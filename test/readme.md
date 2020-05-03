@@ -1,0 +1,1 @@
+These are test files of all kinds used by the project. The main test is 'squidhall.html', which is the primary integration 'walkaround' test.

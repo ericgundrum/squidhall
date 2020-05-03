@@ -1,3 +1,7 @@
+# Wiki Backups
+
+notes/*.html_backup
+
 # Logs
 logs
 *.log

@@ -1,2 +1,3 @@
-# squidhall
-Project to create a virtual 'exhibits hall' for ConZealand.
+# Squid Hall
+
+This is a project to create a virtual 'exhibits hall' for ConZealand.

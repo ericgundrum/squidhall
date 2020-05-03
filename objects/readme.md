@@ -1,0 +1,1 @@
+Files under 'objects' are 3d meshes used in the project.
