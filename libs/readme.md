@@ -1,0 +1,1 @@
+Files under 'libs' are runtime javascript files.

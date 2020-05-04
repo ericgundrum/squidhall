@@ -1,0 +1,17 @@
+{
+	"doc": "Pack file for Squid Hall.",
+	"config": {
+		"outdir": "libs/objects/"
+	},
+	"modules": {
+		"world": {
+			"doc": "Main world module.",
+			"config": {},
+			"objects": [
+				{"name": "arena", "file": "objects/arena.babylon"}
+			],
+			"textures": [],
+			"javascript": []
+		}
+	}
+}
