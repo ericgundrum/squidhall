@@ -20,51 +20,51 @@
                 touch-action: none;
             }
         </style>
-		
+
 		<!-- SCRIPTS START -->
-		
+
 		<!-- Babylon.js support libraries START -->
-		
+
 		<!-- Local copies for testing and demos (no Internet required). -->
         <script src="libs/babylonjs/babylon.js"></script>
         <script src="libs/babylonjs/loaders/babylonjs.loaders.min.js"></script>
-		
-		<!-- CDN for production and final testing. 
+
+		<!-- CDN for production and final testing.
 		<script src="https://cdn.babylonjs.com/babylon.js"></script>
 		<script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
 		-->
 
 		<!-- Babylon.js support libraries END -->
-		
+
 		<!-- Other libraries START -->
-		
+
 		<!-- Other libraries END -->
 
 		<!-- Squidspace START -->
-		
+
 		<script src="libs/squidspace.js"></script>
-		
+
 		<!-- Squidspace END -->
 
 		<!-- World START -->
-		
+
 		<script src="libs/objects/world.js"></script>
-		
+
 		<!-- World END -->
 
 		<!-- SCRIPTS END -->
-        
+
     </head>
 
    <body>
 
     <canvas id="renderCanvas" touch-action="none"></canvas> <!-- touch-action="none" for best results from PEP -->
-	
+
    </body>
 
 	<script>
-		
-		
+
+
 		var canvas = document.getElementById("renderCanvas"); // Get the canvas element
 		var engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
 
@@ -74,7 +74,9 @@
 		    var scene = new BABYLON.Scene(engine);
 
 		    // Lights
-		    var light0 = new BABYLON.DirectionalLight("Omni", new BABYLON.Vector3(-2, -5, 2), scene);
+		    var light0 = new BABYLON.DirectionalLight("Omni", new BABYLON.Vector3(-1, -1, 1), scene);
+        light0.diffuse = new BABYLON.Color3(0.1, 0.1, 0.1);
+        light0.specular = new BABYLON.Color3(0, 0, 0);
 		    var light1 = new BABYLON.PointLight("Omni", new BABYLON.Vector3(2, -5, -2), scene);
 
 		    // Need a free camera for collisions
@@ -84,9 +86,9 @@
 		    //Ground
 		    var ground = BABYLON.Mesh.CreatePlane("ground", 20.0, scene);
 		    ground.material = new BABYLON.StandardMaterial("groundMat", scene);
-		    ground.material.diffuseColor = new BABYLON.Color3(1, 1, 1);
+		    ground.material.diffuseColor = new BABYLON.Color3(0.3, 0.3, 0.1);
 		    ground.material.backFaceCulling = false;
-		    ground.position = new BABYLON.Vector3(5, -10, -15);
+		    ground.position = new BABYLON.Vector3(25, 0, -35);
 		    ground.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
 
 		    //Simple crate
@@ -125,16 +127,17 @@
             var arena = BABYLON.SceneLoader.Append("", "data:" + world.arena,scene, function (scene) {
                 // do something with the scene
             });
-			
-			
+
+
 		    // Add a camera to the scene and attach it to the canvas
 			// TODO: Specify camera in world file.
-			var camera = new BABYLON.UniversalCamera("default camera", new BABYLON.Vector3(0, 0, 0), scene);
+			var camera = new BABYLON.UniversalCamera("default camera", new BABYLON.Vector3(13, 1.6, -20), scene);
 			//var camera = new BABYLON.FreeCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
 			//var camera = new BABYLON.FlyCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
-			camera.setTarget(BABYLON.Vector3.Zero());
+			camera.setTarget(new BABYLON.Vector3(25, 9, -60));
+      camera.fov = 1.2;
 		    camera.attachControl(canvas, true);
-			
+
 			// Set up camera with gravity. See https://doc.babylonjs.com/babylon101/cameras,_mesh_collisions_and_gravity
 			// TODO: Specify these options in world file.
 			// Add gravity.
@@ -148,14 +151,40 @@
 			//arena.checkCollisions = true;
 			//box.checkCollisions = true;
 
-		    // Add lights to the scene
-		    //var light1 = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(1, 1, 0), scene);
-		    //var light2 = new BABYLON.PointLight("light2", new BABYLON.Vector3(0, 1, -1), scene);
+
+      // Add lights to the scene
+      // Basic 3 light.
+      var lightBacktouch = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 30, -70), scene);
+      lightBacktouch.diffuse = new BABYLON.Color3(0, 0, 0.8);
+      lightBacktouch.specular = new BABYLON.Color3(0, 0, 0);
+      lightBacktouch.range = 80;
+
+      var lightFrontFill = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 20, 70), scene);
+      lightFrontFill.diffuse = new BABYLON.Color3(0.3, 0.3, 0.2);
+      lightFrontFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
+      lightFrontFill.range = 150;
+
+      var lightTopFill = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 230, 70), scene);
+      lightTopFill.diffuse = new BABYLON.Color3(1, 1, 1);
+      lightTopFill.specular = new BABYLON.Color3(0.8, 0.8, 0.8);
+      lightTopFill.range = 500;
+
+		    var light1 = new BABYLON.SpotLight("spotLight", new BABYLON.Vector3(40, 9, -50),new BABYLON.Vector3(0, -70, 0),Math.PI / 5, 1, scene);
+        light1.diffuse = new BABYLON.Color3(0, 1, 0);
+        light1.specular = new BABYLON.Color3(0, 1, 0);
+        light1.range = 40;
+
+        var light2 = new BABYLON.SpotLight("spotLight", new BABYLON.Vector3(20, 9, -50),new BABYLON.Vector3(0, -70, 0),Math.PI / 3, 1, scene);
+        light2.diffuse = new BABYLON.Color3(0, 0.7, 0.7);
+        light2.specular = new BABYLON.Color3(0.7, 0.7, 0.7);
+        light2.range = 40;
+
+		    //var light = new BABYLON.PointLight("light2", new BABYLON.Vector3(0, 1, -1), scene);
 
 		    return scene;
 		};
 		/******* End of the create scene function ******/
-		
+
 		var space = createSquidspace(); //Call the createScene function
 
 		// Register a render loop to repeatedly render the scene
