@@ -4,7 +4,7 @@ import sys
 import os
 import json
 
-def insertFile(inFilePath, outFile, singleLine = True):
+def insertTextFile(inFilePath, outFile, singleLine = True):
     """Inserts the contents of a text file specified by the in file path into the out file."""
     
     # TODO: Error handling.
@@ -43,7 +43,7 @@ def processModule(outDir, moduleName, moduleData):
             if pp: mf.write(offset)
             #mf.write("var " + obj["name"] + " = '")
             mf.write(obj["name"] + ": '")
-            insertFile(obj["file"], mf, singleLine = True)
+            insertTextFile(obj["file"], mf, singleLine = True)
             #mf.write("';")
             mf.write("',")
             if pp: mf.write("\n")

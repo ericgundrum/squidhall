@@ -3,7 +3,7 @@
 
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <title>Babylon Template</title>
+        <title>Squid Hall Test</title>
 
         <style>
             html, body {
@@ -68,30 +68,89 @@
 		var canvas = document.getElementById("renderCanvas"); // Get the canvas element
 		var engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
 
+		var createCollisionsScene = function () {
+			// See https://www.babylonjs-playground.com/#4HUQQ
+			// See https://doc.babylonjs.com/babylon101/cameras,_mesh_collisions_and_gravity
+		    var scene = new BABYLON.Scene(engine);
+
+		    // Lights
+		    var light0 = new BABYLON.DirectionalLight("Omni", new BABYLON.Vector3(-2, -5, 2), scene);
+		    var light1 = new BABYLON.PointLight("Omni", new BABYLON.Vector3(2, -5, -2), scene);
+
+		    // Need a free camera for collisions
+		    var camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(0, -8, -20), scene);
+		    camera.attachControl(canvas, true);
+
+		    //Ground
+		    var ground = BABYLON.Mesh.CreatePlane("ground", 20.0, scene);
+		    ground.material = new BABYLON.StandardMaterial("groundMat", scene);
+		    ground.material.diffuseColor = new BABYLON.Color3(1, 1, 1);
+		    ground.material.backFaceCulling = false;
+		    ground.position = new BABYLON.Vector3(5, -10, -15);
+		    ground.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
+
+		    //Simple crate
+		    var box = BABYLON.Mesh.CreateBox("crate", 2, scene);
+		    box.material = new BABYLON.StandardMaterial("Mat", scene);
+		    box.material.diffuseTexture = new BABYLON.Texture("textures/crate.png", scene);
+		    box.material.diffuseTexture.hasAlpha = true;
+		    box.position = new BABYLON.Vector3(5, -9, -10);
+
+		    //Set gravity for the scene (G force like, on Y-axis)
+		    scene.gravity = new BABYLON.Vector3(0, -0.9, 0);
+
+		    // Enable Collisions
+		    scene.collisionsEnabled = true;
+
+		    //Then apply collisions and gravity to the active camera
+		    camera.checkCollisions = true;
+		    camera.applyGravity = true;
+
+		    //Set the ellipsoid around the camera (e.g. your player's size)
+		    camera.ellipsoid = new BABYLON.Vector3(1, 1, 1);
+
+		    //finally, say which mesh will be collisionable
+		    ground.checkCollisions = true;
+		    box.checkCollisions = true;
+
+		    return scene;
+		}
+
 		/******* Add the create scene function ******/
 		var createSquidspace = function () {
 
 		    // Create the scene space
 		    var scene = new BABYLON.Scene(engine);
-			
-            var banner = BABYLON.SceneLoader.Append("", "data:" + world.arena,scene, function (scene) {
+
+            var arena = BABYLON.SceneLoader.Append("", "data:" + world.arena,scene, function (scene) {
                 // do something with the scene
             });
-
-		    // Add a camera to the scene and attach it to the canvas
-		    var camera = new BABYLON.ArcRotateCamera("Camera", Math.PI / 2, Math.PI / 2, 2, new BABYLON.Vector3(0,0,5), scene);
 			
+			
+		    // Add a camera to the scene and attach it to the canvas
+			// TODO: Specify camera in world file.
+			var camera = new BABYLON.UniversalCamera("default camera", new BABYLON.Vector3(0, 0, 0), scene);
+			//var camera = new BABYLON.FreeCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
+			//var camera = new BABYLON.FlyCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
+			camera.setTarget(BABYLON.Vector3.Zero());
 		    camera.attachControl(canvas, true);
+			
+			// Set up camera with gravity. See https://doc.babylonjs.com/babylon101/cameras,_mesh_collisions_and_gravity
+			// TODO: Specify these options in world file.
+			// Add gravity.
+			scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
+			camera.applyGravity = true;
+			//Set the ellipsoid around the camera (e.g. your player's size)
+			camera.ellipsoid = new BABYLON.Vector3(1, 1, 1);
+			// Enable Collisions
+			scene.collisionsEnabled = true;
+			camera.checkCollisions = true;
+			//arena.checkCollisions = true;
+			//box.checkCollisions = true;
 
 		    // Add lights to the scene
 		    //var light1 = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(1, 1, 0), scene);
 		    //var light2 = new BABYLON.PointLight("light2", new BABYLON.Vector3(0, 1, -1), scene);
-
-		    // Add and manipulate meshes in the scene
-		    //var sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter:2}, scene);
-			//BABYLON.SceneLoader.Append("", "data:" + arena, scene, function (scene) {
-			//    // do something with the scene
-			//});
 
 		    return scene;
 		};
