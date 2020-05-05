@@ -77,7 +77,7 @@
 		    var light0 = new BABYLON.DirectionalLight("Omni", new BABYLON.Vector3(-1, -1, 1), scene);
         light0.diffuse = new BABYLON.Color3(0.1, 0.1, 0.1);
         light0.specular = new BABYLON.Color3(0, 0, 0);
-		    //var light1 = new BABYLON.PointLight("Omni", new BABYLON.Vector3(2, -5, -2), scene);
+		    var light1 = new BABYLON.PointLight("Omni", new BABYLON.Vector3(2, -5, -2), scene);
 
 		    // Need a free camera for collisions
 		    var camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(0, -8, -20), scene);
@@ -86,9 +86,9 @@
 		    //Ground
 		    var ground = BABYLON.Mesh.CreatePlane("ground", 20.0, scene);
 		    ground.material = new BABYLON.StandardMaterial("groundMat", scene);
-		    ground.material.diffuseColor = new BABYLON.Color3(1, 1, 1);
+		    ground.material.diffuseColor = new BABYLON.Color3(0.3, 0.3, 0.1);
 		    ground.material.backFaceCulling = false;
-		    ground.position = new BABYLON.Vector3(5, -10, -15);
+		    ground.position = new BABYLON.Vector3(25, 0, -35);
 		    ground.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
 
 		    //Simple crate
@@ -150,10 +150,34 @@
 			//arena.checkCollisions = true;
 			//box.checkCollisions = true;
 
-		    // Add lights to the scene
-		    var light1 = new BABYLON.SpotLight("spotLight", new BABYLON.Vector3(40, 9, -50),new BABYLON.Vector3(90, -10, 0),Math.PI / 3, 2, scene);
-        light1.diffuse = new BABYLON.Color3(0, 0.2, 0);
-        light1.specular = new BABYLON.Color3(0, 0, 0);
+
+      // Add lights to the scene
+      // Basic 3 light.
+      var lightBacktouch = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 30, -70), scene);
+      lightBacktouch.diffuse = new BABYLON.Color3(0, 0, 0.8);
+      lightBacktouch.specular = new BABYLON.Color3(0, 0, 0);
+      lightBacktouch.range = 80;
+
+      var lightFrontFill = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 20, 70), scene);
+      lightFrontFill.diffuse = new BABYLON.Color3(0.3, 0.3, 0.2);
+      lightFrontFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
+      lightFrontFill.range = 150;
+
+      var lightTopFill = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 230, 70), scene);
+      lightTopFill.diffuse = new BABYLON.Color3(1, 1, 1);
+      lightTopFill.specular = new BABYLON.Color3(0.8, 0.8, 0.8);
+      lightTopFill.range = 500;
+
+		    var light1 = new BABYLON.SpotLight("spotLight", new BABYLON.Vector3(40, 9, -50),new BABYLON.Vector3(0, -70, 0),Math.PI / 5, 1, scene);
+        light1.diffuse = new BABYLON.Color3(0, 1, 0);
+        light1.specular = new BABYLON.Color3(0, 1, 0);
+        light1.range = 40;
+
+        var light2 = new BABYLON.SpotLight("spotLight", new BABYLON.Vector3(20, 9, -50),new BABYLON.Vector3(0, -70, 0),Math.PI / 3, 1, scene);
+        light2.diffuse = new BABYLON.Color3(0, 0.7, 0.7);
+        light2.specular = new BABYLON.Color3(0.7, 0.7, 0.7);
+        light2.range = 40;
+
 		    //var light = new BABYLON.PointLight("light2", new BABYLON.Vector3(0, 1, -1), scene);
 
 		    return scene;
