@@ -131,10 +131,11 @@
 
 		    // Add a camera to the scene and attach it to the canvas
 			// TODO: Specify camera in world file.
-			var camera = new BABYLON.UniversalCamera("default camera", new BABYLON.Vector3(20, 9, -30), scene);
+			var camera = new BABYLON.UniversalCamera("default camera", new BABYLON.Vector3(13, 1.6, -20), scene);
 			//var camera = new BABYLON.FreeCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
 			//var camera = new BABYLON.FlyCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
-			camera.setTarget(BABYLON.Vector3.Zero());
+			camera.setTarget(new BABYLON.Vector3(25, 9, -60));
+      camera.fov = 1.2;
 		    camera.attachControl(canvas, true);
 
 			// Set up camera with gravity. See https://doc.babylonjs.com/babylon101/cameras,_mesh_collisions_and_gravity
