@@ -26,6 +26,32 @@
 						},
 						"visible": true
 					}
+				},
+				{
+					"name": "squid", 
+					"action": "insert",
+					"file": "objects/squid.babylon",
+					"config": {
+						"position": {
+							"coords": [0,0,0],
+							"anchor": "bottom",
+							"rotate": 3.12
+						},
+						"visible": true
+					}
+				},
+				{
+					"name": "panel", 
+					"action": "insert",
+					"file": "objects/panel.babylon",
+					"config": {
+						"position": {
+							"coords": [0,0,0],
+							"anchor": "bottom",
+							"rotate": 3.12
+						},
+						"visible": true
+					}
 				}
 			],
 			"textures": [],

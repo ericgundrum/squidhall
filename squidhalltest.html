@@ -1,231 +1,218 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>
+			Squid Hall Test
+		</title>
+		<style>
+		    html, body {
+		        overflow: hidden;
+		        width: 100%;
+		        height: 100%;
+		        margin: 0;
+		        padding: 0;
+		    }
 
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <title>Squid Hall Test</title>
-
-        <style>
-            html, body {
-                overflow: hidden;
-                width: 100%;
-                height: 100%;
-                margin: 0;
-                padding: 0;
-            }
-
-            #renderCanvas {
-                width: 100%;
-                height: 100%;
-                touch-action: none;
-            }
-        </style>
-
-		<!-- SCRIPTS START -->
+		    #renderCanvas {
+		        width: 100%;
+		        height: 100%;
+		        touch-action: none;
+		    }
+		</style><!-- SCRIPTS START -->
 
 		<!-- Babylon.js support libraries START -->
-
 		<!-- Local copies for testing and demos (no Internet required). -->
-        <script src="libs/babylonjs/babylon.js"></script>
-        <script src="libs/babylonjs/loaders/babylonjs.loaders.min.js"></script>
 
-		<!-- CDN for production and final testing.
+		<script src="libs/babylonjs/babylon.js"></script>
+		<script src="libs/babylonjs/loaders/babylonjs.loaders.min.js"></script><!-- CDN for production and final testing.
 		<script src="https://cdn.babylonjs.com/babylon.js"></script>
 		<script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
 		-->
-
 		<!-- Babylon.js support libraries END -->
 
 		<!-- Other libraries START -->
-
 		<!-- Other libraries END -->
 
 		<!-- Squidspace START -->
-
-		<script src="libs/squidspace.js"></script>
-
+		<script src="libs/squidspace.js"></script><!-- Squidspace END -->
 		<!-- Squidspace END -->
 
 		<!-- World START -->
-
-		<script src="libs/objects/world.js"></script>
-
+		<script src="libs/objects/world.js"></script><!-- World END -->
 		<!-- World END -->
 
 		<!-- SCRIPTS END -->
+	</head>
+	<body>
+		<canvas id="renderCanvas" touch-action="none"></canvas><!-- touch-action="none" for best results from PEP -->
+		<script>
+//<![CDATA[
+var canvas = document.getElementById("renderCanvas"); // Get the canvas element
+var engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
 
-    </head>
+var createCollisionsScene = function() {
+	// See https://www.babylonjs-playground.com/#4HUQQ
+	// See https://doc.babylonjs.com/babylon101/cameras,_mesh_collisions_and_gravity
+	var scene = new BABYLON.Scene(engine);
 
-   <body>
+	// Lights
+	var light0 = new BABYLON.DirectionalLight("Omni", new BABYLON.Vector3(-1, -1, 1), scene);
+	light0.diffuse = new BABYLON.Color3(0.1, 0.1, 0.1);
+	light0.specular = new BABYLON.Color3(0, 0, 0);
+	var light1 = new BABYLON.PointLight("Omni", new BABYLON.Vector3(2, -5, -2), scene);
 
-    <canvas id="renderCanvas" touch-action="none"></canvas> <!-- touch-action="none" for best results from PEP -->
+	// Need a free camera for collisions
+	var camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(0, -8, -20), scene);
+	camera.attachControl(canvas, true);
 
-   </body>
+	//Ground
+	var ground = BABYLON.Mesh.CreatePlane("ground", 20.0, scene);
+	ground.material = new BABYLON.StandardMaterial("groundMat", scene);
+	ground.material.diffuseColor = new BABYLON.Color3(0.3, 0.3, 0.1);
+	ground.material.backFaceCulling = false;
+	ground.position = new BABYLON.Vector3(25, 0, -35);
+	ground.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
 
-	<script>
+	//Simple crate
+	var box = BABYLON.Mesh.CreateBox("crate", 2, scene);
+	box.material = new BABYLON.StandardMaterial("Mat", scene);
+	box.material.diffuseTexture = new BABYLON.Texture("textures/crate.png", scene);
+	box.material.diffuseTexture.hasAlpha = true;
+	box.position = new BABYLON.Vector3(5, -9, -10);
 
+	//Set gravity for the scene (G force like, on Y-axis)
+	scene.gravity = new BABYLON.Vector3(0, -0.9, 0);
 
-		var canvas = document.getElementById("renderCanvas"); // Get the canvas element
-		var engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
+	// Enable Collisions
+	scene.collisionsEnabled = true;
 
-		var createCollisionsScene = function () {
-			// See https://www.babylonjs-playground.com/#4HUQQ
-			// See https://doc.babylonjs.com/babylon101/cameras,_mesh_collisions_and_gravity
-		    var scene = new BABYLON.Scene(engine);
+	//Then apply collisions and gravity to the active camera
+	camera.checkCollisions = true;
+	camera.applyGravity = true;
 
-		    // Lights
-		    var light0 = new BABYLON.DirectionalLight("Omni", new BABYLON.Vector3(-1, -1, 1), scene);
-        light0.diffuse = new BABYLON.Color3(0.1, 0.1, 0.1);
-        light0.specular = new BABYLON.Color3(0, 0, 0);
-		    var light1 = new BABYLON.PointLight("Omni", new BABYLON.Vector3(2, -5, -2), scene);
+	//Set the ellipsoid around the camera (e.g. your player's size)
+	camera.ellipsoid = new BABYLON.Vector3(1, 1, 1);
 
-		    // Need a free camera for collisions
-		    var camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(0, -8, -20), scene);
-		    camera.attachControl(canvas, true);
+	//finally, say which mesh will be collisionable
+	ground.checkCollisions = true;
+	box.checkCollisions = true;
 
-		    //Ground
-		    var ground = BABYLON.Mesh.CreatePlane("ground", 20.0, scene);
-		    ground.material = new BABYLON.StandardMaterial("groundMat", scene);
-		    ground.material.diffuseColor = new BABYLON.Color3(0.3, 0.3, 0.1);
-		    ground.material.backFaceCulling = false;
-		    ground.position = new BABYLON.Vector3(25, 0, -35);
-		    ground.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
+	return scene;
+}
 
-		    //Simple crate
-		    var box = BABYLON.Mesh.CreateBox("crate", 2, scene);
-		    box.material = new BABYLON.StandardMaterial("Mat", scene);
-		    box.material.diffuseTexture = new BABYLON.Texture("textures/crate.png", scene);
-		    box.material.diffuseTexture.hasAlpha = true;
-		    box.position = new BABYLON.Vector3(5, -9, -10);
+/******* Add the create scene function ******/
+var createSquidspace = function() {
 
-		    //Set gravity for the scene (G force like, on Y-axis)
-		    scene.gravity = new BABYLON.Vector3(0, -0.9, 0);
+	// Create the scene space
+	var scene = new BABYLON.Scene(engine);
 
-		    // Enable Collisions
-		    scene.collisionsEnabled = true;
+	// Get the arena data.
+	var arenaData = world.arena();
+	var arena = BABYLON.SceneLoader.Append("", "data:" + arenaData.data, scene, function(scene) {
+		// do something with the scene
+	});
 
-		    //Then apply collisions and gravity to the active camera
-		    camera.checkCollisions = true;
-		    camera.applyGravity = true;
+	// Get the panel data.
+	var panelData = world.panel();
+	var panel = BABYLON.SceneLoader.ImportMesh("", "data:", "panelData.data", scene, function(newMeshes) {
+		console.log(newMeshes);
+		for (var index = 0; index < 2; index++) {
 
-		    //Set the ellipsoid around the camera (e.g. your player's size)
-		    camera.ellipsoid = new BABYLON.Vector3(1, 1, 1);
+			var panelmesh = newMeshes[index];
+			panelmesh.isVisible = false;
+			for (var i = 0; i < 10; i++) {
 
-		    //finally, say which mesh will be collisionable
-		    ground.checkCollisions = true;
-		    box.checkCollisions = true;
-
-		    return scene;
+				for (var j = 0; j < 1; j++) {
+					var panel_instance = panelmesh.createInstance("i" + i);
+					panel_instance.position.x = 13 + (i * 1.3);
+					panel_instance.position.y = 0;
+					panel_instance.position.z = -28 - (j * 0.5);
+				}
+			}
 		}
+	});
 
-		/******* Add the create scene function ******/
-		var createSquidspace = function () {
+	var gl = new BABYLON.GlowLayer("glow", scene, {});
+	gl.intensity = 1.0;
 
-		    // Create the scene space
-		    var scene = new BABYLON.Scene(engine);
-			
-			// Get the arena data.
-			var arenaData = world.arena(); 
+	// Get the squid data.
+	var squidData = world.squid();
+	var squid = BABYLON.SceneLoader.ImportMesh("", "data:", squidData.data, scene, function(newMeshes) {
+		var squidmesh = newMeshes[0];
+		squidmesh.position.x = 15;
+		squidmesh.position.y = 12;
+		squidmesh.position.z = -72;
 
-        var arena = BABYLON.SceneLoader.Append("", "data:" + world.arena,scene, function (scene) {
-            // do something with the scene
-       });
+	});
 
-        var panel = BABYLON.SceneLoader.ImportMesh("", "/objects/", "panel.babylon", scene, function (newMeshes) {
-          console.log(newMeshes);
-            for (var index = 0; index <2; index++ ) {
+	// Add a camera to the scene and attach it to the canvas
+	// TODO: Specify camera in world file.
+	var camera = new BABYLON.UniversalCamera("default camera", new BABYLON.Vector3(13, 1.6, -20), scene);
+	//var camera = new BABYLON.FreeCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
+	//var camera = new BABYLON.FlyCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
+	camera.setTarget(new BABYLON.Vector3(25, 1.6, -60));
+	camera.fov = 1.2;
+	camera.attachControl(canvas, true);
 
-                var panelmesh = newMeshes[index];
-                    panelmesh.isVisible = false;
-                for (var i = 0; i < 10; i++) {
-
-                    for (var j = 0; j < 1; j++) {
-                      var panel_instance = panelmesh.createInstance("i" + i );
-                          panel_instance.position.x = 13 + (i * 1.3);
-                          panel_instance.position.y = 0;
-                          panel_instance.position.z = -28 - (j * 0.5);
-                }
-              }
-
-            }
-         });
-
-         var gl = new BABYLON.GlowLayer("glow", scene, {
-         });
-         gl.intensity = 1.0;
-
-         var squid = BABYLON.SceneLoader.ImportMesh("", "/objects/", "squid.babylon", scene, function (newMeshes) {
-            var squidmesh = newMeshes[0];
-            squidmesh.position.x = 15;
-            squidmesh.position.y = 12;
-            squidmesh.position.z = -72;
-
-             });
-
-		    // Add a camera to the scene and attach it to the canvas
-			// TODO: Specify camera in world file.
-			var camera = new BABYLON.UniversalCamera("default camera", new BABYLON.Vector3(13, 1.6, -20), scene);
-			//var camera = new BABYLON.FreeCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
-			//var camera = new BABYLON.FlyCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
-			camera.setTarget(new BABYLON.Vector3(25, 1.6, -60));
-      camera.fov = 1.2;
-		  camera.attachControl(canvas, true);
-
-			// Set up camera with gravity. See https://doc.babylonjs.com/babylon101/cameras,_mesh_collisions_and_gravity
-			// TODO: Specify these options in world file.
-			// Add gravity.
-			//scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
-			//camera.applyGravity = true;
-			//Set the ellipsoid around the camera (e.g. your player's size)
-			//camera.ellipsoid = new BABYLON.Vector3(1, 1, 1);
-			// Enable Collisions
-			//scene.collisionsEnabled = true;
-			//camera.checkCollisions = true;
-			//arena.checkCollisions = true;
-			//box.checkCollisions = true;
+	// Set up camera with gravity. See https://doc.babylonjs.com/babylon101/cameras,_mesh_collisions_and_gravity
+	// TODO: Specify these options in world file.
+	// Add gravity.
+	//scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
+	//camera.applyGravity = true;
+	//Set the ellipsoid around the camera (e.g. your player's size)
+	//camera.ellipsoid = new BABYLON.Vector3(1, 1, 1);
+	// Enable Collisions
+	//scene.collisionsEnabled = true;
+	//camera.checkCollisions = true;
+	//arena.checkCollisions = true;
+	//box.checkCollisions = true;
 
 
-      // Add lights to the scene
-      // Basic 3 light.
+	// Add lights to the scene
+	// Basic 3 light.
 
 
-      var lightFrontFill = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 20, 70), scene);
-      lightFrontFill.diffuse = new BABYLON.Color3(0.3, 0.3, 0.2);
-      lightFrontFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
-      lightFrontFill.range = 150;
+	var lightFrontFill = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 20, 70), scene);
+	lightFrontFill.diffuse = new BABYLON.Color3(0.3, 0.3, 0.2);
+	lightFrontFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
+	lightFrontFill.range = 150;
 
-      var lightTopFill = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 230, 70), scene);
-      lightTopFill.diffuse = new BABYLON.Color3(1, 1, 1);
-      lightTopFill.specular = new BABYLON.Color3(0.8, 0.8, 0.8);
-      lightTopFill.range = 300;
+	var lightTopFill = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 230, 70), scene);
+	lightTopFill.diffuse = new BABYLON.Color3(1, 1, 1);
+	lightTopFill.specular = new BABYLON.Color3(0.8, 0.8, 0.8);
+	lightTopFill.range = 300;
 
 
-		    var light1 = new BABYLON.SpotLight("spotLight", new BABYLON.Vector3(40, 9, -50),new BABYLON.Vector3(0, -70, 0),Math.PI / 5, 1, scene);
-        light1.diffuse = new BABYLON.Color3(0, 1, 0);
-        light1.specular = new BABYLON.Color3(0, 1, 0);
-        light1.range = 40;
+	var light1 = new BABYLON.SpotLight("spotLight", new BABYLON.Vector3(40, 9, -50), new BABYLON.Vector3(0, -70, 0), Math.PI / 5, 1, scene);
+	light1.diffuse = new BABYLON.Color3(0, 1, 0);
+	light1.specular = new BABYLON.Color3(0, 1, 0);
+	light1.range = 40;
 
-        var light2 = new BABYLON.SpotLight("spotLight", new BABYLON.Vector3(20, 9, -50),new BABYLON.Vector3(0, -70, 0),Math.PI / 3, 1, scene);
-        light2.diffuse = new BABYLON.Color3(0, 0.7, 0.7);
-        light2.specular = new BABYLON.Color3(0.7, 0.7, 0.7);
-        light2.range = 40;
+	var light2 = new BABYLON.SpotLight("spotLight", new BABYLON.Vector3(20, 9, -50), new BABYLON.Vector3(0, -70, 0), Math.PI / 3, 1, scene);
+	light2.diffuse = new BABYLON.Color3(0, 0.7, 0.7);
+	light2.specular = new BABYLON.Color3(0.7, 0.7, 0.7);
+	light2.range = 40;
 
-		    //var light = new BABYLON.PointLight("light2", new BABYLON.Vector3(0, 1, -1), scene);
+	//var light = new BABYLON.PointLight("light2", new BABYLON.Vector3(0, 1, -1), scene);
 
-		    return scene;
-		};
-		/******* End of the create scene function ******/
+	return scene;
+};
+/******* End of the create scene function ******/
 
-		var space = createSquidspace(); //Call the createScene function
+var space = createSquidspace(); //Call the createScene function
 
-		// Register a render loop to repeatedly render the scene
-		engine.runRenderLoop(function () {
-		        space.render();
-		});
+// Register a render loop to repeatedly render the scene
+engine.runRenderLoop(function() {
+	space.render();
+});
 
-		// Watch for browser/canvas resize events
-		window.addEventListener("resize", function () {
-		        engine.resize();
-		});
-	</script>
+// Watch for browser/canvas resize events
+window.addEventListener("resize", function() {
+	engine.resize();
+});
+
+//]]>
+		</script>
+	</body>
 </html>
