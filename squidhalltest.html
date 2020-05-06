@@ -123,8 +123,11 @@
 
 		    // Create the scene space
 		    var scene = new BABYLON.Scene(engine);
+			
+			// Get the arena data.
+			var arenaData = world.arena(); 
 
-            var arena = BABYLON.SceneLoader.Append("", "data:" + world.arena,scene, function (scene) {
+            var arena = BABYLON.SceneLoader.Append("", "data:" + arenaData.data,scene, function (scene) {
                 // do something with the scene
             });
 

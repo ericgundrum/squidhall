@@ -1,0 +1,1 @@
+Files under 'img' are runtime image and image texture files.
