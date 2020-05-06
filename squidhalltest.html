@@ -124,9 +124,40 @@
 		    // Create the scene space
 		    var scene = new BABYLON.Scene(engine);
 
-            var arena = BABYLON.SceneLoader.Append("", "data:" + world.arena,scene, function (scene) {
-                // do something with the scene
-            });
+        var arena = BABYLON.SceneLoader.Append("", "data:" + world.arena,scene, function (scene) {
+            // do something with the scene
+       });
+
+        var panel = BABYLON.SceneLoader.ImportMesh("", "/objects/", "panel.babylon", scene, function (newMeshes) {
+          console.log(newMeshes);
+            for (var index = 0; index <2; index++ ) {
+
+                var panelmesh = newMeshes[index];
+                    panelmesh.isVisible = false;
+                for (var i = 0; i < 10; i++) {
+
+                    for (var j = 0; j < 1; j++) {
+                      var panel_instance = panelmesh.createInstance("i" + i );
+                          panel_instance.position.x = 13 + (i * 1.3);
+                          panel_instance.position.y = 0;
+                          panel_instance.position.z = -28 - (j * 0.5);
+                }
+              }
+
+            }
+         });
+
+         var gl = new BABYLON.GlowLayer("glow", scene, {
+         });
+         gl.intensity = 1.0;
+
+         var squid = BABYLON.SceneLoader.ImportMesh("", "/objects/", "squid.babylon", scene, function (newMeshes) {
+            var squidmesh = newMeshes[0];
+            squidmesh.position.x = 15;
+            squidmesh.position.y = 12;
+            squidmesh.position.z = -72;
+
+             });
 
 
 		    // Add a camera to the scene and attach it to the canvas
@@ -134,9 +165,9 @@
 			var camera = new BABYLON.UniversalCamera("default camera", new BABYLON.Vector3(13, 1.6, -20), scene);
 			//var camera = new BABYLON.FreeCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
 			//var camera = new BABYLON.FlyCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
-			camera.setTarget(new BABYLON.Vector3(25, 9, -60));
+			camera.setTarget(new BABYLON.Vector3(25, 1.6, -60));
       camera.fov = 1.2;
-		    camera.attachControl(canvas, true);
+		  camera.attachControl(canvas, true);
 
 			// Set up camera with gravity. See https://doc.babylonjs.com/babylon101/cameras,_mesh_collisions_and_gravity
 			// TODO: Specify these options in world file.
@@ -154,10 +185,7 @@
 
       // Add lights to the scene
       // Basic 3 light.
-      var lightBacktouch = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 30, -70), scene);
-      lightBacktouch.diffuse = new BABYLON.Color3(0, 0, 0.8);
-      lightBacktouch.specular = new BABYLON.Color3(0, 0, 0);
-      lightBacktouch.range = 80;
+
 
       var lightFrontFill = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 20, 70), scene);
       lightFrontFill.diffuse = new BABYLON.Color3(0.3, 0.3, 0.2);
@@ -167,7 +195,8 @@
       var lightTopFill = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 230, 70), scene);
       lightTopFill.diffuse = new BABYLON.Color3(1, 1, 1);
       lightTopFill.specular = new BABYLON.Color3(0.8, 0.8, 0.8);
-      lightTopFill.range = 500;
+      lightTopFill.range = 300;
+
 
 		    var light1 = new BABYLON.SpotLight("spotLight", new BABYLON.Vector3(40, 9, -50),new BABYLON.Vector3(0, -70, 0),Math.PI / 5, 1, scene);
         light1.diffuse = new BABYLON.Color3(0, 1, 0);
