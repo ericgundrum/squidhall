@@ -1,0 +1,37 @@
+{
+	"doc": "Pack file for Squid Hall.",
+	"config": {
+		"outdir": "libs/objects/"
+	},
+	"modules": [
+		{
+		    "name": "world",
+			"doc": "Main world module.",
+			"config": {
+				"pretty-print": true,
+				"pretty-offset": 3,
+				"default-file-loader-func": "TODO: link loader functions not currently supported.",
+				"default-url-loader-func": "TODO: link loader functions not currently supported."
+			},
+			"objects": [
+				{
+					"name": "arena", 
+					"action": "insert",
+					"file": "objects/arena.babylon",
+					"config": {
+						"position": {
+							"coords": [0,2,5],
+							"anchor": "bottom",
+							"rotate": 3.12
+						},
+						"visible": true
+					}
+				}
+			],
+			"textures": [],
+			"lights": [],
+			"private-javascript": [],
+			"public-javascript": []
+		}
+	]
+}

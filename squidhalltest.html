@@ -123,6 +123,9 @@
 
 		    // Create the scene space
 		    var scene = new BABYLON.Scene(engine);
+			
+			// Get the arena data.
+			var arenaData = world.arena(); 
 
         var arena = BABYLON.SceneLoader.Append("", "data:" + world.arena,scene, function (scene) {
             // do something with the scene
@@ -158,7 +161,6 @@
             squidmesh.position.z = -72;
 
              });
-
 
 		    // Add a camera to the scene and attach it to the canvas
 			// TODO: Specify camera in world file.
