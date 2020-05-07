@@ -26,10 +26,13 @@
 		
 		<!-- Local copies for testing and demos (no Internet required). -->
 		<script src="libs/babylonjs/babylon.js"></script>
+		<script src="libs/babylonjs/babylonjs.proceduralTextures.min.js"></script>
+		<script src="libs/babylonjs/babylonjs.materials.min.js"></script>
 		<script src="libs/babylonjs/loaders/babylonjs.loaders.min.js"></script>
 		
 		<!-- CDN for production and final testing.
 		<script src="https://cdn.babylonjs.com/babylon.js"></script>
+		<script src="https://cdn.babylonjs.com/babylonjs.materials.min.js"></script>
 		<script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
 		-->
 			
@@ -60,6 +63,21 @@ var engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
 /******* Add the create scene function ******/
 var createSquidspace = function() {
 	
+	
+	/*
+	## Some ideas for improvement
+	
+	Some options reduce CPU, but degrade the experience. One way to handle this might
+	be to have a basic setting for 'low', 'medium', and 'high', where high uses every
+	option and low uses the least. We could provide a way to choose the setting on the web 
+	page, which saves the setting to a cookie and reloads the page. The code would simply
+	check the cookie on startup and use the appropriate options based on the setting.
+	
+	We need to figure out what is required to support tablets and phones and implement that.
+	
+	We need to determine if we need to support gamepads.
+	*/
+	
 	// 
 	// Build world.
 	//
@@ -76,7 +94,7 @@ var createSquidspace = function() {
 	// Load panels.
 	var panelData = world.panel();
 	var panel = BABYLON.SceneLoader.ImportMesh("", "", "data:" + panelData.data, scene, function(newMeshes) {
-		console.log(newMeshes);
+		//console.log(newMeshes);
 		for (var index = 0; index < 2; index++) {
 
 			var panelmesh = newMeshes[index];
@@ -109,14 +127,15 @@ var createSquidspace = function() {
 
 
 	// Add a floor.
-	// TODO: Properly size the plane to the arena.
-	// TODO: Use a procedural texture (asphalt?).
-	var floor = BABYLON.Mesh.CreatePlane("floor", 90, scene);
-	floor.material = new BABYLON.StandardMaterial("groundMat", scene);
-	floor.material.diffuseColor = new BABYLON.Color3(0.3, 0.3, 0.3);
+	// TODO: Specify floor in world file.
+	var floor = BABYLON.Mesh.CreateGround('floor', 60, 90, 2, scene);
+	floor.position = new BABYLON.Vector3(29, 0, -35);
+    var customMaterialmacadam = new BABYLON.StandardMaterial("macadam", scene);
+    var customProcTextmacadam = new BABYLON.RoadProceduralTexture("macadamtext", 2048, scene);
+    customMaterialmacadam.diffuseTexture = customProcTextmacadam;
+    floor.material = customMaterialmacadam;
 	floor.material.backFaceCulling = false;
-	floor.position = new BABYLON.Vector3(25, 0, -35);
-	floor.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
+    //floor.receiveShadows = true; // This seems to increase the CPU requirements by quite a bit.
 	
 
 	// Add a camera to the scene and attach it to the canvas
@@ -157,6 +176,8 @@ var createSquidspace = function() {
 	// See https://doc.babylonjs.com/babylon101/cameras,_mesh_collisions_and_gravity
 	// TODO: Determine best settings here.
 	scene.gravity = new BABYLON.Vector3(0, -0.9, 0);
+	//scene.gravity = new BABYLON.Vector3(0, 0, 0);
+	
 
 	// Enable Collisions for scene.
 	scene.collisionsEnabled = true;
