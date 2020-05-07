@@ -38,7 +38,7 @@ class ModuleConfiguration(object):
             if "pretty-print" in configData:
                 self.pp = configData["pretty-print"]
             if "pretty-offset" in configData:
-                self.offset = " " * configData["pretty-print"]
+                self.offset = " " * configData["pretty-offset"]
             if "default-file-loader-func" in configData:
                 self.defaultFileLoader = configData["default-file-loader-func"]
             if "default-url-loader-func" in configData:

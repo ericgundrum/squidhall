@@ -8,15 +8,19 @@ import json
 def cleanData(data):
     dirty = False
     
-    # Does it contain a 'cameras' section?
+    # Check for unwanted sections and clean them.
+    
     if "cameras" in data:
         #del data["cameras"]
         data["cameras"] = [] # Make it an empty list.
         dirty = True
         
-    # Does it contain a 'activeCameraID' section?
     if "activeCameraID" in data:
         del data["activeCameraID"]
+        dirty = True
+
+    if "gravity" in data:
+        del data["gravity"]
         dirty = True
         
     # Add other sections we want to remove here.
