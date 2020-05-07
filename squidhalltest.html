@@ -56,7 +56,15 @@
 		<script>
 //<![CDATA[
 	
-
+	var addFloorSection = function(secName, width, depth, x, y, material, scene) {
+	//s TODO: Support width and depth.
+	var floorSection = BABYLON.Mesh.CreatePlane(secName, width, scene); 
+	floorSection.position = new BABYLON.Vector3(x, 0.01, y);
+	floorSection.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
+    floorSection.material = material;
+	floorSection.material.backFaceCulling = false;
+}
+	
 var canvas = document.getElementById("renderCanvas"); // Get the canvas element
 var engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
 
@@ -84,6 +92,21 @@ var createSquidspace = function() {
 
 	// Create the scene space
 	var scene = new BABYLON.Scene(engine);
+	
+	// Add some materials we'll be using.
+	// TODO: Determine if we want to use ambient or diffuse textures. Currently using 
+	//       ambient on marble and diffuse on macadam. See:
+	// * https://gamedev.stackexchange.com/questions/14334/the-difference-between-diffuse-texture-and-ambient-occlusion-texture
+	// * https://www.quora.com/What-is-the-difference-between-Ambient-Diffuse-and-Specular-Light-in-OpenGL-Figures-for-illustration-are-encouraged?share=1
+    var materialMacadam = new BABYLON.StandardMaterial("macadam", scene);
+    var textureMacadam = new BABYLON.RoadProceduralTexture("macadamtext", 2048, scene);
+	materialMacadam.backFaceCulling = false;
+    materialMacadam.diffuseTexture = textureMacadam;
+    var materialMarble = new BABYLON.StandardMaterial("marble", scene);
+    var textureMarble = new BABYLON.MarbleProceduralTexture("marbletext", 512, scene);
+    materialMarble.ambientTexture = textureMarble;
+    //materialMarble.numberOfBricksHeight = 1; // Doesn't seem to do anything?
+    //materialMarble.numberOfBricksWidth = 1; // Doesn't seem to do anything?
 
 	// Load arena.
 	var arenaData = world.arena();
@@ -130,14 +153,16 @@ var createSquidspace = function() {
 	// TODO: Specify floor in world file.
 	var floor = BABYLON.Mesh.CreateGround('floor', 60, 90, 2, scene);
 	floor.position = new BABYLON.Vector3(29, 0, -35);
-    var customMaterialmacadam = new BABYLON.StandardMaterial("macadam", scene);
-    var customProcTextmacadam = new BABYLON.RoadProceduralTexture("macadamtext", 2048, scene);
-    customMaterialmacadam.diffuseTexture = customProcTextmacadam;
-    floor.material = customMaterialmacadam;
-	floor.material.backFaceCulling = false;
+    floor.material = materialMacadam;
     //floor.receiveShadows = true; // This seems to increase the CPU requirements by quite a bit.
 	
-
+	// Add floor sections.
+	addFloorSection("hugos", 15, 15, 20, -65, materialMarble, scene);
+	addFloorSection("exhibits", 15, 15, 20, -50, materialMarble, scene);
+	addFloorSection("artshow", 15, 15, 37, -65, materialMarble, scene);
+	addFloorSection("dealerleft", 10, 10, 34, -35, materialMarble, scene);
+	addFloorSection("dealerright", 10, 10, 20, -35, materialMarble, scene);
+   
 	// Add a camera to the scene and attach it to the canvas
 	// TODO: Specify camera in world file.
 	// TODO: Support switching to VirtualJoysticksCamera if running on a tablet or phone.
