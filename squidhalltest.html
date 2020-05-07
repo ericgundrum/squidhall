@@ -119,7 +119,7 @@ var createSquidspace = function() {
 
 	// Get the panel data.
 	var panelData = world.panel();
-	var panel = BABYLON.SceneLoader.ImportMesh("", "data:" + panelData.data, scene, function(newMeshes) {
+	var panel = BABYLON.SceneLoader.ImportMesh("", "", "data:" + panelData.data, scene, function(newMeshes) {
 		console.log(newMeshes);
 		for (var index = 0; index < 2; index++) {
 
@@ -142,7 +142,7 @@ var createSquidspace = function() {
 
 	// Get the squid data.
 	var squidData = world.squid();
-	var squid = BABYLON.SceneLoader.ImportMesh("", "data:" + squidData.data, scene, function(newMeshes) {
+	var squid = BABYLON.SceneLoader.ImportMesh("", "", "data:" + squidData.data, scene, function(newMeshes) {
 		var squidmesh = newMeshes[0];
 		squidmesh.position.x = 15;
 		squidmesh.position.y = 12;
