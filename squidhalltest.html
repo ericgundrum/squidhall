@@ -56,13 +56,38 @@
 		<script>
 //<![CDATA[
 	
-	var addFloorSection = function(secName, width, depth, x, y, material, scene) {
+var addFloorSection = function(secName, width, depth, x, y, material, scene) {
 	//s TODO: Support width and depth.
 	var floorSection = BABYLON.Mesh.CreatePlane(secName, width, scene); 
-	floorSection.position = new BABYLON.Vector3(x, 0.01, y);
+	floorSection.position = new BABYLON.Vector3(x, 0.001, y);
 	floorSection.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
     floorSection.material = material;
 	floorSection.material.backFaceCulling = false;
+}
+
+	
+var addPanels = function(pnlName, panelLayouts, scene) {
+	var panelData = world.panel();
+	var panel = BABYLON.SceneLoader.ImportMesh("", "", "data:" + panelData.data, 
+												scene, function(newMeshes) {
+		//console.log(newMeshes);
+		for (var index = 0; index < newMeshes.length; index++) {
+
+			var panelmesh = newMeshes[index];
+			panelmesh.isVisible = false;
+			
+			var ctr = 0;
+			for (layout of panelLayouts) {
+				console.log("")
+				var pnl = panelmesh.createInstance("pnlName_" + ctr++);
+				pnl.position.x = layout[0];
+				pnl.position.y = 0.01;
+				pnl.position.z = layout[1];
+				// TODO: Panel rotate.
+				pnl.checkCollisions = true; 
+			}
+		}
+	});
 }
 	
 var canvas = document.getElementById("renderCanvas"); // Get the canvas element
@@ -115,25 +140,55 @@ var createSquidspace = function() {
 	});
 
 	// Load panels.
-	var panelData = world.panel();
-	var panel = BABYLON.SceneLoader.ImportMesh("", "", "data:" + panelData.data, scene, function(newMeshes) {
-		//console.log(newMeshes);
-		for (var index = 0; index < 2; index++) {
-
-			var panelmesh = newMeshes[index];
-			panelmesh.isVisible = false;
-			for (var i = 0; i < 10; i++) {
-
-				for (var j = 0; j < 1; j++) {
-					var panel_instance = panelmesh.createInstance("i" + i);
-					panel_instance.position.x = 13 + (i * 1.3);
-					panel_instance.position.y = 0;
-					panel_instance.position.z = -28 - (j * 0.5);
-					panel_instance.checkCollisions = true; // For walk code, see below.
-				}
-			}
-		}
-	});
+	var spc = 1.3;
+	var arx = 41.5;
+	var arz1 = -62;
+	var arz2 = arz1 + 3.5;
+	var hix1 = 26.5;
+	var hiz1 = arz2;
+	var hix2 = hix1 - 4;
+	var hiz2 = hiz1 + 3.5;
+	var hux = hix1;
+	var huz = arz1 - 2;
+	var nzx = hix2 - (spc * 2);
+	var nzz = -45;
+	var panelLayouts = [
+		// Art Show.
+		[arx - (spc * 0), arz1],
+		[arx - (spc * 1), arz1],
+		[arx - (spc * 2), arz1],
+		[arx - (spc * 3), arz1],
+		[arx - (spc * 4), arz1],
+		[arx - (spc * 5), arz1],
+		[arx - (spc * 6), arz1],
+		[arx - (spc * 7), arz1],
+		[arx - (spc * 0), arz2],
+		[arx - (spc * 1), arz2],
+		[arx - (spc * 2), arz2],
+		[arx - (spc * 3), arz2],
+		[arx - (spc * 4), arz2],
+		[arx - (spc * 5), arz2],
+		[arx - (spc * 6), arz2],
+		[arx - (spc * 7), arz2],
+		// History.
+		[hix1 - (spc * 0), hiz1],
+		[hix1 - (spc * 1), hiz1],
+		[hix1 - (spc * 2), hiz1],
+		[hix2 - (spc * 0), hiz2],
+		[hix2 - (spc * 1), hiz2],
+		[hix2 - (spc * 2), hiz2],
+		[hix2 - (spc * 3), hiz2],
+		[hix2 - (spc * 4), hiz2],
+		[hix2 - (spc * 5), hiz2],
+		// Hugos.
+		[hux - (spc * 0), huz],
+		[hux - (spc * 1), huz],
+		// New Zealand Genre.
+		[nzx - (spc * 0), nzz],
+		[nzx - (spc * 1), nzz],
+		[nzx - (spc * 2), nzz]
+	]
+	addPanels("pnl", panelLayouts, scene)
 
 	var gl = new BABYLON.GlowLayer("glow", scene, {});
 	gl.intensity = 1.0;
