@@ -42,7 +42,7 @@
 		<!-- Other libraries END -->
 
 		<!-- Squidspace START -->
-		<script src="libs/squidspace.js"></script><!-- Squidspace END -->
+		<!-- Not currently supported. <script src="libs/squidspace.mjs"></script> -->
 		<!-- Squidspace END -->
 
 		<!-- World START -->
@@ -55,20 +55,82 @@
 		<canvas id="renderCanvas" touch-action="none"></canvas><!-- touch-action="none" for best results from PEP -->
 		<script>
 //<![CDATA[
+
+//
+// Some size variables we need for calculations.
+//
+// NOTE: Each unit corresponds to 1 meter, so 1.75 is one and three quarter meters.
+//
+
+var pnlwidth = 1;
+var tblwidth = 1.75;
+var tbldepth = 0.6;
+var tblheight = 0.05;
+var norot = 0; // Do not rotate.
+var rot = Math.PI / 2; // Rotate 90 degrees.
+
+
+//
+// Helper functions.
+//
 	
-var addFloorSection = function(secName, width, depth, x, y, material, scene) {
-	//s TODO: Support width and depth.
-	var floorSection = BABYLON.Mesh.CreatePlane(secName, width, scene); 
-	floorSection.position = new BABYLON.Vector3(x, 0.001, y);
+/** Adds a count series of layout elements to an existing layout, starting
+	at the the provided x and z and separated by the provided offset. If across
+	is true the elements start at the west and go east. Otherwise the elements
+	start at the south and go north. The passed rotation is used for all elements
+	in the series.
+*/
+var addLinearSeriesToLayout = function(seriesName, layout, count, x, z, offset, 
+										across, rotation) {
+	for (i = 0;i < count;i++) {
+		layout.push([seriesName + i, x, z, rotation])
+		if (across) {
+			x -= offset;
+		}
+		else {
+			z -= offset;
+		}
+	}
+}
+
+var addRectangleSeriesToLayout = function(seriesName, layout, countWide, countDeep, 
+											x, z, lengthOffset, widthOffset) {
+	// Calculate starting positions.
+	let wx = x - widthOffset;
+	let bz = z + (countDeep * lengthOffset) - widthOffset;
+	let rx = x - (countWide * lengthOffset);
+	
+	// Do width layout.
+	for (i = 0;i < countWide;i++) {
+		addLinearSeriesToLayout(seriesName + "top-", layout, countWide, wx, z, 
+						lengthOffset, true, norot);
+		addLinearSeriesToLayout(seriesName + "bottom-", layout, countWide, wx, bz, 
+						lengthOffset, true, norot);
+	}
+	
+	// Do depth layout.
+	for (i = 0;i< countDeep;i++) {
+		addLinearSeriesToLayout(seriesName + "left-", layout, countDeep, x + widthOffset, bz - widthOffset, 
+						lengthOffset, false, rot);
+		addLinearSeriesToLayout(seriesName + "right-", layout, countDeep, rx, bz - widthOffset, 
+						lengthOffset, false, rot);
+	}
+}
+
+
+var addFloorSection = function(secName, width, depth, x, z, material, scene) {
+	// TODO: Support width and depth.
+	var floorSection = BABYLON.MeshBuilder.CreatePlane(secName, {width: width, size:depth, tileSize:1}, scene); 
+	floorSection.position = new BABYLON.Vector3(x, 0.001, z);
 	floorSection.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
     floorSection.material = material;
 	floorSection.material.backFaceCulling = false;
 }
 
 	
-var addPanels = function(pnlName, panelLayouts, scene) {
+var addPanels = function(panelLayouts, scene) {
 	var panelData = world.panel();
-	var panel = BABYLON.SceneLoader.ImportMesh("", "", "data:" + panelData.data, 
+	var panel = BABYLON.SceneLoader.ImportMesh("panel", "", "data:" + panelData.data, 
 												scene, function(newMeshes) {
 		//console.log(newMeshes);
 		for (var index = 0; index < newMeshes.length; index++) {
@@ -76,26 +138,46 @@ var addPanels = function(pnlName, panelLayouts, scene) {
 			var panelmesh = newMeshes[index];
 			panelmesh.isVisible = false;
 			
-			var ctr = 0;
 			for (layout of panelLayouts) {
-				console.log("")
-				var pnl = panelmesh.createInstance("pnlName_" + ctr++);
-				pnl.position.x = layout[0];
+				var pnl = panelmesh.createInstance(layout[0]);
+				pnl.position.x = layout[1];
 				pnl.position.y = 0.01;
-				pnl.position.z = layout[1];
-				// TODO: Panel rotate.
+				pnl.position.z = layout[2];
+				if (layout[3] != 0) {
+					pnl.rotate(BABYLON.Axis.Y, layout[3]);
+				}
 				pnl.checkCollisions = true; 
 			}
 		}
 	});
 }
-	
-var canvas = document.getElementById("renderCanvas"); // Get the canvas element
-var engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
 
-/******* Add the create scene function ******/
-var createSquidspace = function() {
+
+var addTables = function(tblLayouts, material, scene) {
+	// TODO: Currently using a plane for the table, we may want to 
+	//       replace that with a mesh, like the panels.
+	for (layout of tblLayouts) {
+		//var table = BABYLON.MeshBuilder.CreatePlane(layout[0], {width: 2, size:1, tileSize:1}, scene); 
+		var table = BABYLON.MeshBuilder.CreateBox(layout[0], 
+										{width: tblwidth, depth:tbldepth, height:tblheight}, scene); 
+		table.position = new BABYLON.Vector3(layout[1], 1.25, layout[2]);
+		//table.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
+	    table.material = material;
+		table.material.backFaceCulling = false;		
+		if (layout[3] != 0) {
+			table.rotate(BABYLON.Axis.Y, layout[3]);
+		}
+		table.checkCollisions = true; 
+	}
+}
+
+
+//
+// Create simulation.
+//
 	
+/** Creates the virtual world and does all the layouts. */
+var createSquidspace = function(engine) {
 	
 	/*
 	## Some ideas for improvement
@@ -123,79 +205,111 @@ var createSquidspace = function() {
 	//       ambient on marble and diffuse on macadam. See:
 	// * https://gamedev.stackexchange.com/questions/14334/the-difference-between-diffuse-texture-and-ambient-occlusion-texture
 	// * https://www.quora.com/What-is-the-difference-between-Ambient-Diffuse-and-Specular-Light-in-OpenGL-Figures-for-illustration-are-encouraged?share=1
-    var materialMacadam = new BABYLON.StandardMaterial("macadam", scene);
-    var textureMacadam = new BABYLON.RoadProceduralTexture("macadamtext", 2048, scene);
+    let materialMacadam = new BABYLON.StandardMaterial("macadam", scene);
+    let textureMacadam = new BABYLON.RoadProceduralTexture("macadamtext", 2048, scene);
 	materialMacadam.backFaceCulling = false;
     materialMacadam.diffuseTexture = textureMacadam;
-    var materialMarble = new BABYLON.StandardMaterial("marble", scene);
-    var textureMarble = new BABYLON.MarbleProceduralTexture("marbletext", 512, scene);
+    let materialMarble = new BABYLON.StandardMaterial("marble", scene);
+    let textureMarble = new BABYLON.MarbleProceduralTexture("marbletext", 512, scene);
     materialMarble.ambientTexture = textureMarble;
     //materialMarble.numberOfBricksHeight = 1; // Doesn't seem to do anything?
     //materialMarble.numberOfBricksWidth = 1; // Doesn't seem to do anything?
+    let materialWood = new BABYLON.StandardMaterial("wood", scene);
+    let textureWood = new BABYLON.WoodProceduralTexture("woodtext", 1048, scene);
+	textureWood.ampScale = 256; // TODO: Experiment with this, read docs again.
+	textureWood.woodColor = new BABYLON.Color3(0.8, 0.8, 0.8);
+	materialWood.backFaceCulling = false;
+    materialWood.diffuseTexture = textureWood;
 
 	// Load arena.
-	var arenaData = world.arena();
-	var arena = BABYLON.SceneLoader.Append("", "data:" + arenaData.data, scene, function(scene) {
+	let arenaData = world.arena();
+	let arena = BABYLON.SceneLoader.Append("", "data:" + arenaData.data, scene, function(scene) {
 		// do something with the scene
 	});
 
-	// Load panels.
-	var spc = 1.3;
-	var arx = 41.5;
-	var arz1 = -62;
-	var arz2 = arz1 + 3.5;
-	var hix1 = 26.5;
-	var hiz1 = arz2;
-	var hix2 = hix1 - 4;
-	var hiz2 = hiz1 + 3.5;
-	var hux = hix1;
-	var huz = arz1 - 2;
-	var nzx = hix2 - (spc * 2);
-	var nzz = -45;
-	var panelLayouts = [
-		// Art Show.
-		[arx - (spc * 0), arz1],
-		[arx - (spc * 1), arz1],
-		[arx - (spc * 2), arz1],
-		[arx - (spc * 3), arz1],
-		[arx - (spc * 4), arz1],
-		[arx - (spc * 5), arz1],
-		[arx - (spc * 6), arz1],
-		[arx - (spc * 7), arz1],
-		[arx - (spc * 0), arz2],
-		[arx - (spc * 1), arz2],
-		[arx - (spc * 2), arz2],
-		[arx - (spc * 3), arz2],
-		[arx - (spc * 4), arz2],
-		[arx - (spc * 5), arz2],
-		[arx - (spc * 6), arz2],
-		[arx - (spc * 7), arz2],
-		// History.
-		[hix1 - (spc * 0), hiz1],
-		[hix1 - (spc * 1), hiz1],
-		[hix1 - (spc * 2), hiz1],
-		[hix2 - (spc * 0), hiz2],
-		[hix2 - (spc * 1), hiz2],
-		[hix2 - (spc * 2), hiz2],
-		[hix2 - (spc * 3), hiz2],
-		[hix2 - (spc * 4), hiz2],
-		[hix2 - (spc * 5), hiz2],
-		// Hugos.
-		[hux - (spc * 0), huz],
-		[hux - (spc * 1), huz],
-		// New Zealand Genre.
-		[nzx - (spc * 0), nzz],
-		[nzx - (spc * 1), nzz],
-		[nzx - (spc * 2), nzz]
-	]
-	addPanels("pnl", panelLayouts, scene)
+	// Create panel layouts.
+	let panelLayouts = []
+	let spc = pnlwidth + 0.3; // Spacing from start of one panel to start of next.
 
-	var gl = new BABYLON.GlowLayer("glow", scene, {});
-	gl.intensity = 1.0;
+	// Art Show.
+	let nm = "artshowpnl-";
+	let arx1 = 41.5;
+	let arz1 = -63.5;
+	let arz2 = arz1 + 4;
+	addLinearSeriesToLayout(nm + "1-", panelLayouts, 8, arx1, arz1, spc, true, norot);
+	addLinearSeriesToLayout(nm + "2-", panelLayouts, 8, arx1, arz2, spc, true, norot);
+	addLinearSeriesToLayout(nm + "3-", panelLayouts, 2, arx1, arz1, spc, false, rot);
+	addLinearSeriesToLayout(nm + "4-", panelLayouts, 2, arx1, arz2, spc, false, rot);
+	addLinearSeriesToLayout(nm + "5-", panelLayouts, 2, arx1 - (spc * 2), arz1, spc, false, rot);
+	addLinearSeriesToLayout(nm + "6-", panelLayouts, 2, arx1 - (spc * 2), arz2, spc, false, rot);
+	addLinearSeriesToLayout(nm + "7-", panelLayouts, 2, arx1 - (spc * 4), arz1, spc, false, rot);
+	addLinearSeriesToLayout(nm + "8-", panelLayouts, 2, arx1 - (spc * 4), arz2, spc, false, rot);
+	addLinearSeriesToLayout(nm + "9-", panelLayouts, 2, arx1 - (spc * 6), arz1, spc, false, rot);
+	addLinearSeriesToLayout(nm + "10-", panelLayouts, 2, arx1 - (spc * 6), arz2, spc, false, rot);
+	addLinearSeriesToLayout(nm + "11-", panelLayouts, 2, arx1 - (spc * 8), arz1, spc, false, rot);
+	addLinearSeriesToLayout(nm + "12-", panelLayouts, 2, arx1 - (spc * 8), arz2, spc, false, rot);
+	
+	// History.
+	nm = "historypnl-";
+	let hix1 = 26.5;
+	let hiz1 = arz2;
+	let hix2 = hix1 - 4;
+	let hiz2 = hiz1 + 3.5;
+	addLinearSeriesToLayout(nm + "1-", panelLayouts, 3, hix1, hiz1, spc, true, norot);
+	addLinearSeriesToLayout(nm + "2-", panelLayouts, 6, hix2, hiz2, spc, true, norot);
+	addLinearSeriesToLayout(nm + "3-", panelLayouts, 1, hix2 - (spc * 3), hiz2 - spc, spc, false, rot);
+	
+	// Hugos.
+	nm = "hugospnl-";
+	let hux = hix1;
+	let huz = arz1 - 2;
+	addLinearSeriesToLayout(nm, panelLayouts, 8, hux, huz, spc, true, norot);
+	
+	// New Zealand Genre.
+	nm = "nzgenrepnl-";
+	let nzx = hix2 - (spc * 2);
+	let nzz = -45;
+	addLinearSeriesToLayout(nm, panelLayouts, 3, nzx, nzz, spc, true, norot);
 
+	// Load panels with the layout.
+	addPanels(panelLayouts, scene)
+	
+	// TODO: Add images to panels with CreateDecal().
+
+	// Create table layouts.
+	let tableLayouts = []
+	spc = tblwidth + 0.03; // Spacing from start of one table to start of next.
+
+	// Art Show Tables
+	nm = "artshowtbl-";
+	arx1 = 34.5;
+	let arx2 = 40;
+	arz1 = -71;
+	arz2 = arz1 + 3;
+	addLinearSeriesToLayout(nm + "1-", tableLayouts, 3, arx1, arz1, spc, true, norot);
+	addLinearSeriesToLayout(nm + "2-", tableLayouts, 1, arx1 - (spc * 3) + tbldepth, arz1 - tbldepth, spc, false, rot);
+	addLinearSeriesToLayout(nm + "3-", tableLayouts, 5, arx2, arz2, spc, true, norot);
+
+	// Fan Tables
+	let ftx = 26.5;
+	let ftz = arz1;
+	nm = "fantbl-";
+	addLinearSeriesToLayout(nm + "1-", tableLayouts, 8, ftx, ftz, spc, true, norot);
+	addLinearSeriesToLayout(nm + "2-", tableLayouts, 6, ftx - spc, ftz + 3, spc, true, norot);
+	
+	// Dealer Tables
+	nm = "dealer-chatham-";
+	addRectangleSeriesToLayout(nm, tableLayouts, 5, 3, 38.5, -39, spc, tbldepth);
+	nm = "dealer-north-";
+	addRectangleSeriesToLayout(nm, tableLayouts, 5, 3, 24.5, -39, spc, tbldepth);
+
+	// Load tables with the layout.
+	addTables(tableLayouts, materialWood, scene);
+	
+	
 	// Load squid.
-	var squidData = world.squid();
-	var squid = BABYLON.SceneLoader.ImportMesh("", "", "data:" + squidData.data, scene, function(newMeshes) {
+	let squidData = world.squid();
+	let squid = BABYLON.SceneLoader.ImportMesh("", "", "data:" + squidData.data, scene, function(newMeshes) {
 		var squidmesh = newMeshes[0];
 		squidmesh.position.x = 15;
 		squidmesh.position.y = 12;
@@ -206,12 +320,13 @@ var createSquidspace = function() {
 
 	// Add a floor.
 	// TODO: Specify floor in world file.
-	var floor = BABYLON.Mesh.CreateGround('floor', 60, 90, 2, scene);
+	let floor = BABYLON.Mesh.CreateGround('floor', 60, 90, 2, scene);
 	floor.position = new BABYLON.Vector3(29, 0, -35);
     floor.material = materialMacadam;
     //floor.receiveShadows = true; // This seems to increase the CPU requirements by quite a bit.
 	
 	// Add floor sections.
+	// TODO: Use layouts pattern for these, see if we can reduce meshes.
 	addFloorSection("hugos", 15, 15, 20, -65, materialMarble, scene);
 	addFloorSection("exhibits", 15, 15, 20, -50, materialMarble, scene);
 	addFloorSection("artshow", 15, 15, 37, -65, materialMarble, scene);
@@ -222,7 +337,7 @@ var createSquidspace = function() {
 	// TODO: Specify camera in world file.
 	// TODO: Support switching to VirtualJoysticksCamera if running on a tablet or phone.
 	// See https://doc.babylonjs.com/babylon101/cameras#virtual-joysticks-camera
-	var camera = new BABYLON.UniversalCamera("default camera", new BABYLON.Vector3(13, 1.6, -20), scene);
+	let camera = new BABYLON.UniversalCamera("default camera", new BABYLON.Vector3(13, 1.6, -20), scene);
 	//var camera = new BABYLON.FreeCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
 	//var camera = new BABYLON.FlyCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
 	camera.setTarget(new BABYLON.Vector3(25, 1.6, -60));
@@ -235,7 +350,12 @@ var createSquidspace = function() {
 	//
 
 	// Set the ellipsoid around the camera for collision detection.
-	camera.ellipsoid = new BABYLON.Vector3(1.5, 1, 1.5);
+	// TODO: Experiment with ellipsoid to find best.
+	// NOTE: ellipsoid values are carefully chosen to reduce image tearing when
+	//       up close to objects, while still allowing you to navigate around without
+	//       getting stuck between things. However, this does mean you can't get really
+	//       close to anything straight in front of you.
+	camera.ellipsoid = new BABYLON.Vector3(1.7, 1, 0.3);
 
 	// WASD movement.
     camera.keysUp.push(87);    //W
@@ -256,7 +376,7 @@ var createSquidspace = function() {
 	// See https://doc.babylonjs.com/babylon101/cameras,_mesh_collisions_and_gravity
 	// TODO: Determine best settings here.
 	scene.gravity = new BABYLON.Vector3(0, -0.9, 0);
-	//scene.gravity = new BABYLON.Vector3(0, 0, 0);
+	//scene.gravity = new BABYLON.Vector3(0, 0, 0); // Use for flying instead of walking.
 	
 
 	// Enable Collisions for scene.
@@ -274,24 +394,27 @@ var createSquidspace = function() {
 	//
 	// Lights
 	// 
+
+	let gl = new BABYLON.GlowLayer("glow", scene, {});
+	gl.intensity = 1.0;
 	
-	var lightFrontFill = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 20, 70), scene);
+	let lightFrontFill = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 20, 70), scene);
 	lightFrontFill.diffuse = new BABYLON.Color3(0.3, 0.3, 0.2);
 	lightFrontFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
 	lightFrontFill.range = 150;
 
-	var lightTopFill = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 230, 70), scene);
+	let lightTopFill = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 230, 70), scene);
 	lightTopFill.diffuse = new BABYLON.Color3(1, 1, 1);
 	lightTopFill.specular = new BABYLON.Color3(0.8, 0.8, 0.8);
 	lightTopFill.range = 300;
 
 
-	var light1 = new BABYLON.SpotLight("spotLight", new BABYLON.Vector3(40, 9, -50), new BABYLON.Vector3(0, -70, 0), Math.PI / 5, 1, scene);
+	let light1 = new BABYLON.SpotLight("spotLight", new BABYLON.Vector3(40, 9, -50), new BABYLON.Vector3(0, -70, 0), Math.PI / 5, 1, scene);
 	light1.diffuse = new BABYLON.Color3(0, 1, 0);
 	light1.specular = new BABYLON.Color3(0, 1, 0);
 	light1.range = 40;
 
-	var light2 = new BABYLON.SpotLight("spotLight", new BABYLON.Vector3(20, 9, -50), new BABYLON.Vector3(0, -70, 0), Math.PI / 3, 1, scene);
+	let light2 = new BABYLON.SpotLight("spotLight", new BABYLON.Vector3(20, 9, -50), new BABYLON.Vector3(0, -70, 0), Math.PI / 3, 1, scene);
 	light2.diffuse = new BABYLON.Color3(0, 0.7, 0.7);
 	light2.specular = new BABYLON.Color3(0.7, 0.7, 0.7);
 	light2.range = 40;
@@ -300,9 +423,16 @@ var createSquidspace = function() {
 
 	return scene;
 };
-/******* End of the create scene function ******/
 
-var space = createSquidspace(); //Call the createScene function
+
+// Here's where we do the magic.
+
+// Set up engine.
+var canvas = document.getElementById("renderCanvas"); // Get the canvas element
+var engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
+
+// Create the world.
+var space = createSquidspace(engine); 
 
 // Register a render loop to repeatedly render the scene
 engine.runRenderLoop(function() {
