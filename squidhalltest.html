@@ -337,10 +337,10 @@ var createSquidspace = function(engine) {
 	// TODO: Specify camera in world file.
 	// TODO: Support switching to VirtualJoysticksCamera if running on a tablet or phone.
 	// See https://doc.babylonjs.com/babylon101/cameras#virtual-joysticks-camera
-	let camera = new BABYLON.UniversalCamera("default camera", new BABYLON.Vector3(1, 1.6, -2), scene);
+	let camera = new BABYLON.UniversalCamera("default camera", new BABYLON.Vector3(45, 1.6, -20), scene);
 	//var camera = new BABYLON.FreeCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
 	//var camera = new BABYLON.FlyCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
-	camera.setTarget(new BABYLON.Vector3(25, 1.6, -60));
+	camera.setTarget(new BABYLON.Vector3(20, 1.6, -60));
 	camera.fov = 1.2;
 	camera.speed = 0.55;
     camera.inertia = 0.07;
