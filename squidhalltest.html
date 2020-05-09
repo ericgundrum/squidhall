@@ -62,12 +62,16 @@
 // NOTE: Each unit corresponds to 1 meter, so 1.75 is one and three quarter meters.
 //
 
+var debug = false;
+//var debug = true;
 var pnlwidth = 1;
 var pnlSpacing = pnlwidth + 0.3;
 var tblwidth = 1.8;
 var tbldepth = 0.75;
 var tblheight = 0.05;
 var tblSpacing = tblwidth + 0.02;
+var bmWidth = 1;
+var bmSpacing = bmWidth + 10;
 var norot = 0; // Do not rotate.
 var rot = Math.PI / 2; // Rotate 90 degrees.
 
@@ -150,6 +154,38 @@ var addPanels = function(panelLayouts, scene) {
 				pnl.checkCollisions = true;
 			}
 		}
+	});
+}
+
+
+var addBeams = function(beamLayouts, scene) {
+	var beamData = world.beam();
+	//console.log("beamData: " + beamData.data);
+	// TODO: This import is currently failing silently. The function 
+	//       is not executed and the returned beam object is not the correct type.
+	var beam = BABYLON.SceneLoader.ImportMesh("beam", "", "data:" + beamData.data,
+												scene, function(newMeshes) {
+		console.log("Beam mesh import suceeded. Mesh: " + newMeshes);
+		for (var index = 0; index < newMeshes.length; index++) {
+
+			var beammesh = newMeshes[index];
+			beammesh.isVisible = false;
+
+			console.log("Beam Layouts: " + beamLayouts);
+			for (layout of beamLayouts) {
+				console.log("Beam Layout: " + layout);
+				var bm = beammesh.createInstance(layout[0]);
+				bm.position.x = layout[1];
+				bm.position.y = 2;
+				bm.position.z = layout[2];
+				if (layout[3] != 0) {
+					bm.rotate(BABYLON.Axis.Y, layout[3]);
+				}
+				bm.checkCollisions = false;
+			}
+		}
+	}, null, function(scene, message, exception) {
+		console.log("Beam mesh import failed, message: " + message)
 	});
 }
 
@@ -305,27 +341,15 @@ var createSquidspace = function(engine) {
 	// Load tables with the layout.
 	addTables(tableLayouts, materialWood, scene);
 
+	// Create beam layouts.
+	let beamLayouts = []
+	let bmx = 15;
+	let bmz = -60;
+	nm = "beam-";
+	addLinearSeriesToLayout(nm, beamLayouts, 2, bmx, bmz, bmSpacing, false, norot);
 
-
-	let beamData = world.beam();
-	let beam = BABYLON.SceneLoader.ImportMesh("", "objects/", "beam.babylon", scene, function(newMeshes) {
-//		console.log("beam");
-
-		for (var index = 0; index < newMeshes.length; index++) {
-
-			var beammesh = newMeshes[index];
-			beammesh.isVisible = false;
-
-			for (var i = 0; i < 9; i++ ) {
-				var bm = beammesh.createInstance(layout[0]);
-				bm.position.x = 0;
-				bm.position.y = 0;
-				bm.position.z = -1 * i * 8.3;
-				bm.checkCollisions = false;
-			}
-		}
-	});
-
+	// Load beams with the layout.
+	addBeams(beamLayouts, scene);
 
 
 	// Load squid.
@@ -362,9 +386,6 @@ var createSquidspace = function(engine) {
 	//var camera = new BABYLON.FreeCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
 	//var camera = new BABYLON.FlyCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
 	camera.setTarget(new BABYLON.Vector3(20, 1.6, -60));
-	camera.fov = 1.2;
-	camera.speed = 0.55;
-    camera.inertia = 0.07;
 	camera.attachControl(canvas, true);
 
 	//
@@ -390,16 +411,26 @@ var createSquidspace = function(engine) {
 	//camera.inputs.add(new BABYLON.FreeCameraGamepadInput());
 	//camera.inputs.attached.gamepad.gamepadAngularSensibility = 250;
 
-	// Set camera inertia to a lower value to slow movement down.
-	// NOTE: This affects turning as well as forward/back/left/right. Probably going to
-	//       have to create a custom walk handler to make this more natural.
-	camera.inertia = 0.65
+	// Other camera settings.
+	camera.fov = 1.3;
+	if (!debug) {
+		camera.speed = 0.55; // Lower values slow movement down.
+	    //camera.inertia = 0.2; // Lower values slow movement down, but also affect turning.
+		camera.inertia = 0.4;
+		//camera.inertia = 0.6;
+	}
 
 	// Set gravity for the scene (G force on Y-axis)
 	// See https://doc.babylonjs.com/babylon101/cameras,_mesh_collisions_and_gravity
 	// TODO: Determine best settings here.
-	scene.gravity = new BABYLON.Vector3(0, -0.9, 0);
-	//scene.gravity = new BABYLON.Vector3(0, 0, 0); // Use for flying instead of walking.
+	if (debug) {
+		// Allow user to fly.
+		scene.gravity = new BABYLON.Vector3(0, 0, 0); 
+	}
+	else {
+		// User walks on ground.
+		scene.gravity = new BABYLON.Vector3(0, -0.9, 0);
+	}
 
 
 	// Enable Collisions for scene.
