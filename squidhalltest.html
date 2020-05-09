@@ -23,19 +23,19 @@
 		<!-- SCRIPTS START -->
 
 		<!-- Babylon.js support libraries START -->
-		
+
 		<!-- Local copies for testing and demos (no Internet required). -->
 		<script src="libs/babylonjs/babylon.js"></script>
 		<script src="libs/babylonjs/babylonjs.proceduralTextures.min.js"></script>
 		<script src="libs/babylonjs/babylonjs.materials.min.js"></script>
 		<script src="libs/babylonjs/loaders/babylonjs.loaders.min.js"></script>
-		
+
 		<!-- CDN for production and final testing.
 		<script src="https://cdn.babylonjs.com/babylon.js"></script>
 		<script src="https://cdn.babylonjs.com/babylonjs.materials.min.js"></script>
 		<script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
 		-->
-			
+
 		<!-- Babylon.js support libraries END -->
 
 		<!-- Other libraries START -->
@@ -63,11 +63,11 @@
 //
 
 var pnlwidth = 1;
-var pnlSpacing = pnlwidth + 0.3; 
+var pnlSpacing = pnlwidth + 0.3;
 var tblwidth = 1.8;
 var tbldepth = 0.75;
 var tblheight = 0.05;
-var tblSpacing = tblwidth + 0.02; 
+var tblSpacing = tblwidth + 0.02;
 var norot = 0; // Do not rotate.
 var rot = Math.PI / 2; // Rotate 90 degrees.
 
@@ -75,14 +75,14 @@ var rot = Math.PI / 2; // Rotate 90 degrees.
 //
 // Helper functions.
 //
-	
+
 /** Adds a count series of layout elements to an existing layout, starting
 	at the the provided x and z and separated by the provided offset. If across
 	is true the elements start at the west and go east. Otherwise the elements
 	start at the south and go north. The passed rotation is used for all elements
 	in the series.
 */
-var addLinearSeriesToLayout = function(seriesName, layout, count, x, z, offset, 
+var addLinearSeriesToLayout = function(seriesName, layout, count, x, z, offset,
 										across, rotation) {
 	for (i = 0;i < count;i++) {
 		layout.push([seriesName + i, x, z, rotation])
@@ -95,26 +95,26 @@ var addLinearSeriesToLayout = function(seriesName, layout, count, x, z, offset,
 	}
 }
 
-var addRectangleSeriesToLayout = function(seriesName, layout, countWide, countDeep, 
+var addRectangleSeriesToLayout = function(seriesName, layout, countWide, countDeep,
 											x, z, lengthOffset, widthOffset) {
 	// Calculate starting positions.
 	let wx = x - widthOffset;
 	let bz = z + (countDeep * lengthOffset) - widthOffset;
 	let rx = x - (countWide * lengthOffset);
-	
+
 	// Do width layout.
 	for (i = 0;i < countWide;i++) {
-		addLinearSeriesToLayout(seriesName + "top-", layout, countWide, wx, z, 
+		addLinearSeriesToLayout(seriesName + "top-", layout, countWide, wx, z,
 						lengthOffset, true, norot);
-		addLinearSeriesToLayout(seriesName + "bottom-", layout, countWide, wx, bz, 
+		addLinearSeriesToLayout(seriesName + "bottom-", layout, countWide, wx, bz,
 						lengthOffset, true, norot);
 	}
-	
+
 	// Do depth layout.
 	for (i = 0;i< countDeep;i++) {
-		addLinearSeriesToLayout(seriesName + "left-", layout, countDeep, x + widthOffset, bz - widthOffset, 
+		addLinearSeriesToLayout(seriesName + "left-", layout, countDeep, x + widthOffset, bz - widthOffset,
 						lengthOffset, false, rot);
-		addLinearSeriesToLayout(seriesName + "right-", layout, countDeep, rx, bz - widthOffset, 
+		addLinearSeriesToLayout(seriesName + "right-", layout, countDeep, rx, bz - widthOffset,
 						lengthOffset, false, rot);
 	}
 }
@@ -122,24 +122,24 @@ var addRectangleSeriesToLayout = function(seriesName, layout, countWide, countDe
 
 var addFloorSection = function(secName, width, depth, x, z, material, scene) {
 	// TODO: Support width and depth.
-	var floorSection = BABYLON.MeshBuilder.CreatePlane(secName, {width: width, size:depth, tileSize:1}, scene); 
+	var floorSection = BABYLON.MeshBuilder.CreatePlane(secName, {width: width, size:depth, tileSize:1}, scene);
 	floorSection.position = new BABYLON.Vector3(x, 0.001, z);
 	floorSection.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
     floorSection.material = material;
 	floorSection.material.backFaceCulling = false;
 }
 
-	
+
 var addPanels = function(panelLayouts, scene) {
 	var panelData = world.panel();
-	var panel = BABYLON.SceneLoader.ImportMesh("panel", "", "data:" + panelData.data, 
+	var panel = BABYLON.SceneLoader.ImportMesh("panel", "", "data:" + panelData.data,
 												scene, function(newMeshes) {
 		//console.log(newMeshes);
 		for (var index = 0; index < newMeshes.length; index++) {
 
 			var panelmesh = newMeshes[index];
 			panelmesh.isVisible = false;
-			
+
 			for (layout of panelLayouts) {
 				var pnl = panelmesh.createInstance(layout[0]);
 				pnl.position.x = layout[1];
@@ -148,7 +148,7 @@ var addPanels = function(panelLayouts, scene) {
 				if (layout[3] != 0) {
 					pnl.rotate(BABYLON.Axis.Y, layout[3]);
 				}
-				pnl.checkCollisions = true; 
+				pnl.checkCollisions = true;
 			}
 		}
 	});
@@ -156,20 +156,20 @@ var addPanels = function(panelLayouts, scene) {
 
 
 var addTables = function(tblLayouts, material, scene) {
-	// TODO: Currently using a plane for the table, we may want to 
+	// TODO: Currently using a plane for the table, we may want to
 	//       replace that with a mesh, like the panels.
 	for (layout of tblLayouts) {
-		//var table = BABYLON.MeshBuilder.CreatePlane(layout[0], {width: 2, size:1, tileSize:1}, scene); 
-		var table = BABYLON.MeshBuilder.CreateBox(layout[0], 
-										{width: tblwidth, depth:tbldepth, height:tblheight}, scene); 
+		//var table = BABYLON.MeshBuilder.CreatePlane(layout[0], {width: 2, size:1, tileSize:1}, scene);
+		var table = BABYLON.MeshBuilder.CreateBox(layout[0],
+										{width: tblwidth, depth:tbldepth, height:tblheight}, scene);
 		table.position = new BABYLON.Vector3(layout[1], 1.25, layout[2]);
 		//table.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
 	    table.material = material;
-		table.material.backFaceCulling = false;		
+		table.material.backFaceCulling = false;
 		if (layout[3] != 0) {
 			table.rotate(BABYLON.Axis.Y, layout[3]);
 		}
-		table.checkCollisions = true; 
+		table.checkCollisions = true;
 	}
 }
 
@@ -177,33 +177,33 @@ var addTables = function(tblLayouts, material, scene) {
 //
 // Create simulation.
 //
-	
+
 /** Creates the virtual world and does all the layouts. */
 var createSquidspace = function(engine) {
-	
+
 	/*
 	## Some ideas for improvement
-	
+
 	Some options reduce CPU, but degrade the experience. One way to handle this might
 	be to have a basic setting for 'low', 'medium', and 'high', where high uses every
-	option and low uses the least. We could provide a way to choose the setting on the web 
+	option and low uses the least. We could provide a way to choose the setting on the web
 	page, which saves the setting to a cookie and reloads the page. The code would simply
 	check the cookie on startup and use the appropriate options based on the setting.
-	
+
 	We need to figure out what is required to support tablets and phones and implement that.
-	
+
 	We need to determine if we need to support gamepads.
 	*/
-	
-	// 
+
+	//
 	// Build world.
 	//
 
 	// Create the scene space
 	var scene = new BABYLON.Scene(engine);
-	
+
 	// Add some materials we'll be using.
-	// TODO: Determine if we want to use ambient or diffuse textures. Currently using 
+	// TODO: Determine if we want to use ambient or diffuse textures. Currently using
 	//       ambient on marble and diffuse on macadam. See:
 	// * https://gamedev.stackexchange.com/questions/14334/the-difference-between-diffuse-texture-and-ambient-occlusion-texture
 	// * https://www.quora.com/What-is-the-difference-between-Ambient-Diffuse-and-Specular-Light-in-OpenGL-Figures-for-illustration-are-encouraged?share=1
@@ -234,8 +234,8 @@ var createSquidspace = function(engine) {
 
 	// Art Show.
 	let nm = "artshowpnl-";
-	let arx1 = 41.5;
-	let arz1 = -63.5;
+	let arx1 = 30;
+	let arz1 = -57.5;
 	let arz2 = arz1 + 4;
 	addLinearSeriesToLayout(nm + "1-", panelLayouts, 8, arx1, arz1, pnlSpacing, true, norot);
 	addLinearSeriesToLayout(nm + "2-", panelLayouts, 8, arx1, arz2, pnlSpacing, true, norot);
@@ -249,32 +249,32 @@ var createSquidspace = function(engine) {
 	addLinearSeriesToLayout(nm + "10-", panelLayouts, 2, arx1 - (pnlSpacing * 6), arz2, pnlSpacing, false, rot);
 	addLinearSeriesToLayout(nm + "11-", panelLayouts, 2, arx1 - (pnlSpacing * 8), arz1, pnlSpacing, false, rot);
 	addLinearSeriesToLayout(nm + "12-", panelLayouts, 2, arx1 - (pnlSpacing * 8), arz2, pnlSpacing, false, rot);
-	
+
 	// History.
 	nm = "historypnl-";
-	let hix1 = 26.5;
+	let hix1 = 15;
 	let hiz1 = arz2;
 	let hix2 = hix1 - 4;
 	let hiz2 = hiz1 + 3.5;
 	addLinearSeriesToLayout(nm + "1-", panelLayouts, 3, hix1, hiz1, pnlSpacing, true, norot);
 	addLinearSeriesToLayout(nm + "2-", panelLayouts, 6, hix2, hiz2, pnlSpacing, true, norot);
 	addLinearSeriesToLayout(nm + "3-", panelLayouts, 1, hix2 - (pnlSpacing * 3), hiz2 - pnlSpacing, pnlSpacing, false, rot);
-	
+
 	// Hugos.
 	nm = "hugospnl-";
 	let hux = hix1;
 	let huz = arz1 - 2;
 	addLinearSeriesToLayout(nm, panelLayouts, 8, hux, huz, pnlSpacing, true, norot);
-	
+
 	// New Zealand Genre.
 	nm = "nzgenrepnl-";
 	let nzx = hix2 - (pnlSpacing * 2);
-	let nzz = -45;
+	let nzz = -39;
 	addLinearSeriesToLayout(nm, panelLayouts, 3, nzx, nzz, pnlSpacing, true, norot);
 
 	// Load panels with the layout.
 	addPanels(panelLayouts, scene)
-	
+
 	// TODO: Add images to panels with CreateDecal().
 
 	// Create table layouts.
@@ -282,21 +282,21 @@ var createSquidspace = function(engine) {
 
 	// Art Show Tables
 	nm = "artshowtbl-";
-	arx1 = 34.5;
-	let arx2 = 40;
-	arz1 = -71;
+	arx1 = 23;
+	let arx2 = 28.5;
+	arz1 = -65;
 	arz2 = arz1 + 3;
 	addLinearSeriesToLayout(nm + "1-", tableLayouts, 3, arx1, arz1, tblSpacing, true, norot);
 	addLinearSeriesToLayout(nm + "2-", tableLayouts, 1, arx1 - (tblSpacing * 3) + tbldepth, arz1 - tbldepth, pnlSpacing, false, rot);
 	addLinearSeriesToLayout(nm + "3-", tableLayouts, 5, arx2, arz2, tblSpacing, true, norot);
 
 	// Fan Tables
-	let ftx = 26.5;
+	let ftx = 15;
 	let ftz = arz1;
 	nm = "fantbl-";
 	addLinearSeriesToLayout(nm + "1-", tableLayouts, 8, ftx, ftz, tblSpacing, true, norot);
 	addLinearSeriesToLayout(nm + "2-", tableLayouts, 6, ftx - tblSpacing, ftz + 3, pnlSpacing, true, norot);
-	
+
 	// Dealer Tables
 	nm = "dealer-chatham-";
 	addRectangleSeriesToLayout(nm, tableLayouts, 5, 3, 38.5, -39, tblSpacing, tbldepth);
@@ -305,15 +305,15 @@ var createSquidspace = function(engine) {
 
 	// Load tables with the layout.
 	addTables(tableLayouts, materialWood, scene);
-	
-	
+
+
 	// Load squid.
 	let squidData = world.squid();
 	let squid = BABYLON.SceneLoader.ImportMesh("", "", "data:" + squidData.data, scene, function(newMeshes) {
 		var squidmesh = newMeshes[0];
-		squidmesh.position.x = 15;
-		squidmesh.position.y = 12;
-		squidmesh.position.z = -72;
+		squidmesh.position.x = 4;
+		squidmesh.position.y = 16;
+		squidmesh.position.z = -65;
 
 	});
 
@@ -324,7 +324,7 @@ var createSquidspace = function(engine) {
 	floor.position = new BABYLON.Vector3(29, 0, -35);
     floor.material = materialMacadam;
     //floor.receiveShadows = true; // This seems to increase the CPU requirements by quite a bit.
-	
+
 	// Add floor sections.
 	// TODO: Use layouts pattern for these, see if we can reduce meshes.
 	addFloorSection("hugos", 15, 15, 20, -65, materialMarble, scene);
@@ -332,12 +332,12 @@ var createSquidspace = function(engine) {
 	addFloorSection("artshow", 15, 15, 37, -65, materialMarble, scene);
 	addFloorSection("dealerleft", 10, 10, 34, -35, materialMarble, scene);
 	addFloorSection("dealerright", 10, 10, 20, -35, materialMarble, scene);
-   
+
 	// Add a camera to the scene and attach it to the canvas
 	// TODO: Specify camera in world file.
 	// TODO: Support switching to VirtualJoysticksCamera if running on a tablet or phone.
 	// See https://doc.babylonjs.com/babylon101/cameras#virtual-joysticks-camera
-	let camera = new BABYLON.UniversalCamera("default camera", new BABYLON.Vector3(13, 1.6, -20), scene);
+	let camera = new BABYLON.UniversalCamera("default camera", new BABYLON.Vector3(1, 1.6, -2), scene);
 	//var camera = new BABYLON.FreeCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
 	//var camera = new BABYLON.FlyCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
 	camera.setTarget(new BABYLON.Vector3(25, 1.6, -60));
@@ -362,14 +362,14 @@ var createSquidspace = function(engine) {
     camera.keysDown.push(83)   //D
     camera.keysLeft.push(65);  //A
     camera.keysRight.push(68); //S
-	
+
 	// Support gamepad.
 	//camera.inputs.add(new BABYLON.FreeCameraGamepadInput());
 	//camera.inputs.attached.gamepad.gamepadAngularSensibility = 250;
 
 	// Set camera inertia to a lower value to slow movement down.
 	// NOTE: This affects turning as well as forward/back/left/right. Probably going to
-	//       have to create a custom walk handler to make this more natural. 
+	//       have to create a custom walk handler to make this more natural.
 	camera.inertia = 0.65
 
 	// Set gravity for the scene (G force on Y-axis)
@@ -377,7 +377,7 @@ var createSquidspace = function(engine) {
 	// TODO: Determine best settings here.
 	scene.gravity = new BABYLON.Vector3(0, -0.9, 0);
 	//scene.gravity = new BABYLON.Vector3(0, 0, 0); // Use for flying instead of walking.
-	
+
 
 	// Enable Collisions for scene.
 	scene.collisionsEnabled = true;
@@ -393,11 +393,11 @@ var createSquidspace = function(engine) {
 
 	//
 	// Lights
-	// 
+	//
 
 	let gl = new BABYLON.GlowLayer("glow", scene, {});
 	gl.intensity = 1.0;
-	
+
 	let lightFrontFill = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 20, 70), scene);
 	lightFrontFill.diffuse = new BABYLON.Color3(0.3, 0.3, 0.2);
 	lightFrontFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
@@ -432,7 +432,7 @@ var canvas = document.getElementById("renderCanvas"); // Get the canvas element
 var engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
 
 // Create the world.
-var space = createSquidspace(engine); 
+var space = createSquidspace(engine);
 
 // Register a render loop to repeatedly render the scene
 engine.runRenderLoop(function() {
