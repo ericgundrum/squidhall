@@ -129,7 +129,6 @@ var addFloorSection = function(secName, width, depth, x, z, material, scene) {
 	floorSection.material.backFaceCulling = false;
 }
 
-
 var addPanels = function(panelLayouts, scene) {
 	var panelData = world.panel();
 	var panel = BABYLON.SceneLoader.ImportMesh("panel", "", "data:" + panelData.data,
@@ -307,13 +306,35 @@ var createSquidspace = function(engine) {
 	addTables(tableLayouts, materialWood, scene);
 
 
+
+	let beamData = world.beam();
+	let beam = BABYLON.SceneLoader.ImportMesh("", "objects/", "beam.babylon", scene, function(newMeshes) {
+//		console.log("beam");
+
+		for (var index = 0; index < newMeshes.length; index++) {
+
+			var beammesh = newMeshes[index];
+			beammesh.isVisible = false;
+
+			for (var i = 0; i < 9; i++ ) {
+				var bm = beammesh.createInstance(layout[0]);
+				bm.position.x = 0;
+				bm.position.y = 0;
+				bm.position.z = -1 * i * 8.3;
+				bm.checkCollisions = false;
+			}
+		}
+	});
+
+
+
 	// Load squid.
 	let squidData = world.squid();
 	let squid = BABYLON.SceneLoader.ImportMesh("", "", "data:" + squidData.data, scene, function(newMeshes) {
 		var squidmesh = newMeshes[0];
 		squidmesh.position.x = 4;
-		squidmesh.position.y = 16;
-		squidmesh.position.z = -65;
+		squidmesh.position.y = 10;
+		squidmesh.position.z = -60;
 
 	});
 

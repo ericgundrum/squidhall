@@ -16,7 +16,7 @@
 			"settings": {},
 			"objects": [
 				{
-					"name": "arena", 
+					"name": "arena",
 					"action": "insert",
 					"file": "objects/arena.babylon",
 					"config": {
@@ -29,7 +29,20 @@
 					}
 				},
 				{
-					"name": "squid", 
+					"name": "beam",
+					"action": "insert",
+					"file": "objects/beam.babylon",
+					"config": {
+						"position": {
+							"coords": [0,2,5],
+							"anchor": "bottom",
+							"rotate": 3.12
+						},
+						"visible": true
+					}
+				},
+				{
+					"name": "squid",
 					"action": "insert",
 					"file": "objects/squid.babylon",
 					"config": {
@@ -42,7 +55,7 @@
 					}
 				},
 				{
-					"name": "panel", 
+					"name": "panel",
 					"action": "insert",
 					"file": "objects/panel.babylon",
 					"config": {
