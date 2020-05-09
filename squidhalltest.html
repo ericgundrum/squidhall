@@ -63,9 +63,11 @@
 //
 
 var pnlwidth = 1;
-var tblwidth = 1.75;
-var tbldepth = 0.6;
+var pnlSpacing = pnlwidth + 0.3; 
+var tblwidth = 1.8;
+var tbldepth = 0.75;
 var tblheight = 0.05;
+var tblSpacing = tblwidth + 0.02; 
 var norot = 0; // Do not rotate.
 var rot = Math.PI / 2; // Rotate 90 degrees.
 
@@ -229,25 +231,24 @@ var createSquidspace = function(engine) {
 
 	// Create panel layouts.
 	let panelLayouts = []
-	let spc = pnlwidth + 0.3; // Spacing from start of one panel to start of next.
 
 	// Art Show.
 	let nm = "artshowpnl-";
 	let arx1 = 41.5;
 	let arz1 = -63.5;
 	let arz2 = arz1 + 4;
-	addLinearSeriesToLayout(nm + "1-", panelLayouts, 8, arx1, arz1, spc, true, norot);
-	addLinearSeriesToLayout(nm + "2-", panelLayouts, 8, arx1, arz2, spc, true, norot);
-	addLinearSeriesToLayout(nm + "3-", panelLayouts, 2, arx1, arz1, spc, false, rot);
-	addLinearSeriesToLayout(nm + "4-", panelLayouts, 2, arx1, arz2, spc, false, rot);
-	addLinearSeriesToLayout(nm + "5-", panelLayouts, 2, arx1 - (spc * 2), arz1, spc, false, rot);
-	addLinearSeriesToLayout(nm + "6-", panelLayouts, 2, arx1 - (spc * 2), arz2, spc, false, rot);
-	addLinearSeriesToLayout(nm + "7-", panelLayouts, 2, arx1 - (spc * 4), arz1, spc, false, rot);
-	addLinearSeriesToLayout(nm + "8-", panelLayouts, 2, arx1 - (spc * 4), arz2, spc, false, rot);
-	addLinearSeriesToLayout(nm + "9-", panelLayouts, 2, arx1 - (spc * 6), arz1, spc, false, rot);
-	addLinearSeriesToLayout(nm + "10-", panelLayouts, 2, arx1 - (spc * 6), arz2, spc, false, rot);
-	addLinearSeriesToLayout(nm + "11-", panelLayouts, 2, arx1 - (spc * 8), arz1, spc, false, rot);
-	addLinearSeriesToLayout(nm + "12-", panelLayouts, 2, arx1 - (spc * 8), arz2, spc, false, rot);
+	addLinearSeriesToLayout(nm + "1-", panelLayouts, 8, arx1, arz1, pnlSpacing, true, norot);
+	addLinearSeriesToLayout(nm + "2-", panelLayouts, 8, arx1, arz2, pnlSpacing, true, norot);
+	addLinearSeriesToLayout(nm + "3-", panelLayouts, 2, arx1, arz1, pnlSpacing, false, rot);
+	addLinearSeriesToLayout(nm + "4-", panelLayouts, 2, arx1, arz2, pnlSpacing, false, rot);
+	addLinearSeriesToLayout(nm + "5-", panelLayouts, 2, arx1 - (pnlSpacing * 2), arz1, pnlSpacing, false, rot);
+	addLinearSeriesToLayout(nm + "6-", panelLayouts, 2, arx1 - (pnlSpacing * 2), arz2, pnlSpacing, false, rot);
+	addLinearSeriesToLayout(nm + "7-", panelLayouts, 2, arx1 - (pnlSpacing * 4), arz1, pnlSpacing, false, rot);
+	addLinearSeriesToLayout(nm + "8-", panelLayouts, 2, arx1 - (pnlSpacing * 4), arz2, pnlSpacing, false, rot);
+	addLinearSeriesToLayout(nm + "9-", panelLayouts, 2, arx1 - (pnlSpacing * 6), arz1, pnlSpacing, false, rot);
+	addLinearSeriesToLayout(nm + "10-", panelLayouts, 2, arx1 - (pnlSpacing * 6), arz2, pnlSpacing, false, rot);
+	addLinearSeriesToLayout(nm + "11-", panelLayouts, 2, arx1 - (pnlSpacing * 8), arz1, pnlSpacing, false, rot);
+	addLinearSeriesToLayout(nm + "12-", panelLayouts, 2, arx1 - (pnlSpacing * 8), arz2, pnlSpacing, false, rot);
 	
 	// History.
 	nm = "historypnl-";
@@ -255,21 +256,21 @@ var createSquidspace = function(engine) {
 	let hiz1 = arz2;
 	let hix2 = hix1 - 4;
 	let hiz2 = hiz1 + 3.5;
-	addLinearSeriesToLayout(nm + "1-", panelLayouts, 3, hix1, hiz1, spc, true, norot);
-	addLinearSeriesToLayout(nm + "2-", panelLayouts, 6, hix2, hiz2, spc, true, norot);
-	addLinearSeriesToLayout(nm + "3-", panelLayouts, 1, hix2 - (spc * 3), hiz2 - spc, spc, false, rot);
+	addLinearSeriesToLayout(nm + "1-", panelLayouts, 3, hix1, hiz1, pnlSpacing, true, norot);
+	addLinearSeriesToLayout(nm + "2-", panelLayouts, 6, hix2, hiz2, pnlSpacing, true, norot);
+	addLinearSeriesToLayout(nm + "3-", panelLayouts, 1, hix2 - (pnlSpacing * 3), hiz2 - pnlSpacing, pnlSpacing, false, rot);
 	
 	// Hugos.
 	nm = "hugospnl-";
 	let hux = hix1;
 	let huz = arz1 - 2;
-	addLinearSeriesToLayout(nm, panelLayouts, 8, hux, huz, spc, true, norot);
+	addLinearSeriesToLayout(nm, panelLayouts, 8, hux, huz, pnlSpacing, true, norot);
 	
 	// New Zealand Genre.
 	nm = "nzgenrepnl-";
-	let nzx = hix2 - (spc * 2);
+	let nzx = hix2 - (pnlSpacing * 2);
 	let nzz = -45;
-	addLinearSeriesToLayout(nm, panelLayouts, 3, nzx, nzz, spc, true, norot);
+	addLinearSeriesToLayout(nm, panelLayouts, 3, nzx, nzz, pnlSpacing, true, norot);
 
 	// Load panels with the layout.
 	addPanels(panelLayouts, scene)
@@ -278,7 +279,6 @@ var createSquidspace = function(engine) {
 
 	// Create table layouts.
 	let tableLayouts = []
-	spc = tblwidth + 0.03; // Spacing from start of one table to start of next.
 
 	// Art Show Tables
 	nm = "artshowtbl-";
@@ -286,22 +286,22 @@ var createSquidspace = function(engine) {
 	let arx2 = 40;
 	arz1 = -71;
 	arz2 = arz1 + 3;
-	addLinearSeriesToLayout(nm + "1-", tableLayouts, 3, arx1, arz1, spc, true, norot);
-	addLinearSeriesToLayout(nm + "2-", tableLayouts, 1, arx1 - (spc * 3) + tbldepth, arz1 - tbldepth, spc, false, rot);
-	addLinearSeriesToLayout(nm + "3-", tableLayouts, 5, arx2, arz2, spc, true, norot);
+	addLinearSeriesToLayout(nm + "1-", tableLayouts, 3, arx1, arz1, tblSpacing, true, norot);
+	addLinearSeriesToLayout(nm + "2-", tableLayouts, 1, arx1 - (tblSpacing * 3) + tbldepth, arz1 - tbldepth, pnlSpacing, false, rot);
+	addLinearSeriesToLayout(nm + "3-", tableLayouts, 5, arx2, arz2, tblSpacing, true, norot);
 
 	// Fan Tables
 	let ftx = 26.5;
 	let ftz = arz1;
 	nm = "fantbl-";
-	addLinearSeriesToLayout(nm + "1-", tableLayouts, 8, ftx, ftz, spc, true, norot);
-	addLinearSeriesToLayout(nm + "2-", tableLayouts, 6, ftx - spc, ftz + 3, spc, true, norot);
+	addLinearSeriesToLayout(nm + "1-", tableLayouts, 8, ftx, ftz, tblSpacing, true, norot);
+	addLinearSeriesToLayout(nm + "2-", tableLayouts, 6, ftx - tblSpacing, ftz + 3, pnlSpacing, true, norot);
 	
 	// Dealer Tables
 	nm = "dealer-chatham-";
-	addRectangleSeriesToLayout(nm, tableLayouts, 5, 3, 38.5, -39, spc, tbldepth);
+	addRectangleSeriesToLayout(nm, tableLayouts, 5, 3, 38.5, -39, tblSpacing, tbldepth);
 	nm = "dealer-north-";
-	addRectangleSeriesToLayout(nm, tableLayouts, 5, 3, 24.5, -39, spc, tbldepth);
+	addRectangleSeriesToLayout(nm, tableLayouts, 5, 3, 24.5, -39, tblSpacing, tbldepth);
 
 	// Load tables with the layout.
 	addTables(tableLayouts, materialWood, scene);
