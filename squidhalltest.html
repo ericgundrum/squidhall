@@ -156,7 +156,7 @@ var addPanels = function(panelLayouts, scene) {
 
 
 var addTables = function(tblLayouts, material, scene) {
-	// TODO: Currently using a plane for the table, we may want to 
+	// TODO: Currently using a box for the table, we may want to 
 	//       replace that with a mesh, like the panels.
 	for (layout of tblLayouts) {
 		//var table = BABYLON.MeshBuilder.CreatePlane(layout[0], {width: 2, size:1, tileSize:1}, scene); 
@@ -342,6 +342,8 @@ var createSquidspace = function(engine) {
 	//var camera = new BABYLON.FlyCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
 	camera.setTarget(new BABYLON.Vector3(25, 1.6, -60));
 	camera.fov = 1.2;
+	camera.speed = 0.55;
+    camera.inertia = 0.07;
 	camera.attachControl(canvas, true);
 
 	//
