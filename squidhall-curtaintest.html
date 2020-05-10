@@ -163,32 +163,88 @@ var addBeams = function(beamLayouts, scene) {
 	//console.log("beamData: " + beamData.data);
 	// TODO: This import is currently failing silently. The function
 	//       is not executed and the returned beam object is not the correct type.
-	var beam = BABYLON.SceneLoader.ImportMesh("beam", "", "data:" + beamData.data,
-												scene, function(newMeshes) {
-		console.log("Beam mesh import suceeded. Mesh: " + newMeshes);
-		for (var index = 0; index < newMeshes.length; index++) {
+//	var beam = BABYLON.SceneLoader.ImportMesh("beam", "", "data:" + beamData.data,
+	// var beam = BABYLON.SceneLoader.ImportMesh("beam", "/objects/", "beam.babylon",
+	// 											scene, function(newMeshes) {
+	// 	console.log("Beam mesh import suceeded. Mesh: " + newMeshes.length);
+	// 	for (var index = 0; index < newMeshes.length; index++) {
+	//
+	// 		var beammesh = newMeshes[index];
+	// 		beammesh.isVisible = false;
+	//
+	// 		console.log("Beam Layouts: " + beamLayouts);
+	// 		for (layout of beamLayouts) {
+	// 			console.log("Beam Layout: " + layout);
+	// 			var bm = beammesh.createInstance(layout[0]);
+	// 			bm.position.x = layout[1];
+	// 			bm.position.y = 2;
+	// 			bm.position.z = layout[2];
+	// 			if (layout[3] != 0) {
+	// 				bm.rotate(BABYLON.Axis.Y, layout[3]);
+	// 			}
+	// 			bm.checkCollisions = false;
+	// 		}
+	// 	}
+	// }, null, function(scene, message, exception) {
+	// 	console.log("Beam mesh import failed, message: " + message)
+	// });
+var beam = BABYLON.SceneLoader.ImportMesh("", "objects/", "beam.babylon", scene, function(newMeshes) {
+//		console.log("beam");
 
-			var beammesh = newMeshes[index];
-			beammesh.isVisible = false;
+	for (var index = 0; index < newMeshes.length; index++) {
 
-			console.log("Beam Layouts: " + beamLayouts);
-			for (layout of beamLayouts) {
-				console.log("Beam Layout: " + layout);
-				var bm = beammesh.createInstance(layout[0]);
-				bm.position.x = layout[1];
-				bm.position.y = 2;
-				bm.position.z = layout[2];
-				if (layout[3] != 0) {
-					bm.rotate(BABYLON.Axis.Y, layout[3]);
-				}
-				bm.checkCollisions = false;
-			}
+		var beammesh = newMeshes[index];
+		beammesh.isVisible = false;
+
+		for (var i = 0; i < 9; i++ ) {
+			var bm = beammesh.createInstance(layout[0]);
+			bm.position.x = 0;
+			bm.position.y = 0;
+			bm.position.z = -1 * i * 8.3;
+			bm.checkCollisions = false;
 		}
-	}, null, function(scene, message, exception) {
-		console.log("Beam mesh import failed, message: " + message)
-	});
+	}
+});
 }
 
+var addCurtains = function(scene) {
+	var curtain = BABYLON.SceneLoader.ImportMesh("", "objects/", "curtain.babylon", scene, function(newMeshes) {
+	//		console.log("curtain");
+
+		for (var index = 0; index < newMeshes.length; index++) {
+
+			var curtainmesh = newMeshes[index];
+			curtainmesh.isVisible = false;
+
+			for (var i = 0; i < 7; i++ ) {
+				var bm = curtainmesh.createInstance(layout[0]);
+				bm.position.x = 0;
+				bm.position.y = 0;
+				bm.position.z = -1 * i * 10;
+				bm.checkCollisions = false;
+			}
+
+			for (var i = 0; i < 7; i++ ) {
+				var bm = curtainmesh.createInstance(layout[0]);
+				bm.rotation.y = Math.PI;
+				bm.position.x = 38;
+				bm.position.y = 0;
+				bm.position.z = -1 * i * 10 - 10;
+				bm.checkCollisions = false;
+			}
+
+			for (var i = 0; i < 4; i++ ) {
+				var bm = curtainmesh.createInstance(layout[0]);
+				bm.rotation.y = -1 * Math.PI / 2;
+				bm.position.x = i * 10;
+				bm.position.y = 0;
+				bm.position.z = -64;
+				bm.checkCollisions = false;
+			}
+
+		}
+	});
+}
 
 var addTables = function(tblLayouts, material, scene) {
 	// TODO: Currently using a box for the table, we may want to
@@ -350,6 +406,20 @@ var createSquidspace = function(engine) {
 
 	// Load beams with the layout.
 	addBeams(beamLayouts, scene);
+
+	// Create beam layouts.
+	let curtainLayouts = []
+	let ctx = 15;
+	let ctz = -60;
+	nm = "curtain-";
+	addLinearSeriesToLayout(nm, curtainLayouts, 2, bmx, bmz, bmSpacing, false, norot);
+
+	// Load beams with the layout.
+	addBeams(curtainLayouts, scene);
+
+
+	// Load curtains with temporary code
+	addCurtains(scene);
 
 
 	// Load squid.
