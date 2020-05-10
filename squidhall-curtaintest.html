@@ -161,7 +161,7 @@ var addPanels = function(panelLayouts, scene) {
 var addBeams = function(beamLayouts, scene) {
 	var beamData = world.beam();
 	//console.log("beamData: " + beamData.data);
-	// TODO: This import is currently failing silently. The function 
+	// TODO: This import is currently failing silently. The function
 	//       is not executed and the returned beam object is not the correct type.
 	var beam = BABYLON.SceneLoader.ImportMesh("beam", "", "data:" + beamData.data,
 												scene, function(newMeshes) {
@@ -191,7 +191,7 @@ var addBeams = function(beamLayouts, scene) {
 
 
 var addTables = function(tblLayouts, material, scene) {
-	// TODO: Currently using a box for the table, we may want to 
+	// TODO: Currently using a box for the table, we may want to
 	//       replace that with a mesh, like the panels.
 	for (layout of tblLayouts) {
 		//var table = BABYLON.MeshBuilder.CreatePlane(layout[0], {width: 2, size:1, tileSize:1}, scene);
@@ -382,7 +382,7 @@ var createSquidspace = function(engine) {
 	// TODO: Specify camera in world file.
 	// TODO: Support switching to VirtualJoysticksCamera if running on a tablet or phone.
 	// See https://doc.babylonjs.com/babylon101/cameras#virtual-joysticks-camera
-	let camera = new BABYLON.UniversalCamera("default camera", new BABYLON.Vector3(45, 1.6, -20), scene);
+	let camera = new BABYLON.UniversalCamera("default camera", new BABYLON.Vector3(1, 1.6, -2), scene);
 	//var camera = new BABYLON.FreeCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
 	//var camera = new BABYLON.FlyCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
 	camera.setTarget(new BABYLON.Vector3(20, 1.6, -60));
@@ -425,7 +425,7 @@ var createSquidspace = function(engine) {
 	// TODO: Determine best settings here.
 	if (debug) {
 		// Allow user to fly.
-		scene.gravity = new BABYLON.Vector3(0, 0, 0); 
+		scene.gravity = new BABYLON.Vector3(0, 0, 0);
 	}
 	else {
 		// User walks on ground.

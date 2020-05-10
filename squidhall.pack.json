@@ -42,6 +42,19 @@
 					}
 				},
 				{
+					"name": "curtain",
+					"action": "insert",
+					"file": "objects/curtain.babylon",
+					"config": {
+						"position": {
+							"coords": [0,2,5],
+							"anchor": "bottom",
+							"rotate": 3.12
+						},
+						"visible": true
+					}
+				},
+				{
 					"name": "squid",
 					"action": "insert",
 					"file": "objects/squid.babylon",
