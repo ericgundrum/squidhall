@@ -54,9 +54,9 @@ def insertTextFile(inFilePath, outFile, singleLine = True):
     inFile = open(inFilePath, "r")
     for line in inFile:
         if singleLine:
-            outFile.write(line.replace('\n', '\\n'))
+            outFile.write(line.replace('\n', '\\n').replace('"', '\\"'))
         else:
-            outFile.write(line)
+            outFile.write(line.replace('"', '\\"'))
     inFile.close()
 
 
@@ -142,12 +142,12 @@ def insertReturnElement(element, source, outFile, config, baseOffset, singleLine
     # Write data.
     # TODO: Support link loader func here.
     if config.pp: outFile.write("\n" + baseOffset + config.offset + config.offset)
-    outFile.write("\"data\": '")
+    outFile.write("\"data\": \"")
     if source == ElementSource.DATA:
         insertText(element["data"], outFile, singleLine)
     elif source == ElementSource.FILE:
         insertTextFile(element["file"], outFile, singleLine)
-    outFile.write("'")
+    outFile.write("\"")
         
     # Write element config, if present.
     if "config" in element:

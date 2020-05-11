@@ -32,6 +32,7 @@
 
 		<!-- CDN for production and final testing.
 		<script src="https://cdn.babylonjs.com/babylon.js"></script>
+		<script src="https://cdn.babylonjs.com/babylonjs.proceduralTextures.min.js"></script>
 		<script src="https://cdn.babylonjs.com/babylonjs.materials.min.js"></script>
 		<script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
 		-->
@@ -252,19 +253,19 @@ var addFloorSection = function(secName, x, z, width, depth, material, scene) {
 
 
 var addPanels = function(panelLayouts, scene) {
-	var panelData = world.panel();
-	var panel = BABYLON.SceneLoader.ImportMesh("panel", "", "data:" + panelData.data,
+	let panelData = world.panel();
+	let panel = BABYLON.SceneLoader.ImportMesh("panel", "", "data:" + panelData.data,
 												scene, function(newMeshes) {
-	
-													
+		if (debug) console.log("Panel mesh import suceeded. Mesh count: " + newMeshes.length);
+									
 		//console.log(newMeshes);
-		for (var index = 0; index < newMeshes.length; index++) {
+		for (index = 0; index < newMeshes.length; index++) {
 
-			var panelmesh = newMeshes[index];
+			let panelmesh = newMeshes[index];
 			panelmesh.isVisible = false;
 
 			for (layout of panelLayouts) {
-				var pnl = panelmesh.createInstance(layout[0]);
+				let pnl = panelmesh.createInstance(layout[0]);
 				pnl.position = makeLayoutVector(layout[1], 0.01, layout[2], pnlwidth, pnldepth);
 				if (layout[3] != 0) {
 					pnl.rotate(BABYLON.Axis.Y, layout[3]);
@@ -273,20 +274,24 @@ var addPanels = function(panelLayouts, scene) {
 				pnl.checkCollisions = true;
 			}
 		}
-	});
+	}, null, function(scene, message, exception) {
+		console.log("Panel mesh import failed.\n  Message: " + message + "\n  Exception: " + exception);
+	}); 
+	//}, ".obj"); 
 }
 
 
 var addBeams = function(beamLayouts, scene) {
-	var beamData = world.beam();
+	let beamData = world.beam();
 	//console.log("beamData: " + beamData.data);
 	// TODO: This import is currently failing silently. The function 
 	//       is not executed and the returned beam object is not the correct type.
 	var beam = BABYLON.SceneLoader.ImportMesh("beam", "", "data:" + beamData.data,
 												scene, function(newMeshes) {
-		console.log("Beam mesh import suceeded. Mesh: " + newMeshes);
+		if (debug) console.log("Beam mesh import suceeded. Mesh count: " + newMeshes.length);
+		
 		for (var index = 0; index < newMeshes.length; index++) {
-
+			/*
 			var beammesh = newMeshes[index];
 			beammesh.isVisible = false;
 
@@ -302,9 +307,66 @@ var addBeams = function(beamLayouts, scene) {
 				}
 				bm.checkCollisions = false;
 			}
+			*/
+			/*
+			var beammesh = newMeshes[index];
+			beammesh.isVisible = false;
+
+			for (var i = 0; i < 9; i++ ) {
+				var bm = beammesh.createInstance(layout[0]);
+				bm.position.x = 0;
+				bm.position.y = 0;
+				bm.position.z = -1 * i * 8.3;
+				bm.checkCollisions = false;
+			}
+			*/
 		}
 	}, null, function(scene, message, exception) {
-		console.log("Beam mesh import failed, message: " + message)
+		console.log("Beam mesh import failed.\n  Message: " + message + "\n  Exception: " + exception);
+	}); 
+	//}, ".obj"); 
+}
+
+var addCurtains = function(scene) {
+	let curtainData = world.curtain();
+	let curtain = BABYLON.SceneLoader.ImportMesh("curtain", "", "data:" + curtainData.data, 
+							scene, function(newMeshes) {
+		if (debug) console.log("Curtain mesh import suceeded. Mesh count: " + newMeshes.length);
+								
+		for (index = 0; index < newMeshes.length; index++) {
+
+			let curtainmesh = newMeshes[index];
+			curtainmesh.isVisible = false;
+
+			for (i = 0; i < 7; i++ ) {
+				let bm = curtainmesh.createInstance(layout[0]);
+				bm.position.x = 0;
+				bm.position.y = 0;
+				bm.position.z = -1 * i * 10;
+				bm.checkCollisions = false;
+			}
+
+			for (i = 0; i < 7; i++ ) {
+				let bm = curtainmesh.createInstance(layout[0]);
+				bm.rotation.y = Math.PI;
+				bm.position.x = 38;
+				bm.position.y = 0;
+				bm.position.z = -1 * i * 10 - 10;
+				bm.checkCollisions = false;
+			}
+
+			for (i = 0; i < 4; i++ ) {
+				let bm = curtainmesh.createInstance(layout[0]);
+				bm.rotation.y = -1 * Math.PI / 2;
+				bm.position.x = i * 10;
+				bm.position.y = 0;
+				bm.position.z = -64;
+				bm.checkCollisions = false;
+			}
+
+		}
+	}, null, function(scene, message, exception) {
+		console.log("Curtain mesh import failed.\n  Message: " + message + "\n  Exception: " + exception);
 	});
 }
 
@@ -489,6 +551,8 @@ var createSquidspace = function(engine) {
 	// Load beams with the layout.
 	addBeams(beamLayouts, scene);
 	*/
+	addBeams(null, scene);
+	addCurtains(scene);
 
 
 	// Load squid.
@@ -602,6 +666,13 @@ var createSquidspace = function(engine) {
 	return scene;
 };
 
+
+if (debug) {
+	// Log plugin activations.
+	BABYLON.SceneLoader.OnPluginActivatedObservable.add(function (plugin) {
+	    console.log("Plugin Activated: " + plugin.name);
+	});
+}
 
 // Here's where we do the magic.
 

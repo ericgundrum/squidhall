@@ -22,6 +22,11 @@ def cleanData(data):
     if "gravity" in data:
         del data["gravity"]
         dirty = True
+
+    if "lights" in data:
+        #del data["lights"]
+        data["lights"] = [] # Make it an empty list.
+        dirty = True
         
     # Add other sections we want to remove here.
     
@@ -47,6 +52,7 @@ def processFile(filePath):
             if cleanData(data):
                 try:
                     # Write it back out.
+                    # TODO: This writes it packed, do we want a 'pretty print' option?
                     with open(filePath, 'w') as babFile:
                         json.dump(data, babFile)
                 except Exception:
