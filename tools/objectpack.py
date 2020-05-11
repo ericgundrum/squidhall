@@ -142,11 +142,15 @@ def insertReturnElement(element, source, outFile, config, baseOffset, singleLine
     # Write data.
     # TODO: Support link loader func here.
     if config.pp: outFile.write("\n" + baseOffset + config.offset + config.offset)
-    outFile.write("\"data\": \"")
     if source == ElementSource.DATA:
+        outFile.write("\"data\": \"")
         insertText(element["data"], outFile, singleLine)
     elif source == ElementSource.FILE:
+        outFile.write("\"data\": \"")
         insertTextFile(element["file"], outFile, singleLine)
+    elif source == ElementSource.URL:
+        outFile.write("\"url\": \"")
+        insertText(element["url"], outFile, singleLine)
     outFile.write("\"")
         
     # Write element config, if present.
@@ -203,9 +207,9 @@ def insertFetchElementFunc(elem, outFile, config, public=True):
     # Write the element fetch action.
     if action == ElementAction.INSERT:
         if source == ElementSource.DATA:
-            insertReturnElement(elem, ElementSource.DATA, outFile, config, baseOffset, singleLine = True)
+            insertReturnElement(elem, source, outFile, config, baseOffset, singleLine = True)
         elif source == ElementSource.FILE:
-            insertReturnElement(elem, ElementSource.FILE, outFile, config, baseOffset, singleLine = True)
+            insertReturnElement(elem, source, outFile, config, baseOffset, singleLine = True)
         elif source == ElementSource.URL:
             # TODO: Implement URL packing.
             raise NotImplementedError("Action 'insert' with source 'url' not currently supported.")
@@ -224,8 +228,7 @@ def insertFetchElementFunc(elem, outFile, config, public=True):
             raise NotImplementedError("Action 'link' with source 'file' not currently supported.")
             pass
         elif source == ElementSource.URL:
-            # TODO: Implement URL loading.
-            raise NotImplementedError("Action 'link' with source 'url' not currently supported.")
+            insertReturnElement(elem, source, outFile, config, baseOffset, singleLine = True)
             pass
         elif source == ElementSource.LOCAL:
             # TODO: Implement locals.

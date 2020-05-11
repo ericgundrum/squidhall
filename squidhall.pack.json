@@ -17,9 +17,10 @@
 			"objects": [
 				{
 					"name": "arena",
-					"action": "insert",
-					"file": "objects/arena.babylon",
+					"action": "link",
+					"url": "objects/arena.babylon",
 					"config": {
+						"doc": "Example. We are not currently using config, but eventually every object will.",
 						"position": {
 							"coords": [0,2,5],
 							"anchor": "bottom",
@@ -30,55 +31,23 @@
 				},
 				{
 					"name": "beam",
-					"action": "insert",
-					"file": "objects/beam.babylon",
-					"config": {
-						"position": {
-							"coords": [0,2,5],
-							"anchor": "bottom",
-							"rotate": 3.12
-						},
-						"visible": true
-					}
+					"action": "link",
+					"url": "objects/beam.babylon"
 				},
 				{
 					"name": "curtain",
-					"action": "insert",
-					"file": "objects/curtain.babylon",
-					"config": {
-						"position": {
-							"coords": [0,2,5],
-							"anchor": "bottom",
-							"rotate": 3.12
-						},
-						"visible": true
-					}
+					"action": "link",
+					"url": "objects/curtain.babylon"
 				},
 				{
 					"name": "squid",
-					"action": "insert",
-					"file": "objects/squid.babylon",
-					"config": {
-						"position": {
-							"coords": [0,0,0],
-							"anchor": "bottom",
-							"rotate": 3.12
-						},
-						"visible": true
-					}
+					"action": "link",
+					"url": "objects/squid.babylon"
 				},
 				{
 					"name": "panel",
-					"action": "insert",
-					"file": "objects/panel.babylon",
-					"config": {
-						"position": {
-							"coords": [0,0,0],
-							"anchor": "bottom",
-							"rotate": 3.12
-						},
-						"visible": true
-					}
+					"action": "link",
+					"url": "objects/panel.babylon"
 				}
 			],
 			"textures": [],
