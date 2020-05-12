@@ -123,7 +123,9 @@ var loadObject = function(objName, objData, scene, onSuccessFunc) {
 		// TODO: Throw exception.
 	}
 	
-	return BABYLON.SceneLoader.ImportMesh(objName, fr, fn, scene, 
+	let meshNameFilter = ""; // Empty string means import *all* meshes in the object.
+	
+	return BABYLON.SceneLoader.ImportMesh(meshNameFilter, fr, fn, scene, 
 			function(newMeshes) {
 				if (debug) console.log("'" + objName + 
 					"' mesh import suceeded. Mesh count: " + newMeshes.length);
@@ -328,7 +330,7 @@ var addBeams = function(scene) {
 				beammesh.isVisible = false;
 
 				for (var i = 0; i < 9; i++ ) {
-					var bm = beammesh.createInstance(layout[0]);
+					var bm = beammesh.createInstance("beam" + i);
 					bm.position.x = 0;
 					bm.position.y = 0;
 					bm.position.z = -1 * i * 8.3;
@@ -348,7 +350,7 @@ var addCurtains = function(scene) {
 			curtainmesh.isVisible = false;
 
 			for (i = 0; i < 7; i++ ) {
-				let bm = curtainmesh.createInstance(layout[0]);
+				let bm = curtainmesh.createInstance("curtain1" + i);
 				bm.position.x = 0;
 				bm.position.y = 0;
 				bm.position.z = -1 * i * 10;
@@ -356,7 +358,7 @@ var addCurtains = function(scene) {
 			}
 
 			for (i = 0; i < 7; i++ ) {
-				let bm = curtainmesh.createInstance(layout[0]);
+				let bm = curtainmesh.createInstance("curtain2" + i);
 				bm.rotation.y = Math.PI;
 				bm.position.x = 38;
 				bm.position.y = 0;
@@ -365,7 +367,7 @@ var addCurtains = function(scene) {
 			}
 
 			for (i = 0; i < 4; i++ ) {
-				let bm = curtainmesh.createInstance(layout[0]);
+				let bm = curtainmesh.createInstance("curtain3" + i);
 				bm.rotation.y = -1 * Math.PI / 2;
 				bm.position.x = i * 10;
 				bm.position.y = 0;

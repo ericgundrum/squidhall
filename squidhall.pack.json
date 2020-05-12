@@ -17,8 +17,8 @@
 			"objects": [
 				{
 					"name": "arena",
-					"action": "link",
-					"url": "objects/arena.babylon",
+					"action": "insert",
+					"file": "objects/arena.babylon",
 					"config": {
 						"doc": "Example. We are not currently using config, but eventually every object will.",
 						"position": {
@@ -31,23 +31,23 @@
 				},
 				{
 					"name": "beam",
-					"action": "link",
-					"url": "objects/beam.babylon"
+					"action": "insert",
+					"file": "objects/beam.babylon"
 				},
 				{
 					"name": "curtain",
-					"action": "link",
-					"url": "objects/curtain.babylon"
+					"action": "insert",
+					"file": "objects/curtain.babylon"
 				},
 				{
 					"name": "squid",
-					"action": "link",
-					"url": "objects/squid.babylon"
+					"action": "insert",
+					"file": "objects/squid.babylon"
 				},
 				{
 					"name": "panel",
-					"action": "link",
-					"url": "objects/panel.babylon"
+					"action": "insert",
+					"file": "objects/panel.babylon"
 				}
 			],
 			"textures": [],
