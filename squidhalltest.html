@@ -123,12 +123,18 @@ var loadObject = function(objName, objData, scene, onSuccessFunc) {
 		// TODO: Throw exception.
 	}
 	
-	return BABYLON.SceneLoader.ImportMesh(objName, fr, fn, scene, onSuccessFunc, null, 
-												function(scene, message, exception) {
-		console.log("'" + objName + 
+	return BABYLON.SceneLoader.ImportMesh(objName, fr, fn, scene, 
+			function(newMeshes) {
+				if (debug) console.log("'" + objName + 
+					"' mesh import suceeded. Mesh count: " + newMeshes.length);
+				if (typeof onSuccessFunc == "function") onSuccessFunc(newMeshes);
+			}, null,
+			function(scene, message, exception) {
+				console.log("'" + objName + 
 					"' mesh import failed.\n  Message: " + message + 
 					"\n  Exception: " + exception);
-	}, loaderPluginExtension); 
+			}, 
+	loaderPluginExtension); 
 }
 
 var makeLayoutXYZ = function(x, y, z, w, d) {
@@ -293,9 +299,6 @@ var addFloorSection = function(secName, x, z, width, depth, material, scene) {
 var addPanels = function(panelLayouts, scene) {
 	let data = world.panel();
 	let panel = loadObject("panel", data, scene, function(newMeshes) {
-		if (debug) console.log("Panel mesh import suceeded. Mesh count: " + newMeshes.length);
-									
-		//console.log(newMeshes);
 		for (index = 0; index < newMeshes.length; index++) {
 
 			let panelmesh = newMeshes[index];
@@ -315,41 +318,23 @@ var addPanels = function(panelLayouts, scene) {
 }
 
 
-var addBeams = function(beamLayouts, scene) {
+var addBeams = function(scene) {
 	let data = world.beam();
 	var beam = loadObject("beam", data, scene, function(newMeshes) {
-		if (debug) console.log("Beam mesh import suceeded. Mesh count: " + newMeshes.length);
-		
 		for (var index = 0; index < newMeshes.length; index++) {
-			/*
-			var beammesh = newMeshes[index];
-			beammesh.isVisible = false;
+			for (var index = 0; index < newMeshes.length; index++) {
 
-			console.log("Beam Layouts: " + beamLayouts);
-			for (layout of beamLayouts) {
-				console.log("Beam Layout: " + layout);
-				var bm = beammesh.createInstance(layout[0]);
-				bm.position.x = layout[1];
-				bm.position.y = 2;
-				bm.position.z = layout[2];
-				if (layout[3] != 0) {
-					bm.rotate(BABYLON.Axis.Y, layout[3]);
+				var beammesh = newMeshes[index];
+				beammesh.isVisible = false;
+
+				for (var i = 0; i < 9; i++ ) {
+					var bm = beammesh.createInstance(layout[0]);
+					bm.position.x = 0;
+					bm.position.y = 0;
+					bm.position.z = -1 * i * 8.3;
+					bm.checkCollisions = false;
 				}
-				bm.checkCollisions = false;
 			}
-			*/
-			/*
-			var beammesh = newMeshes[index];
-			beammesh.isVisible = false;
-
-			for (var i = 0; i < 9; i++ ) {
-				var bm = beammesh.createInstance(layout[0]);
-				bm.position.x = 0;
-				bm.position.y = 0;
-				bm.position.z = -1 * i * 8.3;
-				bm.checkCollisions = false;
-			}
-			*/
 		}
 	}); 
 }
@@ -357,8 +342,6 @@ var addBeams = function(beamLayouts, scene) {
 var addCurtains = function(scene) {
 	let data = world.curtain();
 	let curtain = loadObject("curtain", data, scene, function(newMeshes) {
-		if (debug) console.log("Curtain mesh import suceeded. Mesh count: " + newMeshes.length);
-								
 		for (index = 0; index < newMeshes.length; index++) {
 
 			let curtainmesh = newMeshes[index];
@@ -419,7 +402,7 @@ var addTables = function(tblLayouts, material, scene) {
 //
 
 /** Creates the virtual world and does all the layouts. */
-var createSquidspace = function(engine) {
+var createSquidspace = function(engine, canvas) {
 
 	/*
 	## Some ideas for improvement
@@ -466,6 +449,20 @@ var createSquidspace = function(engine) {
 	// Load arena.
 	let arenaData = world.arena();
 	let arena = loadObject("arena", arenaData, scene);
+	
+	addBeams(scene);
+	addCurtains(scene);
+
+	// Load squid.
+	let squidData = world.squid();
+	let squid = loadObject("squid", squidData, scene, function(newMeshes) {
+		if (newMeshes.length > 0) {
+			var squidmesh = newMeshes[0];
+			squidmesh.position.x = 4;
+			squidmesh.position.y = 10;
+			squidmesh.position.z = -60;
+		}
+	});
 
 	// Add a floor.
 	// TODO: Specify floor in world file.
@@ -562,32 +559,6 @@ var createSquidspace = function(engine) {
 	addTables(tableLayouts, materialWood, scene);
 	*/
 	
-	/* TODO: Not working.
-	// Create beam layouts.
-	let beamLayouts = []
-	let bmx = 15;
-	let bmz = -60;
-	nm = "beam-";
-	addLinearSeriesToLayout(nm, beamLayouts, 2, bmx, bmz, bmSpacing, false, norot);
-
-	// Load beams with the layout.
-	addBeams(beamLayouts, scene);
-	*/
-	addBeams(null, scene);
-	addCurtains(scene);
-
-
-	// Load squid.
-	let squidData = world.squid();
-	let squid = loadObject("squid", squidData, scene, function(newMeshes) {
-		if (debug) console.log("Squid mesh import suceeded. Mesh count: " + newMeshes.length);
-		var squidmesh = newMeshes[0];
-		squidmesh.position.x = 4;
-		squidmesh.position.y = 10;
-		squidmesh.position.z = -60;
-
-	});
-
 	// Add a camera to the scene and attach it to the canvas
 	// TODO: Specify camera in world file.
 	// TODO: Support switching to VirtualJoysticksCamera if running on a tablet or phone.
@@ -704,7 +675,7 @@ document.addEventListener("DOMContentLoaded", (event) =>{
 	var engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
 
 	// Create the world.
-	var space = createSquidspace(engine);
+	var space = createSquidspace(engine, canvas);
 
 	// Register a render loop to repeatedly render the scene
 	engine.runRenderLoop(function() {
