@@ -171,7 +171,7 @@
 				"x":32,
 				"y":11.7,
 				"z":-1 * 8.3 * 5 - 2,
-				"rotateY":0,
+				"rotateY":-1 * Math.PI/2,
 				"texture":"arena-banner-autographing.png"
 			},
 			"dealers-chatham":{
@@ -232,7 +232,7 @@ Object.keys(bannerlayout).forEach(function(key){
 			bannerTexture.vScale = -1;
 //			mat.diffuseColor = BABYLON.Color3(1, 1, 1);
 			mat.diffuseTexture = bannerTexture;
-//			mat.emissiveTexture = bannerTexture;
+			mat.emissiveTexture = bannerTexture;
 			mat.alpha = 0.9;
 			mat.backFaceCulling = false;
 			newMeshes[1].material = mat;
