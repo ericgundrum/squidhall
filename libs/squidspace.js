@@ -90,51 +90,6 @@ var SquidSpace = function() {
 		return defaultVal;
 	}
 
-	var loadObject = function(objName, objData, scene, onSuccessFunc) {
-		// Note: You can add this ImportMesh() argument to force a specific 
-		//       loader plugin by file type. 
-		let loaderPluginExtension = null;
-		//let loaderPluginExtension = ".obj"; // Force obj file loader plugin.
-
-		// File Root arg.
-		let fr = "";
-		if ("root" in objData) {
-			fr = objData["root"];
-		}
-
-		// File Name arg.
-		let fn = null;
-		if ("file" in objData) {
-			fn = objData["file"];
-		}
-		else if ("data" in objData) {
-			fn = "data:" + objData["data"];
-		}
-		else {
-			// TODO: Throw exception.
-		}
-
-		let meshNameFilter = ""; // Empty string means import *all* meshes in the object.
-
-		return BABYLON.SceneLoader.ImportMesh(meshNameFilter, fr, fn, scene, 
-				function(newMeshes) {
-					if (debugVerbose) console.log("'" + objName + 
-						"' mesh import suceeded. Mesh count: " + newMeshes.length);
-			
-					for (m of newMeshes) {
-						m.id = objName;
-					}
-			
-					if (typeof onSuccessFunc == "function") onSuccessFunc(newMeshes);
-				}, null,
-				function(scene, message, exception) {
-					console.log("== '" + objName + 
-						"' mesh import failed. ==\n  Message: " + 
-						message.substring(0, 64) + " ... " +  message.substring(message.length - 64) +
-						"\n  Exception: " + exception);
-				}, 
-		loaderPluginExtension); 
-	}
 
 	/* I want to add this for debugVerbose mode, but it isn't working and I don't have time to figure it out.
 	var showWorldAxis = function showWorldAxis(size, scene) {
@@ -173,85 +128,6 @@ var SquidSpace = function() {
 	};
 	*/
 
-
-	//
-	// Layout helper functions.
-	//
-	
-	var addSingleInstanceToLayout  = function(instanceName, layout, count, x, z, 
-											offset, rotation) {
-		layout.push([instanceName, x, z, rotation]);
-	}
-	
-	
-	/** Adds a count series of layout elements to an existing layout, starting
-		at the the provided x and z and separated by the provided offset. If across
-		is true the elements start at the west and go east. Otherwise the elements
-		start at the south and go north. The passed rotation is used for all elements
-		in the series.
-	*/
-	var addLinearSeriesToLayout = function(seriesName, layout, count, x, z, offset,
-											across, rotation) {
-		for (let i = 0;i < count;i++) {
-			layout.push([seriesName + i, x, z, rotation])
-			if (across) {
-				x += offset;
-			}
-			else {
-				z += offset;
-			}
-		}
-	}
-
-
-	var addRectangleSeriesToLayout = function(seriesName, layout, countWide, countDeep,
-												x, z, lengthOffset, widthOffset) {
-		// Calculate starting positions.
-		let wx = x - widthOffset;
-		let bz = z + (countDeep * lengthOffset) - widthOffset;
-		let rx = x - (countWide * lengthOffset);
-
-		// Do width layout.
-		for (let i = 0;i < countWide;i++) {
-			addLinearSeriesToLayout(seriesName + "top-", layout, countWide, wx, z,
-							lengthOffset, true, norot);
-			addLinearSeriesToLayout(seriesName + "bottom-", layout, countWide, wx, bz,
-							lengthOffset, true, norot);
-		}
-
-		// Do depth layout.
-		for (let i = 0;i< countDeep;i++) {
-			addLinearSeriesToLayout(seriesName + "left-", layout, countDeep, x + widthOffset, bz - widthOffset,
-							lengthOffset, false, rot);
-			addLinearSeriesToLayout(seriesName + "right-", layout, countDeep, rx, bz - widthOffset,
-							lengthOffset, false, rot);
-		}
-	}
-
-	
-	var layoutObjects = function(objName, layout, material, scene) {
-		// Get the object.
-		let obj = objects[objName];
-		if (typeof obj != "object") throw `Invalid object reference: ''${objName}''.`;
-		
-		// Get the meshes.
-		let meshes = objects[objName];
-		if ((typeof meshes != "object") && !(meshes instanceof Array) && (meshes.length < 1))
-			 throw `Mesh not loaded for object reference: ''${objName}''.`;
-		
-		for (mesh of meshes) {
-			for (instance of layout) {
-				let m = mesh.createInstance(instance[0]);
-				pnl.position = makeLayoutVector(instance[1], 0.01, instance[2], pnlwidth, pnldepth);
-				if (layout[3] != 0) {
-					pnl.rotate(BABYLON.Axis.Y, instance[3]);
-					pnl.position.z -= (pnlwidth / 2);
-				}
-				pnl.checkCollisions = true;
-			}
-		}
-	}
-	
 	
 	var objectSpecLoader = function(objDict, scene, onSuccessFunc) {
 		for (key in objDict) {
@@ -280,13 +156,12 @@ var SquidSpace = function() {
 										materials.macadam, scene);
 						success = true;
 					}
-					/*
 					if (tp === "floorSection") {
-						obj = addFloorSection(tp, pos[0], pos[1], pos[2], sz[0], sz[1], 
-											materials.marble, scene);
-						success = true;
+						//obj = addFloorSection(mn, pos[0], pos[1], pos[2], sz[0], sz[1], 
+						//					materials.marble, scene);
+						//addFloorSection("hugos", 15, 15, 10, 15, materials.marble, scene);
+						//success = true;
 					}
-					*/
 				}
 				else {
 					// TODO: Throw Error.
@@ -294,7 +169,7 @@ var SquidSpace = function() {
 				}
 			}
 			else {
-				obj = loadObject(key, objDict[key], scene, function(newMeshes) {
+				obj = SquidSpace.loadObject(key, objDict[key], scene, function(newMeshes) {
 					// Process each mesh.
 					for (mesh of newMeshes) {
 						if (visible) {
@@ -315,7 +190,7 @@ var SquidSpace = function() {
 			
 			if (success) {
 				// Append the config?
-				if (config != undefined) {
+				if (typeof config === "object") {
 					obj["config"] = config;
 				}
 				// Save the object.
@@ -371,12 +246,14 @@ var SquidSpace = function() {
 		let gl = new BABYLON.GlowLayer("glow", scene, {});
 		gl.intensity = 1.0;
 
-		let lightFrontFill = new BABYLON.PointLight("pointLight", new makePointVector(25, 20, 30), scene);
+		let lightFrontFill = new BABYLON.PointLight("pointLight", 
+												SquidSpace.makePointVector(25, 20, 30), scene);
 		lightFrontFill.diffuse = new BABYLON.Color3(1, 1, 1);
 		lightFrontFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
 		lightFrontFill.range = 150;
 
-		let lightTopFill = new BABYLON.PointLight("pointLight", new makePointVector(25, 30, 30), scene);
+		let lightTopFill = new BABYLON.PointLight("pointLight", 
+												SquidSpace.makePointVector(25, 30, 30), scene);
 		lightTopFill.diffuse = new BABYLON.Color3(1, 1, 1);
 		lightTopFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
 		lightTopFill.range = 300;
@@ -387,7 +264,7 @@ var SquidSpace = function() {
 		// Public helper functions.
 		//
 		
-		var makeLayoutXYZ = function(x, y, z, w, d) {
+		makeLayoutXYZ: function(x, y, z, w, d) {
 			// TODO: This function was created because I don't understand how Babylon
 			//       does local vectors and was under time pressure, so couldn't do the
 			//       research. At some point we need to use the BJS code instead, but could
@@ -400,10 +277,10 @@ var SquidSpace = function() {
 				floorOriginNW[1] + y, 
 				floorOriginNW[2] + (z * -1) + (d / 2)
 			];
-		}
+		},
 
 
-		var makePointVector = function(x, y, z) {
+		makePointVector: function(x, y, z) {
 			// TODO: This function was created because I don't understand how Babylon
 			//       does local vectors and was under time pressure, so couldn't do the
 			//       research. At some point we need to use the BJS code instead, but could
@@ -416,10 +293,10 @@ var SquidSpace = function() {
 				floorOriginNW[1] + y, 
 				floorOriginNW[2] + (z * -1)
 			);
-		}
+		},
 
 
-		var makeLayoutVector = function(x, y, z, w, d) {
+		makeLayoutVector: function(x, y, z, w, d) {
 			// TODO: This function was created because I don't understand how Babylon
 			//       does local vectors and was under time pressure, so couldn't do the
 			//       research. At some point we need to use the BJS code instead, but could
@@ -432,7 +309,133 @@ var SquidSpace = function() {
 				floorOriginNW[1] + y, 
 				floorOriginNW[2] + (z * -1) + (d / 2)
 			);
-		}
+		},
+		
+
+		loadObject: function(objName, objData, scene, onSuccessFunc) {
+			// Note: You can add this ImportMesh() argument to force a specific 
+			//       loader plugin by file type. 
+			let loaderPluginExtension = null;
+			//let loaderPluginExtension = ".obj"; // Force obj file loader plugin.
+
+			// File Root arg.
+			let fr = "";
+			if ("root" in objData) {
+				fr = objData["root"];
+			}
+
+			// File Name arg.
+			let fn = null;
+			if ("file" in objData) {
+				fn = objData["file"];
+			}
+			else if ("data" in objData) {
+				fn = "data:" + objData["data"];
+			}
+			else {
+				// TODO: Throw exception.
+			}
+
+			let meshNameFilter = ""; // Empty string means import *all* meshes in the object.
+
+			return BABYLON.SceneLoader.ImportMesh(meshNameFilter, fr, fn, scene, 
+					function(newMeshes) {
+						if (debugVerbose) console.log("'" + objName + 
+							"' mesh import suceeded. Mesh count: " + newMeshes.length);
+			
+						for (m of newMeshes) {
+							m.id = objName;
+						}
+			
+						if (typeof onSuccessFunc == "function") onSuccessFunc(newMeshes);
+					}, null,
+					function(scene, message, exception) {
+						console.log("== '" + objName + 
+							"' mesh import failed. ==\n  Message: " + 
+							message.substring(0, 64) + " ... " +  message.substring(message.length - 64) +
+							"\n  Exception: " + exception);
+					}, 
+			loaderPluginExtension); 
+		},
+		
+		//
+		// Layout helper functions.
+		//
+	
+		addSingleInstanceToLayout: function(instanceName, layout, count, x, z, 
+												offset, rotation) {
+			layout.push([instanceName, x, z, rotation]);
+		},
+	
+	
+		/** Adds a count series of layout elements to an existing layout, starting
+			at the the provided x and z and separated by the provided offset. If across
+			is true the elements start at the west and go east. Otherwise the elements
+			start at the south and go north. The passed rotation is used for all elements
+			in the series.
+		*/
+		addLinearSeriesToLayout: function(seriesName, layout, count, x, z, offset,
+												across, rotation) {
+			for (let i = 0;i < count;i++) {
+				layout.push([seriesName + i, x, z, rotation])
+				if (across) {
+					x += offset;
+				}
+				else {
+					z += offset;
+				}
+			}
+		},
+
+
+		addRectangleSeriesToLayout: function(seriesName, layout, countWide, countDeep,
+													x, z, lengthOffset, widthOffset) {
+			// Calculate starting positions.
+			let wx = x - widthOffset;
+			let bz = z + (countDeep * lengthOffset) - widthOffset;
+			let rx = x - (countWide * lengthOffset);
+
+			// Do width layout.
+			for (let i = 0;i < countWide;i++) {
+				addLinearSeriesToLayout(seriesName + "top-", layout, countWide, wx, z,
+								lengthOffset, true, norot);
+				addLinearSeriesToLayout(seriesName + "bottom-", layout, countWide, wx, bz,
+								lengthOffset, true, norot);
+			}
+
+			// Do depth layout.
+			for (let i = 0;i< countDeep;i++) {
+				addLinearSeriesToLayout(seriesName + "left-", layout, countDeep, x + widthOffset, bz - widthOffset,
+								lengthOffset, false, rot);
+				addLinearSeriesToLayout(seriesName + "right-", layout, countDeep, rx, bz - widthOffset,
+								lengthOffset, false, rot);
+			}
+		},
+
+	
+		layoutObjects: function(objName, layout, material, scene) {
+			// Get the object.
+			let obj = objects[objName];
+			if (typeof obj != "object") throw `Invalid object reference: ''${objName}''.`;
+		
+			// Get the meshes.
+			let meshes = objects[objName];
+			if ((typeof meshes != "object") && !(meshes instanceof Array) && (meshes.length < 1))
+				 throw `Mesh not loaded for object reference: ''${objName}''.`;
+		
+			for (mesh of meshes) {
+				for (instance of layout) {
+					let m = mesh.createInstance(instance[0]);
+					pnl.position = makeLayoutVector(instance[1], 0.01, instance[2], pnlwidth, pnldepth);
+					if (layout[3] != 0) {
+						pnl.rotate(BABYLON.Axis.Y, instance[3]);
+						pnl.position.z -= (pnlwidth / 2);
+					}
+					pnl.checkCollisions = true;
+				}
+			}
+		},
+
 		
 		//
 		// Public scene management functions.
@@ -539,12 +542,7 @@ var SquidSpace = function() {
 						
 			// Create world from spec.
 			objectSpecLoader(world.objects, scene, null);
-			// TODO: material, lights, etc. spec loaders.
-			
-			
-			// TODO: This is test code, remove.
-			addFloorSection("hugos", 15, 15, 10, 15, materials.marble, scene);
-			
+			// TODO: material, lights, etc. spec loaders.			
 
 			// Add lights.
 			// TODO: Move these to the world spec file.
