@@ -6,6 +6,10 @@
 
 notes/*.html_backup
 
+# Generated files
+
+libs/objects/*.js
+
 # Logs
 logs
 *.log

@@ -73,6 +73,21 @@
 					"file": "objects/banner.babylon"
 				},
 				{
+					"name": "signhalf",
+					"action": "insert",
+					"file": "objects/sign-half.babylon"
+				},
+				{
+					"name": "signfull",
+					"action": "insert",
+					"file": "objects/sign-full.babylon"
+				},
+				{
+					"name": "signtwin",
+					"action": "insert",
+					"file": "objects/sign-twin.babylon"
+				},
+				{
 					"name": "user",
 					"action": "builtin",
 					"data": {

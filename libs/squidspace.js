@@ -247,16 +247,16 @@ var SquidSpace = function() {
 		gl.intensity = 1.0;
 
 		let lightFrontFill = new BABYLON.PointLight("pointLight", 
-												SquidSpace.makePointVector(25, 20, 30), scene);
+												SquidSpace.makePointVector(25, 20, 0), scene);
 		lightFrontFill.diffuse = new BABYLON.Color3(1, 1, 1);
 		lightFrontFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
-		lightFrontFill.range = 150;
+		lightFrontFill.range = 90;
 
 		let lightTopFill = new BABYLON.PointLight("pointLight", 
-												SquidSpace.makePointVector(25, 30, 30), scene);
+												SquidSpace.makePointVector(25, 20, 60), scene);
 		lightTopFill.diffuse = new BABYLON.Color3(1, 1, 1);
 		lightTopFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
-		lightTopFill.range = 300;
+		lightTopFill.range = 90;
 	}
 
 	return {
@@ -552,7 +552,8 @@ var SquidSpace = function() {
 			// TODO: Specify camera in world file.
 			// TODO: Support switching to VirtualJoysticksCamera if running on a tablet or phone.
 			// See https://doc.babylonjs.com/babylon101/cameras#virtual-joysticks-camera
-			let camera = new BABYLON.UniversalCamera("default camera", new BABYLON.Vector3(45, 1.6, -20), scene);
+			let camera = new BABYLON.UniversalCamera("default camera", 
+													SquidSpace.makePointVector(2, 1.6, 2), scene);
 			//var camera = new BABYLON.FreeCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
 			//var camera = new BABYLON.FlyCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
 			camera.setTarget(new BABYLON.Vector3(20, 1.6, -60));
