@@ -13,17 +13,25 @@
 			"settings": {},
 			"objects": [
 				{
+					"doc": "Floor should be the first thing in the objects list.",
+					"name": "floor",
+					"action": "builtin",
+					"data": {
+						"type": "floor",
+						"size": [60, 90],
+						"position": [29, 0, -35],
+						"material": "macadam"
+					},
+					"config": {
+						"space-object": true
+					}
+				},
+				{
 					"name": "arena",
 					"action": "insert",
 					"file": "objects/arena.babylon",
 					"config": {
-						"doc": "Example. We are not currently using config, but eventually every object will.",
-						"position": {
-							"coords": [0,2,5],
-							"anchor": "bottom",
-							"rotate": 3.12
-						},
-						"visible": true
+						"space-object": true
 					}
 				},
 				{
@@ -50,6 +58,17 @@
 					"name": "banner",
 					"action": "insert",
 					"file": "objects/banner.babylon"
+				},
+				{
+					"name": "user",
+					"action": "builtin",
+					"data": {
+						"type": "usercamera",
+						"position": [0, 0, 0]
+					},
+					"config": {
+						"space-object": true
+					}
 				}
 			],
 			"textures": [],
