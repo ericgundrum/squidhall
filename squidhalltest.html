@@ -88,6 +88,7 @@
 	var canvas = document.getElementById("renderCanvas"); // Get the canvas element
 	var engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
 	var scene = new BABYLON.Scene(engine);
+	SquidSpace.prepareWorld(scene, debugVerbose, debugLayer);
 
 	// NOTE: Insert code to add other things to the scene here. This is
 	//       where you would be adding your own experiments.
@@ -95,7 +96,6 @@
 	// Here's where we do the magic. 
 	document.addEventListener("DOMContentLoaded", (event) =>{	
 		// Create and activate the world space.
-		SquidSpace.prepareWorld(scene, debugVerbose, debugLayer);
 		if (SquidSpace.buildWorld(world, [], scene, debugVerbose)) {
 			// Register a render loop to repeatedly render the world space.
 			// NOTE: Use commented out render loop below if you don't want FPS label.

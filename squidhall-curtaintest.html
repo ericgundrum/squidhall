@@ -135,7 +135,7 @@ var addFloorSection = function(secName, width, depth, x, z, material, scene) {
 }
 
 var addPanels = function(panelLayouts, scene) {
-	var panelData = world.panel();
+	var panelData = world.objects.panel;
 	var panel = BABYLON.SceneLoader.ImportMesh("panel", "", "data:" + panelData.data,
 												scene, function(newMeshes) {
 		//console.log(newMeshes);
@@ -160,7 +160,7 @@ var addPanels = function(panelLayouts, scene) {
 
 
 var addBeams = function(beamLayouts, scene) {
-	var beamData = world.beam();
+	var beamData = world.objects.beam;
 	//console.log("beamData: " + beamData.data);
 	// TODO: This import is currently failing silently. The function
 	//       is not executed and the returned beam object is not the correct type.
@@ -316,7 +316,7 @@ var createSquidspace = function(engine) {
     materialWood.diffuseTexture = textureWood;
 
 	// Load arena.
-	let arenaData = world.arena();
+	let arenaData = world.objects.arena;
 	let arena = BABYLON.SceneLoader.Append("", "data:" + arenaData.data, scene, function(scene) {
 		// do something with the scene
 	});
@@ -424,7 +424,7 @@ var createSquidspace = function(engine) {
 
 
 	// Load squid.
-	let squidData = world.squid();
+	let squidData = world.objects.squid;
 	let squid = BABYLON.SceneLoader.ImportMesh("", "", "data:" + squidData.data, scene, function(newMeshes) {
 		var squidmesh = newMeshes[0];
 		squidmesh.position.x = 4;

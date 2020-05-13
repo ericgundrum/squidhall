@@ -13,13 +13,13 @@
 			"settings": {},
 			"objects": [
 				{
-					"doc": "Floor should be the first thing in the objects list.",
+					"doc": "Floor should be the first thing in the objects list because it establishes the world origin. Note: position specified is absolute position.",
 					"name": "floor",
 					"action": "builtin",
 					"data": {
 						"type": "floor",
-						"size": [60, 90],
-						"position": [29, 0, -35],
+						"size": [40, 68.7],
+						"position": [-0.1, 0, 0],
 						"material": "macadam"
 					},
 					"config": {
@@ -30,6 +30,19 @@
 					"name": "arena",
 					"action": "insert",
 					"file": "objects/arena.babylon",
+					"config": {
+						"space-object": true
+					}
+				},
+				{
+					"name": "artfloorsection",
+					"action": "builtin",
+					"data": {
+						"type": "floorSection",
+						"size": [15, 15],
+						"position": [0, 0.01, 3],
+						"material": "macadam"
+					},
 					"config": {
 						"space-object": true
 					}

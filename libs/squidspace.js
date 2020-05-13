@@ -46,17 +46,11 @@ var SquidSpace = function() {
 	//
 
 
-	// This is the SE corner of the arena and the origin for layouts. 
-	var floorOriginSE = [0, 0, 0]; 
+	// This is the NW corner of the arena and the origin for layouts. 
+	var floorOriginNW = [0, 0, 0]; 
 	var floorSize = [0, 0]
-	// This is the offset to the north from the south for where the first elements are placed. 
-	// It represents the starting point from the south wall from which every layout point is 
-	// calculated.
-	var startOffsetS = -32.5; 
-	// This is the offset to the west from the east for where the first elements are placed.
-	// It represents the starting point from the east wall from which every layout point is 
-	// calculated.
-	var startOffsetE = 11.2; 
+
+	// TODO: Move these values into the pack file data.
 	var pnlwidth = 1;
 	var pnldepth = 0.005;
 	var pnlSpacing = pnlwidth + 0.3;
@@ -66,6 +60,8 @@ var SquidSpace = function() {
 	var tblSpacing = tblwidth + 0.02;
 	var bmWidth = 1;
 	var bmSpacing = bmWidth + 10;
+
+	// TODO: Determine if these belong in the pack file data.
 	var norot = 0; // Do not rotate.
 	var rot = Math.PI / 2; // Rotate 90 degrees.
 
@@ -182,39 +178,6 @@ var SquidSpace = function() {
 	// Layout helper functions.
 	//
 	
-
-	var makeLayoutXYZ = function(x, y, z, w, d) {
-		// TODO: This function was created because I don't understand how Babylon
-		//       does local vectors and was under time pressure, so couldn't do the
-		//       research. At some point we need to use the BJS code instead, but could
-		//       just insert it here without breaking dependent code.
-		// IMPORTANT! The origin specifies the point the floor starts from at the NW corner of
-		// the arena. All layout offsets are calculated from that point!
-
-		return [
-			floorOriginSE[0] + x + startOffsetE + (w / 2), 
-			floorOriginSE[1] + y, 
-			floorOriginSE[2] + (z * -1) + startOffsetS - (d / 2)
-		];
-	}
-
-
-	var makeLayoutVector = function(x, y, z, w, d) {
-		// TODO: This function was created because I don't understand how Babylon
-		//       does local vectors and was under time pressure, so couldn't do the
-		//       research. At some point we need to use the BJS code instead, but could
-		//       just insert it here without breaking dependent code.
-		// IMPORTANT! The origin specifies the point the floor starts from at the NW corner of
-		// the arena. All layout offsets are calculated from that point!
-
-		return new BABYLON.Vector3(
-			floorOriginSE[0] + x + startOffsetE + (w / 2), 
-			floorOriginSE[1] + y, 
-			floorOriginSE[2] + (z * -1) + startOffsetS - (d / 2)
-		);
-	}
-
-	
 	var addSingleInstanceToLayout  = function(instanceName, layout, count, x, z, 
 											offset, rotation) {
 		layout.push([instanceName, x, z, rotation]);
@@ -289,6 +252,7 @@ var SquidSpace = function() {
 		}
 	}
 	
+	
 	var objectSpecLoader = function(objDict, scene, onSuccessFunc) {
 		for (key in objDict) {
 			let obj = undefined;
@@ -312,9 +276,17 @@ var SquidSpace = function() {
 					//       with a default if not loaded.
 					// TODO: Refactor this into a function
 					if (tp === "floor") {
-						obj = addFloor(pos[0], pos[1], pos[1], sz[0], sz[1], materials.macadam, scene);
+						obj = addFloor(pos[0], pos[1], pos[2], sz[0], sz[1], 
+										materials.macadam, scene);
 						success = true;
 					}
+					/*
+					if (tp === "floorSection") {
+						obj = addFloorSection(tp, pos[0], pos[1], pos[2], sz[0], sz[1], 
+											materials.marble, scene);
+						success = true;
+					}
+					*/
 				}
 				else {
 					// TODO: Throw Error.
@@ -366,7 +338,7 @@ var SquidSpace = function() {
 		// Override global origin and size because everything else will calculate from that.
 		// IMPORTANT! The origin specifies the point the floor starts from at the NW corner of
 		// the arena. All layout offsets are calculated from that point!
-		floorOriginSE = [x, y, z]; 
+		floorOriginNW = [x, y, z]; 
 		floorSize = [w, d]; 
 
 		// Calculate offsets.
@@ -384,10 +356,10 @@ var SquidSpace = function() {
 	}
 
 
-	var addFloorSection = function(secName, x, z, width, depth, material, scene) {
-		// TODO: Support width and depth.
-		var floorSection = BABYLON.MeshBuilder.CreatePlane(secName, {width: width, size:depth, tileSize:1}, scene);
-		floorSection.position = new makeLayoutVector(x, 0.001, z, width, depth);
+	var addFloorSection = function(secName, x, z, w, d, material, scene) {
+		var floorSection = BABYLON.MeshBuilder.CreatePlane(secName, 
+												{width: w, height:d}, scene);
+		floorSection.position = new makeLayoutVector(x, 0.001, z, w, d);
 		floorSection.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
 	    floorSection.material = material;
 		floorSection.material.backFaceCulling = false;
@@ -399,31 +371,73 @@ var SquidSpace = function() {
 		let gl = new BABYLON.GlowLayer("glow", scene, {});
 		gl.intensity = 1.0;
 
-		let lightFrontFill = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 20, 70), scene);
-		lightFrontFill.diffuse = new BABYLON.Color3(0.3, 0.3, 0.2);
+		let lightFrontFill = new BABYLON.PointLight("pointLight", new makePointVector(25, 20, 30), scene);
+		lightFrontFill.diffuse = new BABYLON.Color3(1, 1, 1);
 		lightFrontFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
 		lightFrontFill.range = 150;
 
-		let lightTopFill = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 230, 70), scene);
+		let lightTopFill = new BABYLON.PointLight("pointLight", new makePointVector(25, 30, 30), scene);
 		lightTopFill.diffuse = new BABYLON.Color3(1, 1, 1);
-		lightTopFill.specular = new BABYLON.Color3(0.8, 0.8, 0.8);
+		lightTopFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
 		lightTopFill.range = 300;
-
-
-		let light1 = new BABYLON.SpotLight("spotLight", new BABYLON.Vector3(40, 9, -50), new BABYLON.Vector3(0, -70, 0), Math.PI / 5, 1, scene);
-		light1.diffuse = new BABYLON.Color3(0, 1, 0);
-		light1.specular = new BABYLON.Color3(0, 1, 0);
-		light1.range = 40;
-
-		let light2 = new BABYLON.SpotLight("spotLight", new BABYLON.Vector3(20, 9, -50), new BABYLON.Vector3(0, -70, 0), Math.PI / 3, 1, scene);
-		light2.diffuse = new BABYLON.Color3(0, 0.7, 0.7);
-		light2.specular = new BABYLON.Color3(0.7, 0.7, 0.7);
-		light2.range = 40;
-
-		//var light = new BABYLON.PointLight("light2", new BABYLON.Vector3(0, 1, -1), scene);
 	}
 
 	return {
+		//
+		// Public helper functions.
+		//
+		
+		var makeLayoutXYZ = function(x, y, z, w, d) {
+			// TODO: This function was created because I don't understand how Babylon
+			//       does local vectors and was under time pressure, so couldn't do the
+			//       research. At some point we need to use the BJS code instead, but could
+			//       just insert it here without breaking dependent code.
+			// IMPORTANT! The origin specifies the point the floor starts from at the NW corner of
+			// the arena. All layout offsets are calculated from that point!
+
+			return [
+				floorOriginNW[0] + x + (w / 2), 
+				floorOriginNW[1] + y, 
+				floorOriginNW[2] + (z * -1) + (d / 2)
+			];
+		}
+
+
+		var makePointVector = function(x, y, z) {
+			// TODO: This function was created because I don't understand how Babylon
+			//       does local vectors and was under time pressure, so couldn't do the
+			//       research. At some point we need to use the BJS code instead, but could
+			//       just insert it here without breaking dependent code.
+			// IMPORTANT! The origin specifies the point the floor starts from at the NW corner of
+			// the arena. All layout offsets are calculated from that point!
+
+			return new BABYLON.Vector3(
+				floorOriginNW[0] + x, 
+				floorOriginNW[1] + y, 
+				floorOriginNW[2] + (z * -1)
+			);
+		}
+
+
+		var makeLayoutVector = function(x, y, z, w, d) {
+			// TODO: This function was created because I don't understand how Babylon
+			//       does local vectors and was under time pressure, so couldn't do the
+			//       research. At some point we need to use the BJS code instead, but could
+			//       just insert it here without breaking dependent code.
+			// IMPORTANT! The origin specifies the point the floor starts from at the NW corner of
+			// the arena. All layout offsets are calculated from that point!
+
+			return new BABYLON.Vector3(
+				floorOriginNW[0] + x + (w / 2), 
+				floorOriginNW[1] + y, 
+				floorOriginNW[2] + (z * -1) + (d / 2)
+			);
+		}
+		
+		//
+		// Public scene management functions.
+		//
+		
 		/** PoC-specific function to add Babylon.js built-ins and do other setup. */
 		prepareWorld: function(scene, debugVerbose, debugLayer) {
 			// TODO: Figure out how to move this stuff into world spec.
@@ -522,14 +536,15 @@ var SquidSpace = function() {
 			if (!success) {
 				return success;
 			}
-			
-			// Add a floor.
-			// TODO: Specify floor in world file.
-			//objects.floor = addFloor(0.5, 0, 7.5, 57, 83, materials.macadam, scene);
-			
+						
 			// Create world from spec.
 			objectSpecLoader(world.objects, scene, null);
 			// TODO: material, lights, etc. spec loaders.
+			
+			
+			// TODO: This is test code, remove.
+			addFloorSection("hugos", 15, 15, 10, 15, materials.marble, scene);
+			
 
 			// Add lights.
 			// TODO: Move these to the world spec file.
@@ -598,36 +613,6 @@ var SquidSpace = function() {
 			camera.checkCollisions = true;
 			camera.applyGravity = true;
 
-			//
-			// Lights
-			//
-
-			let gl = new BABYLON.GlowLayer("glow", scene, {});
-			gl.intensity = 1.0;
-
-			let lightFrontFill = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 20, 70), scene);
-			lightFrontFill.diffuse = new BABYLON.Color3(0.3, 0.3, 0.2);
-			lightFrontFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
-			lightFrontFill.range = 150;
-
-			let lightTopFill = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 230, 70), scene);
-			lightTopFill.diffuse = new BABYLON.Color3(1, 1, 1);
-			lightTopFill.specular = new BABYLON.Color3(0.8, 0.8, 0.8);
-			lightTopFill.range = 300;
-
-
-			let light1 = new BABYLON.SpotLight("spotLight", new BABYLON.Vector3(40, 9, -50), new BABYLON.Vector3(0, -70, 0), Math.PI / 5, 1, scene);
-			light1.diffuse = new BABYLON.Color3(0, 1, 0);
-			light1.specular = new BABYLON.Color3(0, 1, 0);
-			light1.range = 40;
-
-			let light2 = new BABYLON.SpotLight("spotLight", new BABYLON.Vector3(20, 9, -50), new BABYLON.Vector3(0, -70, 0), Math.PI / 3, 1, scene);
-			light2.diffuse = new BABYLON.Color3(0, 0.7, 0.7);
-			light2.specular = new BABYLON.Color3(0.7, 0.7, 0.7);
-			light2.range = 40;
-
-			//var light = new BABYLON.PointLight("light2", new BABYLON.Vector3(0, 1, -1), scene);
-		
 			// Done.
 			return success;
 		}
