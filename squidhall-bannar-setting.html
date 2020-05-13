@@ -89,7 +89,7 @@
 	var engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
 	var scene = new BABYLON.Scene(engine);
 
-	var camera = new BABYLON.UniversalCamera("default camera", new BABYLON.Vector3(40, 1.6, -20), scene);
+	var camera = new BABYLON.UniversalCamera("default camera", new BABYLON.Vector3(37, 1.6, -0), scene);
 	//var camera = new BABYLON.FreeCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
 	//var camera = new BABYLON.FlyCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
 	camera.setTarget(new BABYLON.Vector3(20, 1.6, -60));
@@ -155,17 +155,66 @@
 		var bannerlayout = {
 			"artshow":{
 				"x":5,
-				"y":12,
-				"z":-16.6,
+				"y":11.7,
+				"z":-1 * 8.3 * 2 - 2,
 				"rotateY":0,
 				"texture":"arena-banner-artshow.png"
 			},
 			"artshow2":{
 				"x":20,
-				"y":12,
-				"z":-16.6,
+				"y":11.7,
+				"z":-1 * 8.3 * 2 - 2,
 				"rotateY":0,
 				"texture":"arena-banner-artshow.png"
+			},
+			"autograph":{
+				"x":32,
+				"y":11.7,
+				"z":-1 * 8.3 * 5 - 2,
+				"rotateY":0,
+				"texture":"arena-banner-autographing.png"
+			},
+			"dealers-chatham":{
+				"x":10,
+				"y":11.7,
+				"z":-1 * 8.3 * 4 - 2,
+				"rotateY":0,
+				"texture":"arena-banner-dealers.png"
+			},
+			"dealers-stewart":{
+				"x":10,
+				"y":11.7,
+				"z":-1 * 8.3 * 5 - 2,
+				"rotateY":0,
+				"texture":"arena-banner-dealers.png"
+			},
+			"dealers-north":{
+				"x":26,
+				"y":11.7,
+				"z":-1 * 8.3 * 4 - 2,
+				"rotateY":0,
+				"texture":"arena-banner-dealers.png"
+			},
+			"dealers-south":{
+				"x":24,
+				"y":11.7,
+				"z":-1 * 8.3 * 5 - 2,
+				"rotateY":0,
+				"texture":"arena-banner-dealers.png"
+			},
+			"exhibit":{
+				"x":24,
+				"y":11.7,
+				"z":-1 * 8.3 * 3 - 2,
+				"rotateY":0,
+				"texture":"arena-banner-exhibit.png"
+			},
+			"siteslection":{
+				"x":3,
+				"y":11.7,
+				"z":-1 * 8.3 * 3 - 2,
+				"rotateY":Math.PI / 2,
+				"texture":"arena-banner-siteseleciton.png"
 			},
 		};
 
@@ -177,12 +226,14 @@ Object.keys(bannerlayout).forEach(function(key){
 
 			var banner = loadObject("banner", data, scene, function(newMeshes) {
 			var mat = new BABYLON.StandardMaterial("mat", scene);
-			var bannerTexture = new BABYLON.Texture("./materials/arena-banner-artshow.png" , scene);
-			console.log("bannerlayout[0]"+"./materials/" + bannerinfo.texture);
+			var bannerTexture = new BABYLON.Texture("./materials/" + bannerinfo.texture , scene);
+			console.log("bannerlayout[0]"+"/materials/" + bannerinfo.texture);
 
 			bannerTexture.vScale = -1;
+//			mat.diffuseColor = BABYLON.Color3(1, 1, 1);
 			mat.diffuseTexture = bannerTexture;
-			mat.alpha = 0.8;
+//			mat.emissiveTexture = bannerTexture;
+			mat.alpha = 0.9;
 			mat.backFaceCulling = false;
 			newMeshes[1].material = mat;
 

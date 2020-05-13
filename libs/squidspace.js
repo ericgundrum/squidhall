@@ -674,15 +674,15 @@ var SquidSpace = function() {
 			let gl = new BABYLON.GlowLayer("glow", scene, {});
 			gl.intensity = 1.0;
 
-			let lightFrontFill = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 20, -20), scene);
+			let lightFrontFill = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 20, -0), scene);
 			lightFrontFill.diffuse = new BABYLON.Color3(1, 1, 1);
 			lightFrontFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
-			lightFrontFill.range = 70;
+			lightFrontFill.range = 150;
 
-			let lightTopFill = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 230, -50), scene);
+			let lightTopFill = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 230, -60), scene);
 			lightTopFill.diffuse = new BABYLON.Color3(1, 1, 1);
-			lightTopFill.specular = new BABYLON.Color3(0.8, 0.8, 0.8);
-			lightTopFill.range = 70;
+			lightTopFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
+			lightTopFill.range = 150;
 
 
 			// let light1 = new BABYLON.SpotLight("spotLight", new BABYLON.Vector3(40, 9, -50), new BABYLON.Vector3(0, -70, 0), Math.PI / 5, 1, scene);
