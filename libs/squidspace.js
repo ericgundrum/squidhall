@@ -45,6 +45,7 @@ var SquidSpace = function() {
 	// NOTE: Each unit corresponds to 1 meter, so 1.75 is one and three quarter meters.
 	//
 
+
 	// This is the SE corner of the arena and the origin for layouts. 
 	var floorOriginSE = [0, 0, 0]; 
 	var floorSize = [0, 0]
@@ -68,17 +69,21 @@ var SquidSpace = function() {
 	var norot = 0; // Do not rotate.
 	var rot = Math.PI / 2; // Rotate 90 degrees.
 
+
 	//
 	// Module data.
 	//
+
 
 	var textures = {};
 	var materials = {};
 	var objects = {};
 
+
 	//
 	// Helper functions.
 	//
+
 
 	var loadObject = function(objName, objData, scene, onSuccessFunc) {
 		// Note: You can add this ImportMesh() argument to force a specific 
@@ -129,36 +134,6 @@ var SquidSpace = function() {
 		loaderPluginExtension); 
 	}
 
-	var makeLayoutXYZ = function(x, y, z, w, d) {
-		// TODO: This function was created because I don't understand how Babylon
-		//       does local vectors and was under time pressure, so couldn't do the
-		//       research. At some point we need to use the BJS code instead, but could
-		//       just insert it here without breaking dependent code.
-		// IMPORTANT! The origin specifies the point the floor starts from at the NW corner of
-		// the arena. All layout offsets are calculated from that point!
-
-		return [
-			floorOriginSE[0] + x + startOffsetE + (w / 2), 
-			floorOriginSE[1] + y, 
-			floorOriginSE[2] + (z * -1) + startOffsetS - (d / 2)
-		];
-	}
-
-	var makeLayoutVector = function(x, y, z, w, d) {
-		// TODO: This function was created because I don't understand how Babylon
-		//       does local vectors and was under time pressure, so couldn't do the
-		//       research. At some point we need to use the BJS code instead, but could
-		//       just insert it here without breaking dependent code.
-		// IMPORTANT! The origin specifies the point the floor starts from at the NW corner of
-		// the arena. All layout offsets are calculated from that point!
-
-		return new BABYLON.Vector3(
-			floorOriginSE[0] + x + startOffsetE + (w / 2), 
-			floorOriginSE[1] + y, 
-			floorOriginSE[2] + (z * -1) + startOffsetS - (d / 2)
-		);
-	}
-
 
 	/* I want to add this for debugVerbose mode, but it isn't working and I don't have time to figure it out.
 	var showWorldAxis = function showWorldAxis(size, scene) {
@@ -197,10 +172,50 @@ var SquidSpace = function() {
 	};
 	*/
 
+
 	//
 	// Layout helper functions.
 	//
+	
 
+	var makeLayoutXYZ = function(x, y, z, w, d) {
+		// TODO: This function was created because I don't understand how Babylon
+		//       does local vectors and was under time pressure, so couldn't do the
+		//       research. At some point we need to use the BJS code instead, but could
+		//       just insert it here without breaking dependent code.
+		// IMPORTANT! The origin specifies the point the floor starts from at the NW corner of
+		// the arena. All layout offsets are calculated from that point!
+
+		return [
+			floorOriginSE[0] + x + startOffsetE + (w / 2), 
+			floorOriginSE[1] + y, 
+			floorOriginSE[2] + (z * -1) + startOffsetS - (d / 2)
+		];
+	}
+
+
+	var makeLayoutVector = function(x, y, z, w, d) {
+		// TODO: This function was created because I don't understand how Babylon
+		//       does local vectors and was under time pressure, so couldn't do the
+		//       research. At some point we need to use the BJS code instead, but could
+		//       just insert it here without breaking dependent code.
+		// IMPORTANT! The origin specifies the point the floor starts from at the NW corner of
+		// the arena. All layout offsets are calculated from that point!
+
+		return new BABYLON.Vector3(
+			floorOriginSE[0] + x + startOffsetE + (w / 2), 
+			floorOriginSE[1] + y, 
+			floorOriginSE[2] + (z * -1) + startOffsetS - (d / 2)
+		);
+	}
+
+	
+	var addSingleInstanceToLayout  = function(instanceName, layout, count, x, z, 
+											offset, rotation) {
+		layout.push([instanceName, x, z, rotation]);
+	}
+	
+	
 	/** Adds a count series of layout elements to an existing layout, starting
 		at the the provided x and z and separated by the provided offset. If across
 		is true the elements start at the west and go east. Otherwise the elements
@@ -245,9 +260,34 @@ var SquidSpace = function() {
 		}
 	}
 
+	
+	var layoutObjects = function(objName, layout, material, scene) {
+		// Get the object.
+		let obj = objects[objName];
+		if (typeof obj != "object") throw `Invalid object reference: ''${objName}''.`;
+		
+		// Get the meshes.
+		let meshes = objects[objName];
+		if ((typeof meshes != "object") && !(meshes instanceof Array) && (meshes.length < 1))
+			 throw `Mesh not loaded for object reference: ''${objName}''.`;
+		
+		for (mesh of meshes) {
+			for (instance of layout) {
+				let m = mesh.createInstance(instance[0]);
+				pnl.position = makeLayoutVector(instance[1], 0.01, instance[2], pnlwidth, pnldepth);
+				if (layout[3] != 0) {
+					pnl.rotate(BABYLON.Axis.Y, instance[3]);
+					pnl.position.z -= (pnlwidth / 2);
+				}
+				pnl.checkCollisions = true;
+			}
+		}
+	}
+
 	//
 	// Object functions.
 	//
+
 
 	var addFloor = function (x, y, z, w, d, material, scene) {
 		// NOTE: This makes the floor origin/size and the layout-based origin/size the same 
@@ -389,7 +429,7 @@ var SquidSpace = function() {
 
 	return {
 		/** PoC-specific function to add Babylon.js built-ins and do other setup. */
-		"prepareWorld": function(scene, debugVerbose, debugLayer) {
+		prepareWorld: function(scene, debugVerbose, debugLayer) {
 			// TODO: Figure out how to move this stuff into world spec.
 		
 		
@@ -454,7 +494,7 @@ var SquidSpace = function() {
 		/** PoC-specific function to load the passed scene from the world 
 		    and content specs. 
 		*/
-		"buildWorld": function(worldSpec, contentSpecs, scene, debugVerbose) {
+		buildWorld: function(worldSpec, contentSpecs, scene, debugVerbose) {
 			// Assume success.
 			let success = true;
 		 

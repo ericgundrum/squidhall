@@ -12,14 +12,14 @@ class ElementAction(Enum):
     """Enumeration of supported pack actions."""
     INSERT = 1
     LINK = 2
+    BUILTIN = 2
 
 
 class ElementSource(Enum):
     """Enumeration of supported pack sources."""
     DATA = 1
     FILE = 2
-    URL = 3
-    LOCAL = 4
+    FILE_AND_ROOT = 3
     EMPTY = 99
     
     
@@ -186,20 +186,49 @@ def insertFetchElementFunc(elem, outFile, config, public=True):
     if "action" in elem:
         if elem["action"].lower() == "link":
             action = ElementAction.LINK
+        elif elem["action"].lower() == "insert":
+            action = ElementAction.INSERT
+        elif elem["action"].lower() == "builtin":
+            action = ElementAction.BUILTIN
+        else:
+            raise ValueError("Invalid 'action' value: " + elem["action"])
+    else:
+        raise ValueError("Action element required.")
             
-    # Determine element source.
-    # TODO: Decide if we want to throw exception if source not specified or invalid or
-    # if more than one source is specified. Currently defaults to empty data.
+    # Determine element source and, if required, loader.
     source = ElementSource.EMPTY
-    if "data" in elem:
-        source = ElementSource.DATA
-    elif "file" in elem:
-        source = ElementSource.FILE
-    elif "url" in elem:
-        source = ElementSource.URL
-    elif "local" in elem:
-        source = ElementSource.LOCAL
-
+    loader = None
+    if action == ElementAction.INSERT:
+        if "data" in elem and not "file" in elem and not "root" in elem:
+            source = ElementSource.DATA
+        elif "file" in elem and not "data" in elem and not "root" in elem:
+            source = ElementSource.FILE
+        else:
+            raise ValueError("Action 'insert' requires one of 'file' or 'data' element.")
+        # Is a loader supplied?
+        # TODO: Verify loader value against a list of valid loaders.
+        if "loader" in elem:
+            loader = elem["loader"]
+    elif action == ElementAction.LINK:
+        if "file" in elem and "root" in elem and not "data" in elem:
+            source = ElementSource.FILE_AND_ROOT
+        else:
+            raise ValueError("Action 'link' requires one each of 'root' and 'file' element.")
+        # Is a loader supplied?
+        if "loader" in elem:
+            raise ValueError("Action 'link' does not support a 'loader' element.")
+    elif action == ElementAction.BUILTIN:
+        if "data" in elem and not "file" in elem and not "root" in elem:
+            source = ElementSource.FILE
+        else:
+            raise ValueError("Action 'builtin' requires one of 'data' element.")
+        # Is a loader supplied?
+        if "loader" in elem:
+            raise ValueError("Action 'builtin' does not support a 'loader' element.")
+    
+    if source == ElementSource.EMPTY:
+        raise ValueError("No valid source element supplied.")
+    
     # Write the element fetch prefix
     if config.pp: outFile.write("\n" + baseOffset)
     outFile.write(elem["name"] + ": function(){") # TODO: This is different for private section.
@@ -210,31 +239,18 @@ def insertFetchElementFunc(elem, outFile, config, public=True):
             insertReturnElement(elem, source, outFile, config, baseOffset, singleLine = True)
         elif source == ElementSource.FILE:
             insertReturnElement(elem, source, outFile, config, baseOffset, singleLine = True)
-        elif source == ElementSource.URL:
-            # TODO: Implement URL packing.
-            raise NotImplementedError("Action 'insert' with source 'url' not currently supported.")
-            pass
-        elif source == ElementSource.LOCAL:
-            # TODO: Implement locals.
-            raise NotImplementedError("Action 'insert' with source 'local' not currently supported.")
-            pass
         else:
-            raise ValueError("Cannot implement action 'insert' with no specified source.")
+            raise ValueError("Invalid source for action 'insert'.")
     elif action == ElementAction.LINK:
-        if source == ElementSource.DATA:
-            raise ValueError("Cannot implement action 'link' with source 'data'.")
-        elif source == ElementSource.FILE:
-            # TODO: Implement File loading.
-            raise NotImplementedError("Action 'link' with source 'file' not currently supported.")
-            pass
-        elif source == ElementSource.URL:
-            insertReturnElement(elem, source, outFile, config, baseOffset, singleLine = True)
-            pass
-        elif source == ElementSource.LOCAL:
-            # TODO: Implement locals.
-            raise NotImplementedError("Action 'link' with source 'local' not currently supported.")
+        if source == ElementSource.FILE_AND_ROOT:
+            raise NotImplementedError("Action 'link' with source 'root' and 'file' not currently supported.")
         else:
-            raise ValueError("Cannot implement action 'link' with no specified source.")
+            raise ValueError("Invalid source for action 'link'.")
+    elif action == ElementAction.BUILTIN:
+        if source == ElementSource.DATA:
+            raise NotImplementedError("Action 'builtin' with source 'data' not currently supported.")
+        else:
+            raise ValueError("Invalid source for action 'builtin'.")
     
     # Write the element fetch suffix. 
     if config.pp: outFile.write("\n" + baseOffset)

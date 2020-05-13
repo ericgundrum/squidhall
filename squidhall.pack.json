@@ -8,10 +8,7 @@
 		    "name": "world",
 			"doc": "Main world module.",
 			"config": {
-				"pretty-print": true,
-				"pretty-offset": 3,
-				"default-file-loader-func": "TODO: link loader functions not currently supported.",
-				"default-url-loader-func": "TODO: link loader functions not currently supported."
+				"doc": "No config, use defaults."
 			},
 			"settings": {},
 			"objects": [
@@ -53,8 +50,7 @@
 			"textures": [],
 			"materials": [],
 			"lights": [],
-			"private-javascript": [],
-			"public-javascript": []
+			"layouts": []
 		}
 	]
 }
