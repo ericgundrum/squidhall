@@ -3,7 +3,7 @@
 //'use strict'; 
 
 
-/** The SquidSpace module provides a runtime for a simulated
+/** The squidscene module provides a runtime for a simulated
 	scene. It allows you to define a 'world' and will then run
 	that world as a simulation using the world's settings and 
 	allowing the user to move around it in similar to how they 
@@ -15,7 +15,7 @@
 	affecting how far you can jump and how fast you move.
 
 	NOTE: This is a PoC version of the module and is intended only
-	      to support the Squid Hall project. Later versions may be
+	      to support the Squid Hall project. Later versions will be
 	      very different than this one.
 
 	## Some ideas for improvement
@@ -28,7 +28,7 @@
 
 	We need to figure out what is required to support tablets and phones and implement that.
 
-	We need to determine if we want to support gamepads.
+	We need to determine if we need to support gamepads.
 */
 
 
@@ -84,15 +84,6 @@ var SquidSpace = function() {
 	// Helper functions.
 	//
 
-	var getValIfKeyInDict = function(key, dict, defaultVal) {
-		if ((dict != undefined) && (typeof dict === "object")) {
-			if (key in dict) {
-				return dict[key];
-			}
-		}
-		
-		return defaultVal;
-	}
 
 	var loadObject = function(objName, objData, scene, onSuccessFunc) {
 		// Note: You can add this ImportMesh() argument to force a specific 
@@ -108,11 +99,14 @@ var SquidSpace = function() {
 
 		// File Name arg.
 		let fn = null;
-		if ("file" in objData) {
-			fn = objData["file"];
+		if ("url" in objData) {
+			fn = objData["url"];
 		}
 		else if ("data" in objData) {
 			fn = "data:" + objData["data"];
+		}
+		else if ("loaderfunc" in objData) {
+			// TODO: Throw exception. Do we need to support loader funcs at some point? How?
 		}
 		else {
 			// TODO: Throw exception.
@@ -139,6 +133,7 @@ var SquidSpace = function() {
 				}, 
 		loaderPluginExtension); 
 	}
+
 
 	/* I want to add this for debugVerbose mode, but it isn't working and I don't have time to figure it out.
 	var showWorldAxis = function showWorldAxis(size, scene) {
@@ -288,75 +283,11 @@ var SquidSpace = function() {
 			}
 		}
 	}
-	
-	var objectSpecLoader = function(objDict, scene, onSuccessFunc) {
-		for (key in objDict) {
-			let obj = undefined;
-			let success = false;
-			let config = undefined;
-			let visible = false;
-			if (typeof objDict[key]["config"] === "object") {
-				config = objDict[key]["config"];
-				visible = getValIfKeyInDict("space-object", config, false);
-			}
-			let builtin = getValIfKeyInDict("builtin", objDict[key], false);
-			
-			if (builtin) {
-				if (typeof objDict[key]["data"] === "object") {
-					let data = objDict[key]["data"];
-					let tp = getValIfKeyInDict("type", data, "");
-					let sz = getValIfKeyInDict("size", data, [1, 1]);
-					let pos = getValIfKeyInDict("position", data, [0, 0]);
-					let mn = getValIfKeyInDict("material", data, "");
-					// TODO: Get material from material list by material name
-					//       with a default if not loaded.
-					// TODO: Refactor this into a function
-					if (tp === "floor") {
-						obj = addFloor(pos[0], pos[1], pos[1], sz[0], sz[1], materials.macadam, scene);
-						success = true;
-					}
-				}
-				else {
-					// TODO: Throw Error.
-					Console.log("Builtin without data section.")
-				}
-			}
-			else {
-				obj = loadObject(key, objDict[key], scene, function(newMeshes) {
-					// Process each mesh.
-					for (mesh of newMeshes) {
-						if (visible) {
-							mesh.isVisible = true;
-							mesh.checkCollisions = true;
-						}
-						else {
-							mesh.isVisible = false;
-						}
-					}
-				
-					if (typeof onSuccessFunc == "function") onSuccessFunc(newMeshes);
-				
-					// We are good to go!
-					success = true;
-				});
-			}
-			
-			if (success) {
-				// Append the config?
-				if (config != undefined) {
-					obj["config"] = config;
-				}
-				// Save the object.
-				objects[key] = obj;
-			}			
-		}
-	}
-	
-	// TODO: Spec loaders for materials, lights, etc.
 
 	//
-	// Builtins.
+	// Object functions.
 	//
+
 
 	var addFloor = function (x, y, z, w, d, material, scene) {
 		// NOTE: This makes the floor origin/size and the layout-based origin/size the same 
@@ -378,7 +309,6 @@ var SquidSpace = function() {
 		floor.position = new BABYLON.Vector3(x, y, z);
 	    floor.material = material;
 	    //floor.receiveShadows = true; // This seems to increase the CPU requirements by quite a bit.
-		floor.checkCollisions = true;
 
 		return floor;
 	}
@@ -393,35 +323,109 @@ var SquidSpace = function() {
 		floorSection.material.backFaceCulling = false;
 		return floorSection;
 	}
-	
-	var addLights = function(scene) {
-
-		let gl = new BABYLON.GlowLayer("glow", scene, {});
-		gl.intensity = 1.0;
-
-		let lightFrontFill = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 20, 70), scene);
-		lightFrontFill.diffuse = new BABYLON.Color3(0.3, 0.3, 0.2);
-		lightFrontFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
-		lightFrontFill.range = 150;
-
-		let lightTopFill = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 230, 70), scene);
-		lightTopFill.diffuse = new BABYLON.Color3(1, 1, 1);
-		lightTopFill.specular = new BABYLON.Color3(0.8, 0.8, 0.8);
-		lightTopFill.range = 300;
 
 
-		let light1 = new BABYLON.SpotLight("spotLight", new BABYLON.Vector3(40, 9, -50), new BABYLON.Vector3(0, -70, 0), Math.PI / 5, 1, scene);
-		light1.diffuse = new BABYLON.Color3(0, 1, 0);
-		light1.specular = new BABYLON.Color3(0, 1, 0);
-		light1.range = 40;
+	var addPanels = function(panelLayouts, scene) {
+		let data = world.panel();
+		let panel = loadObject("panel", data, scene, function(newMeshes) {
+			for (index = 0; index < newMeshes.length; index++) {
 
-		let light2 = new BABYLON.SpotLight("spotLight", new BABYLON.Vector3(20, 9, -50), new BABYLON.Vector3(0, -70, 0), Math.PI / 3, 1, scene);
-		light2.diffuse = new BABYLON.Color3(0, 0.7, 0.7);
-		light2.specular = new BABYLON.Color3(0.7, 0.7, 0.7);
-		light2.range = 40;
+				let panelmesh = newMeshes[index];
+				panelmesh.isVisible = false;
 
-		//var light = new BABYLON.PointLight("light2", new BABYLON.Vector3(0, 1, -1), scene);
+				for (layout of panelLayouts) {
+					let pnl = panelmesh.createInstance(layout[0]);
+					pnl.position = makeLayoutVector(layout[1], 0.01, layout[2], pnlwidth, pnldepth);
+					if (layout[3] != 0) {
+						pnl.rotate(BABYLON.Axis.Y, layout[3]);
+						pnl.position.z -= (pnlwidth / 2);
+					}
+					pnl.checkCollisions = true;
+				}
+			}
+		}); 
 	}
+
+
+	var addBeams = function(scene) {
+		let data = world.beam();
+		var beam = loadObject("beam", data, scene, function(newMeshes) {
+			for (var index = 0; index < newMeshes.length; index++) {
+				for (var index = 0; index < newMeshes.length; index++) {
+
+					var beammesh = newMeshes[index];
+					beammesh.isVisible = false;
+
+					for (var i = 0; i < 9; i++ ) {
+						var bm = beammesh.createInstance("beam" + i);
+						bm.position.x = 0;
+						bm.position.y = 0;
+						bm.position.z = -1 * i * 8.3;
+						bm.checkCollisions = false;
+					}
+				}
+			}
+		}); 
+	}
+
+	var addCurtains = function(scene) {
+		let data = world.curtain();
+		let curtain = loadObject("curtain", data, scene, function(newMeshes) {
+			for (index = 0; index < newMeshes.length; index++) {
+
+				let curtainmesh = newMeshes[index];
+				curtainmesh.isVisible = false;
+
+				for (let i = 0; i < 7; i++ ) {
+					let bm = curtainmesh.createInstance("curtain1" + i);
+					bm.position.x = 0;
+					bm.position.y = 0;
+					bm.position.z = -1 * i * 10;
+					bm.checkCollisions = false;
+				}
+
+				for (let i = 0; i < 7; i++ ) {
+					let bm = curtainmesh.createInstance("curtain2" + i);
+					bm.rotation.y = Math.PI;
+					bm.position.x = 38;
+					bm.position.y = 0;
+					bm.position.z = -1 * i * 10 - 10;
+					bm.checkCollisions = false;
+				}
+
+				for (let i = 0; i < 4; i++ ) {
+					let bm = curtainmesh.createInstance("curtain3" + i);
+					bm.rotation.y = -1 * Math.PI / 2;
+					bm.position.x = i * 10;
+					bm.position.y = 0;
+					bm.position.z = -64;
+					bm.checkCollisions = false;
+				}
+
+			}
+		});
+	}
+
+
+	var addTables = function(tblLayouts, material, scene) {
+		// TODO: Currently using a box for the table, we may want to 
+		//       replace that with a mesh, like the panels.
+		for (layout of tblLayouts) {
+			//var table = BABYLON.MeshBuilder.CreatePlane(layout[0], {width: 2, size:1, tileSize:1}, scene);
+			var table = BABYLON.MeshBuilder.CreateBox(layout[0],
+											{width: tblwidth, depth:tbldepth, height:tblheight}, scene);
+			table.position = new BABYLON.Vector3(layout[1], 1.25, layout[2]);
+			//table.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
+		    table.material = material;
+			table.material.backFaceCulling = false;
+			if (layout[3] != 0) {
+				table.rotate(BABYLON.Axis.Y, layout[3]);
+			}
+			table.checkCollisions = true;
+		}
+	}
+
+
 
 	return {
 		/** PoC-specific function to add Babylon.js built-ins and do other setup. */
@@ -484,11 +488,7 @@ var SquidSpace = function() {
 			textures.wood.woodColor = new BABYLON.Color3(0.8, 0.8, 0.8);
 			materials.wood.backFaceCulling = false;
 		    materials.wood.diffuseTexture = textures.wood;
-			
-			
-			// Add some builtin objects we'll be using.
-			//objects.floorsection = BABYLON.MeshBuilder.CreatePlane("floorsection", 
-			//							{width: width, size:depth, tileSize:1}, scene);
+		
 		},
 	
 		/** PoC-specific function to load the passed scene from the world 
@@ -522,18 +522,121 @@ var SquidSpace = function() {
 			if (!success) {
 				return success;
 			}
-			
+		
+			// Create world from spec.
+		
+			// Load arena.
+			let arenaData = world.arena();
+			objects.arena = loadObject("arena", arenaData, scene);
+
+			addBeams(scene);
+			addCurtains(scene);
+
+			// Load squid.
+			let squidData = world.squid();
+			let squid = loadObject("squid", squidData, scene, function(newMeshes) {
+				if (newMeshes.length > 0) {
+					var squidmesh = newMeshes[0];
+					squidmesh.position.x = 4;
+					squidmesh.position.y = 10;
+					squidmesh.position.z = -60;
+				}
+			});
+
 			// Add a floor.
 			// TODO: Specify floor in world file.
-			//objects.floor = addFloor(0.5, 0, 7.5, 57, 83, materials.macadam, scene);
-			
-			// Create world from spec.
-			objectSpecLoader(world.objects, scene, null);
-			// TODO: material, lights, etc. spec loaders.
+			objects.floor = addFloor(0.5, 0, 7.5, 57, 83, materials.macadam, scene);
 
-			// Add lights.
-			// TODO: Move these to the world spec file.
-			addLights(scene);
+			// Add floor sections.
+			// TODO: Use layouts pattern for these, see if we can reduce meshes.
+			addFloorSection("exhibits", 18, 8, 15, 25, materials.marble, scene);
+			addFloorSection("artshow", 0, 0, 15, 17, materials.marble, scene);
+			addFloorSection("dealerleft", 4, 35, 10, 10, materials.marble, scene);
+			addFloorSection("dealerright", 20, 35, 10, 10, materials.marble, scene);
+
+			// Create panel layouts.
+			let panelLayouts = [];
+
+			addLinearSeriesToLayout("testh", panelLayouts, 4, 1, 1, pnlSpacing, true, norot);
+			addLinearSeriesToLayout("testh", panelLayouts, 4, 8, 1, pnlSpacing, false, rot);
+
+			/* TODO: Recalcuate.
+			// Art Show.
+			let nm = "artshowpnl-";
+			let arx1 = 0;
+			let arz1 = 20;
+			let arz2 = arz1 + 4;
+			addLinearSeriesToLayout(nm + "1-", panelLayouts, 8, arx1, arz1, pnlSpacing, true, norot);
+			addLinearSeriesToLayout(nm + "2-", panelLayouts, 8, arx1, arz2, pnlSpacing, true, norot);
+			addLinearSeriesToLayout(nm + "3-", panelLayouts, 2, arx1, arz1, pnlSpacing, false, rot);
+			addLinearSeriesToLayout(nm + "4-", panelLayouts, 2, arx1, arz2, pnlSpacing, false, rot);
+			addLinearSeriesToLayout(nm + "5-", panelLayouts, 2, arx1 - (pnlSpacing * 2), arz1, pnlSpacing, false, rot);
+			addLinearSeriesToLayout(nm + "6-", panelLayouts, 2, arx1 - (pnlSpacing * 2), arz2, pnlSpacing, false, rot);
+			addLinearSeriesToLayout(nm + "7-", panelLayouts, 2, arx1 - (pnlSpacing * 4), arz1, pnlSpacing, false, rot);
+			addLinearSeriesToLayout(nm + "8-", panelLayouts, 2, arx1 - (pnlSpacing * 4), arz2, pnlSpacing, false, rot);
+			addLinearSeriesToLayout(nm + "9-", panelLayouts, 2, arx1 - (pnlSpacing * 6), arz1, pnlSpacing, false, rot);
+			addLinearSeriesToLayout(nm + "10-", panelLayouts, 2, arx1 - (pnlSpacing * 6), arz2, pnlSpacing, false, rot);
+			addLinearSeriesToLayout(nm + "11-", panelLayouts, 2, arx1 - (pnlSpacing * 8), arz1, pnlSpacing, false, rot);
+			addLinearSeriesToLayout(nm + "12-", panelLayouts, 2, arx1 - (pnlSpacing * 8), arz2, pnlSpacing, false, rot);
+
+			// History.
+			nm = "historypnl-";
+			let hix1 = 15;
+			let hiz1 = arz2;
+			let hix2 = hix1 - 4;
+			let hiz2 = hiz1 + 3.5;
+			addLinearSeriesToLayout(nm + "1-", panelLayouts, 3, hix1, hiz1, pnlSpacing, true, norot);
+			addLinearSeriesToLayout(nm + "2-", panelLayouts, 6, hix2, hiz2, pnlSpacing, true, norot);
+			addLinearSeriesToLayout(nm + "3-", panelLayouts, 1, hix2 - (pnlSpacing * 3), hiz2 - pnlSpacing, pnlSpacing, false, rot);
+
+			// Hugos.
+			nm = "hugospnl-";
+			let hux = hix1;
+			let huz = arz1 - 2;
+			addLinearSeriesToLayout(nm, panelLayouts, 8, hux, huz, pnlSpacing, true, norot);
+
+			// New Zealand Genre.
+			nm = "nzgenrepnl-";
+			let nzx = hix2 - (pnlSpacing * 2);
+			let nzz = -39;
+			addLinearSeriesToLayout(nm, panelLayouts, 3, nzx, nzz, pnlSpacing, true, norot);
+			*/
+
+			// Load panels with the layout.
+			addPanels(panelLayouts, scene)
+
+			// TODO: Add images to panels with CreateDecal().
+
+			/* TODO: Recalcuate.
+			// Create table layouts.
+			let tableLayouts = []
+
+			// Art Show Tables
+			nm = "artshowtbl-";
+			arx1 = 23;
+			let arx2 = 28.5;
+			arz1 = -65;
+			arz2 = arz1 + 3;
+			addLinearSeriesToLayout(nm + "1-", tableLayouts, 3, arx1, arz1, tblSpacing, true, norot);
+			addLinearSeriesToLayout(nm + "2-", tableLayouts, 1, arx1 - (tblSpacing * 3) + tbldepth, arz1 - tbldepth, pnlSpacing, false, rot);
+			addLinearSeriesToLayout(nm + "3-", tableLayouts, 5, arx2, arz2, tblSpacing, true, norot);
+
+			// Fan Tables
+			let ftx = 15;
+			let ftz = arz1;
+			nm = "fantbl-";
+			addLinearSeriesToLayout(nm + "1-", tableLayouts, 8, ftx, ftz, tblSpacing, true, norot);
+			addLinearSeriesToLayout(nm + "2-", tableLayouts, 6, ftx - tblSpacing, ftz + 3, pnlSpacing, true, norot);
+
+			// Dealer Tables
+			nm = "dealer-chatham-";
+			addRectangleSeriesToLayout(nm, tableLayouts, 5, 3, 38.5, -39, tblSpacing, tbldepth);
+			nm = "dealer-north-";
+			addRectangleSeriesToLayout(nm, tableLayouts, 5, 3, 24.5, -39, tblSpacing, tbldepth);
+
+			// Load tables with the layout.
+			addTables(tableLayouts, materials.wood, scene);
+			*/
 
 			// Add a camera to the scene and attach it to the canvas
 			// TODO: Specify camera in world file.
@@ -597,6 +700,11 @@ var SquidSpace = function() {
 			// Apply collisions and gravity to the active camera
 			camera.checkCollisions = true;
 			camera.applyGravity = true;
+
+			// Set collision detection on anything we haven't already done.
+			objects.floor.checkCollisions = true;
+			objects.arena.collisionsEnabled = true; // Doesn't seem to be working.
+			objects.arena.checkCollisions = true; // Doesn't seem to be working.
 
 			//
 			// Lights

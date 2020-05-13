@@ -12,7 +12,7 @@ class ElementAction(Enum):
     """Enumeration of supported pack actions."""
     INSERT = 1
     LINK = 2
-    BUILTIN = 2
+    BUILTIN = 3
 
 
 class ElementSource(Enum):
@@ -131,57 +131,11 @@ def insertDict(dict, outFile, config, baseOffset):
     outFile.write("}")
     
         
-def insertReturnElement(element, source, outFile, config, baseOffset, singleLine = True):
-    """Inserts a return statement into the out file that returns a dictionary 
-    consisting of the element data and configuration."""
-    
-    # Write return prefix. 
-    if config.pp: outFile.write("\n" + baseOffset + config.offset)
-    outFile.write("return {")
-
-    # Write data.
-    # TODO: Support link loader func here.
-    if config.pp: outFile.write("\n" + baseOffset + config.offset + config.offset)
-    if source == ElementSource.DATA:
-        outFile.write("\"data\": \"")
-        insertText(element["data"], outFile, singleLine)
-    elif source == ElementSource.FILE:
-        outFile.write("\"data\": \"")
-        insertTextFile(element["file"], outFile, singleLine)
-    elif source == ElementSource.URL:
-        outFile.write("\"url\": \"")
-        insertText(element["url"], outFile, singleLine)
-    outFile.write("\"")
-        
-    # Write element config, if present.
-    if "config" in element:
-        outFile.write(",")
-        if config.pp: outFile.write("\n" + baseOffset + config.offset + config.offset)
-        outFile.write('"config": ')
-        insertDict(element["config"], outFile, config, baseOffset + config.offset + config.offset)
-    
-    # Write return suffix.
-    if config.pp: outFile.write("\n" + baseOffset + config.offset)
-    outFile.write("};")
-
-
-def insertFetchElementFunc(elem, outFile, config, public=True):
+def insertLoaderData(elem, outFile, config, baseOffset):
     """Inserts a function that fetches an element into the out file, where 
     the element returned is a dictionary consisting of the element data and configuration."""
     
-    offset = config.offset
-    baseOffset = offset
-    if public:
-        baseOffset = offset + offset
-    
-    # TODO: Currently only implemented to write public section elements, will need to modify  
-    # to support private elements, which use a different syntax.
-    
-    # TODO: Verify element has all required fields with expected values. Error if not.
-    
     # Determine action requested.
-    # TODO: Decide if we want to throw exception if action not specified or invalid.
-    # Currently defaults to 'insert'.
     action = ElementAction.INSERT
     if "action" in elem:
         if elem["action"].lower() == "link":
@@ -195,9 +149,8 @@ def insertFetchElementFunc(elem, outFile, config, public=True):
     else:
         raise ValueError("Action element required.")
             
-    # Determine element source and, if required, loader.
+    # Determine element source, based on the action.
     source = ElementSource.EMPTY
-    loader = None
     if action == ElementAction.INSERT:
         if "data" in elem and not "file" in elem and not "root" in elem:
             source = ElementSource.DATA
@@ -205,62 +158,71 @@ def insertFetchElementFunc(elem, outFile, config, public=True):
             source = ElementSource.FILE
         else:
             raise ValueError("Action 'insert' requires one of 'file' or 'data' element.")
-        # Is a loader supplied?
-        # TODO: Verify loader value against a list of valid loaders.
-        if "loader" in elem:
-            loader = elem["loader"]
     elif action == ElementAction.LINK:
         if "file" in elem and "root" in elem and not "data" in elem:
             source = ElementSource.FILE_AND_ROOT
         else:
             raise ValueError("Action 'link' requires one each of 'root' and 'file' element.")
-        # Is a loader supplied?
-        if "loader" in elem:
-            raise ValueError("Action 'link' does not support a 'loader' element.")
     elif action == ElementAction.BUILTIN:
         if "data" in elem and not "file" in elem and not "root" in elem:
-            source = ElementSource.FILE
+            source = ElementSource.DATA
         else:
             raise ValueError("Action 'builtin' requires one of 'data' element.")
-        # Is a loader supplied?
-        if "loader" in elem:
-            raise ValueError("Action 'builtin' does not support a 'loader' element.")
     
     if source == ElementSource.EMPTY:
         raise ValueError("No valid source element supplied.")
     
-    # Write the element fetch prefix
+    # Write the prefix
     if config.pp: outFile.write("\n" + baseOffset)
-    outFile.write(elem["name"] + ": function(){") # TODO: This is different for private section.
+    outFile.write(elem["name"] + ": {") 
+
+    # Write data.
+    if config.pp: outFile.write("\n" + baseOffset + config.offset + config.offset)
+    if (action == ElementAction.BUILTIN):
+        outFile.write("\"builtin\": true,")
+        if config.pp: outFile.write("\n" + baseOffset + config.offset + config.offset)
     
-    # Write the element fetch action.
-    if action == ElementAction.INSERT:
-        if source == ElementSource.DATA:
-            insertReturnElement(elem, source, outFile, config, baseOffset, singleLine = True)
-        elif source == ElementSource.FILE:
-            insertReturnElement(elem, source, outFile, config, baseOffset, singleLine = True)
+    if source == ElementSource.DATA:
+        outFile.write("\"data\": ")
+        if isinstance(elem["data"], str):
+            outFile.write("\"")
+            insertText(elem["data"], outFile, singleLine)
+            outFile.write("\"")
+        elif isinstance(elem["data"], dict):
+            insertDict(elem["data"], outFile, config, baseOffset + config.offset + config.offset)
         else:
-            raise ValueError("Invalid source for action 'insert'.")
-    elif action == ElementAction.LINK:
-        if source == ElementSource.FILE_AND_ROOT:
-            raise NotImplementedError("Action 'link' with source 'root' and 'file' not currently supported.")
-        else:
-            raise ValueError("Invalid source for action 'link'.")
-    elif action == ElementAction.BUILTIN:
-        if source == ElementSource.DATA:
-            raise NotImplementedError("Action 'builtin' with source 'data' not currently supported.")
-        else:
-            raise ValueError("Invalid source for action 'builtin'.")
-    
-    # Write the element fetch suffix. 
+            raise ValueError("Data element must be a string for 'insert' actions or a dictionary for 'buitin' actions.")
+    elif source == ElementSource.FILE:
+        outFile.write("\"data\": \"")
+        insertTextFile(elem["file"], outFile, singleLine = True)
+        outFile.write("\"")
+    elif source == ElementSource.FILE_AND_ROOT:
+        outFile.write("\"root\": \"")
+        insertText(elem["root"], outFile, singleLine = True)
+        outFile.write("\"",)
+        if config.pp: outFile.write("\n" + baseOffset + config.offset + config.offset)
+        outFile.write("\"file\": \"")
+        insertText(elem["file"], outFile, singleLine = True)
+        outFile.write("\"")
+    else:
+        raise ValueError("Invalid source.")
+                    
+    # Write elem config, if present.
+    if "config" in elem:
+        outFile.write(",")
+        if config.pp: outFile.write("\n" + baseOffset + config.offset + config.offset)
+        outFile.write('"config": ')
+        insertDict(elem["config"], outFile, config, baseOffset + config.offset + config.offset)
+        
+    # Write the suffix. 
     if config.pp: outFile.write("\n" + baseOffset)
-    outFile.write("},") # TODO: This is different for private section.
+    outFile.write("},") 
     
     
 def processModule(outDir, module):
     """Processes one module's elements and generates a module file."""
     
-    # TODO: Error handling. Need to decide if we wrap everything in a try-catch or
+    # TODO: Improve error handling. Need to decide if we wrap everything in a try-catch or
     # do it line-by-line. 
     
     # DEBUG: Comment out for production.
@@ -281,31 +243,45 @@ def processModule(outDir, module):
     # Write module start.
     mf.write("var " + module["name"] + " = (function(){")
     if config.pp: mf.write("\n")
-    
-    # Process private javascript.
-    # TODO.
-    
+        
     # Write module publics.
     if config.pp: mf.write("\n" + offset)
     mf.write("return {")
     
+    baseOffset = offset + offset
+    
     # Process objects.
     if "objects" in module:
+        if config.pp: mf.write("\n" + baseOffset)
+        mf.write("objects: {")
         for obj in module["objects"]:
-            insertFetchElementFunc(obj, mf, config, public=True)
-            
-    # Process lights.
-    if "lights" in module:
-        for light in module["lights"]:
-            insertFetchElementFunc(light, mf, config, public=True)
+            insertLoaderData(obj, mf, config, baseOffset + offset)
+        if config.pp: mf.write("\n" + baseOffset)
+        mf.write("},")
         
     # Process textures.
     if "textures" in module:
+        if config.pp: mf.write("\n" + baseOffset)
+        mf.write("textures: {")
         for texture in module["textures"]:
-            insertFetchElementFunc(texture, mf, config, public=True)
-        
-    # Process public javascript.
-    # TODO.
+            insertLoaderData(texture, mf, config, baseOffset + offset)
+        mf.write("},")
+            
+    # Process materials.
+    if "materials" in module:
+        if config.pp: mf.write("\n" + baseOffset)
+        mf.write("materials: {")
+        for material in module["materials"]:
+            insertLoaderData(material, mf, config, baseOffset + offset)
+        mf.write("},")
+            
+    # Process lights.
+    if "lights" in module:
+        if config.pp: mf.write("\n" + baseOffset)
+        mf.write("lights: {")
+        for light in module["lights"]:
+            insertLoaderData(light, mf, config, baseOffset + offset)
+        mf.write("}")
     
     # Write module end.
     if config.pp: mf.write("\n" + offset)
