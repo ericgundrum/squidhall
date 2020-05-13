@@ -1,16 +1,16 @@
-// NOTE: Strict mode is causing problems I can't track down right now. 
+// NOTE: Strict mode is causing problems I can't track down right now.
 // TODO: Find out why this breaks things and fix.
-//'use strict'; 
+//'use strict';
 
 
 /** The squidscene module provides a runtime for a simulated
 	scene. It allows you to define a 'world' and will then run
-	that world as a simulation using the world's settings and 
-	allowing the user to move around it in similar to how they 
-	navigate through a real world. 
+	that world as a simulation using the world's settings and
+	allowing the user to move around it in similar to how they
+	navigate through a real world.
 
-	In most cases the physics used are simplified, but broadly similar 
-	to the real-world. However, some physics parameters may 
+	In most cases the physics used are simplified, but broadly similar
+	to the real-world. However, some physics parameters may
 	be changed. For example, gravity can be increased or decreased;
 	affecting how far you can jump and how fast you move.
 
@@ -46,17 +46,17 @@ var SquidSpace = function() {
 	//
 
 
-	// This is the SE corner of the arena and the origin for layouts. 
-	var floorOriginSE = [0, 0, 0]; 
+	// This is the SE corner of the arena and the origin for layouts.
+	var floorOriginSE = [0, 0, 0];
 	var floorSize = [0, 0]
-	// This is the offset to the north from the south for where the first elements are placed. 
-	// It represents the starting point from the south wall from which every layout point is 
+	// This is the offset to the north from the south for where the first elements are placed.
+	// It represents the starting point from the south wall from which every layout point is
 	// calculated.
-	var startOffsetS = -32.5; 
+	var startOffsetS = -32.5;
 	// This is the offset to the west from the east for where the first elements are placed.
-	// It represents the starting point from the east wall from which every layout point is 
+	// It represents the starting point from the east wall from which every layout point is
 	// calculated.
-	var startOffsetE = 11.2; 
+	var startOffsetE = 11.2;
 	var pnlwidth = 1;
 	var pnldepth = 0.005;
 	var pnlSpacing = pnlwidth + 0.3;
@@ -86,8 +86,8 @@ var SquidSpace = function() {
 
 
 	var loadObject = function(objName, objData, scene, onSuccessFunc) {
-		// Note: You can add this ImportMesh() argument to force a specific 
-		//       loader plugin by file type. 
+		// Note: You can add this ImportMesh() argument to force a specific
+		//       loader plugin by file type.
 		let loaderPluginExtension = null;
 		//let loaderPluginExtension = ".obj"; // Force obj file loader plugin.
 
@@ -114,24 +114,24 @@ var SquidSpace = function() {
 
 		let meshNameFilter = ""; // Empty string means import *all* meshes in the object.
 
-		return BABYLON.SceneLoader.ImportMesh(meshNameFilter, fr, fn, scene, 
+		return BABYLON.SceneLoader.ImportMesh(meshNameFilter, fr, fn, scene,
 				function(newMeshes) {
-					if (debugVerbose) console.log("'" + objName + 
+					if (debugVerbose) console.log("'" + objName +
 						"' mesh import suceeded. Mesh count: " + newMeshes.length);
-			
+
 					for (m of newMeshes) {
 						m.id = objName;
 					}
-			
+
 					if (typeof onSuccessFunc == "function") onSuccessFunc(newMeshes);
 				}, null,
 				function(scene, message, exception) {
-					console.log("== '" + objName + 
-						"' mesh import failed. ==\n  Message: " + 
+					console.log("== '" + objName +
+						"' mesh import failed. ==\n  Message: " +
 						message.substring(0, 64) + " ... " +  message.substring(message.length - 64) +
 						"\n  Exception: " + exception);
-				}, 
-		loaderPluginExtension); 
+				},
+		loaderPluginExtension);
 	}
 
 
@@ -148,15 +148,15 @@ var SquidSpace = function() {
 	        plane.material.diffuseTexture = dynamicTexture;
 	    return plane;
 	     };
-	    var axisX = BABYLON.Mesh.CreateLines("axisX", [ 
-	      BABYLON.Vector3.Zero(), new BABYLON.Vector3(size, 0, 0), new BABYLON.Vector3(size * 0.95, 0.05 * size, 0), 
+	    var axisX = BABYLON.Mesh.CreateLines("axisX", [
+	      BABYLON.Vector3.Zero(), new BABYLON.Vector3(size, 0, 0), new BABYLON.Vector3(size * 0.95, 0.05 * size, 0),
 	      new BABYLON.Vector3(size, 0, 0), new BABYLON.Vector3(size * 0.95, -0.05 * size, 0)
 	      ], scene);
 	    axisX.color = new BABYLON.Color3(1, 0, 0);
 	    var xChar = makeTextPlane("X", "red", size / 10);
 	    xChar.position = new BABYLON.Vector3(0.9 * size, -0.05 * size, 0);
 	    var axisY = BABYLON.Mesh.CreateLines("axisY", [
-	        BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, size, 0), new BABYLON.Vector3( -0.05 * size, size * 0.95, 0), 
+	        BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, size, 0), new BABYLON.Vector3( -0.05 * size, size * 0.95, 0),
 	        new BABYLON.Vector3(0, size, 0), new BABYLON.Vector3( 0.05 * size, size * 0.95, 0)
 	        ], scene);
 	    axisY.color = new BABYLON.Color3(0, 1, 0);
@@ -176,7 +176,7 @@ var SquidSpace = function() {
 	//
 	// Layout helper functions.
 	//
-	
+
 
 	var makeLayoutXYZ = function(x, y, z, w, d) {
 		// TODO: This function was created because I don't understand how Babylon
@@ -187,8 +187,8 @@ var SquidSpace = function() {
 		// the arena. All layout offsets are calculated from that point!
 
 		return [
-			floorOriginSE[0] + x + startOffsetE + (w / 2), 
-			floorOriginSE[1] + y, 
+			floorOriginSE[0] + x + startOffsetE + (w / 2),
+			floorOriginSE[1] + y,
 			floorOriginSE[2] + (z * -1) + startOffsetS - (d / 2)
 		];
 	}
@@ -203,19 +203,19 @@ var SquidSpace = function() {
 		// the arena. All layout offsets are calculated from that point!
 
 		return new BABYLON.Vector3(
-			floorOriginSE[0] + x + startOffsetE + (w / 2), 
-			floorOriginSE[1] + y, 
+			floorOriginSE[0] + x + startOffsetE + (w / 2),
+			floorOriginSE[1] + y,
 			floorOriginSE[2] + (z * -1) + startOffsetS - (d / 2)
 		);
 	}
 
-	
-	var addSingleInstanceToLayout  = function(instanceName, layout, count, x, z, 
+
+	var addSingleInstanceToLayout  = function(instanceName, layout, count, x, z,
 											offset, rotation) {
 		layout.push([instanceName, x, z, rotation]);
 	}
-	
-	
+
+
 	/** Adds a count series of layout elements to an existing layout, starting
 		at the the provided x and z and separated by the provided offset. If across
 		is true the elements start at the west and go east. Otherwise the elements
@@ -260,17 +260,17 @@ var SquidSpace = function() {
 		}
 	}
 
-	
+
 	var layoutObjects = function(objName, layout, material, scene) {
 		// Get the object.
 		let obj = objects[objName];
 		if (typeof obj != "object") throw `Invalid object reference: ''${objName}''.`;
-		
+
 		// Get the meshes.
 		let meshes = objects[objName];
 		if ((typeof meshes != "object") && !(meshes instanceof Array) && (meshes.length < 1))
 			 throw `Mesh not loaded for object reference: ''${objName}''.`;
-		
+
 		for (mesh of meshes) {
 			for (instance of layout) {
 				let m = mesh.createInstance(instance[0]);
@@ -290,15 +290,15 @@ var SquidSpace = function() {
 
 
 	var addFloor = function (x, y, z, w, d, material, scene) {
-		// NOTE: This makes the floor origin/size and the layout-based origin/size the same 
+		// NOTE: This makes the floor origin/size and the layout-based origin/size the same
 		//       so long as both use the same origin and size.
-		// IMPORTANT! This function *must* be called before doing any layouts. 
+		// IMPORTANT! This function *must* be called before doing any layouts.
 
 		// Override global origin and size because everything else will calculate from that.
 		// IMPORTANT! The origin specifies the point the floor starts from at the NW corner of
 		// the arena. All layout offsets are calculated from that point!
-		floorOriginSE = [x, y, z]; 
-		floorSize = [w, d]; 
+		floorOriginSE = [x, y, z];
+		floorSize = [w, d];
 
 		// Calculate offsets.
 		x = x + (w / 2);
@@ -343,7 +343,7 @@ var SquidSpace = function() {
 					pnl.checkCollisions = true;
 				}
 			}
-		}); 
+		});
 	}
 
 
@@ -365,8 +365,9 @@ var SquidSpace = function() {
 					}
 				}
 			}
-		}); 
+		});
 	}
+
 
 	var addCurtains = function(scene) {
 		let data = world.curtain();
@@ -408,7 +409,7 @@ var SquidSpace = function() {
 
 
 	var addTables = function(tblLayouts, material, scene) {
-		// TODO: Currently using a box for the table, we may want to 
+		// TODO: Currently using a box for the table, we may want to
 		//       replace that with a mesh, like the panels.
 		for (layout of tblLayouts) {
 			//var table = BABYLON.MeshBuilder.CreatePlane(layout[0], {width: 2, size:1, tileSize:1}, scene);
@@ -431,22 +432,22 @@ var SquidSpace = function() {
 		/** PoC-specific function to add Babylon.js built-ins and do other setup. */
 		prepareWorld: function(scene, debugVerbose, debugLayer) {
 			// TODO: Figure out how to move this stuff into world spec.
-		
-		
+
+
 			if (debugVerbose) {
 				// Log plugin activations.
 				BABYLON.SceneLoader.OnPluginActivatedObservable.add(function (plugin) {
 				    console.log(`Plugin Activated: ${plugin.name}`);
 				});
 			}
-		
+
 			// Turn on optimizaton.
 			var options = new BABYLON.SceneOptimizerOptions();
 			options.addOptimization(new BABYLON.HardwareScalingOptimization(0, 1));
 			/* Set Degredation Level - TODO: Come up with a way to make this user settable.
-			BABYLON.SceneOptimizerOptions.LowDegradationAllowed()  
-			BABYLON.SceneOptimizerOptions.ModerateDegradationAllowed()  
-			BABYLON.SceneOptimizerOptions.HighDegradationAllowed() 
+			BABYLON.SceneOptimizerOptions.LowDegradationAllowed()
+			BABYLON.SceneOptimizerOptions.ModerateDegradationAllowed()
+			BABYLON.SceneOptimizerOptions.HighDegradationAllowed()
 			*/
 			options.addOptimization(new BABYLON.SceneOptimizerOptions.ModerateDegradationAllowed());
 			var optimizer = new BABYLON.SceneOptimizer(scene, options);
@@ -467,7 +468,7 @@ var SquidSpace = function() {
 
 			// TODO: Make this dynamic somehow.
 			if (debugLayer) scene.debugLayer.show();
-		
+
 			// Add some materials we'll be using.
 			// TODO: Determine if we want to use ambient or diffuse textures. Currently using
 			//       ambient on marble and diffuse on macadam. See:
@@ -488,16 +489,16 @@ var SquidSpace = function() {
 			textures.wood.woodColor = new BABYLON.Color3(0.8, 0.8, 0.8);
 			materials.wood.backFaceCulling = false;
 		    materials.wood.diffuseTexture = textures.wood;
-		
+
 		},
-	
-		/** PoC-specific function to load the passed scene from the world 
-		    and content specs. 
+
+		/** PoC-specific function to load the passed scene from the world
+		    and content specs.
 		*/
 		buildWorld: function(worldSpec, contentSpecs, scene, debugVerbose) {
 			// Assume success.
 			let success = true;
-		 
+
 			// Verify inputs.
 			// TODO: Add other validation checks, such as object
 			//       member validation.
@@ -517,14 +518,14 @@ var SquidSpace = function() {
 				// Scene is required.
 				success = false;
 			}
-		
+
 			// Are we OK to continue?
 			if (!success) {
 				return success;
 			}
-		
+
 			// Create world from spec.
-		
+
 			// Load arena.
 			let arenaData = world.arena();
 			objects.arena = loadObject("arena", arenaData, scene);
@@ -686,7 +687,7 @@ var SquidSpace = function() {
 			// TODO: Determine best settings here.
 			if (debugVerbose) {
 				// Allow user to fly.
-				scene.gravity = new BABYLON.Vector3(0, 0, 0); 
+				scene.gravity = new BABYLON.Vector3(0, 0, 0);
 			}
 			else {
 				// User walks on ground.
@@ -713,29 +714,29 @@ var SquidSpace = function() {
 			let gl = new BABYLON.GlowLayer("glow", scene, {});
 			gl.intensity = 1.0;
 
-			let lightFrontFill = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 20, 70), scene);
-			lightFrontFill.diffuse = new BABYLON.Color3(0.3, 0.3, 0.2);
+			let lightFrontFill = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 20, -0), scene);
+			lightFrontFill.diffuse = new BABYLON.Color3(1, 1, 1);
 			lightFrontFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
 			lightFrontFill.range = 150;
 
-			let lightTopFill = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 230, 70), scene);
+			let lightTopFill = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(25, 230, -60), scene);
 			lightTopFill.diffuse = new BABYLON.Color3(1, 1, 1);
-			lightTopFill.specular = new BABYLON.Color3(0.8, 0.8, 0.8);
-			lightTopFill.range = 300;
+			lightTopFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
+			lightTopFill.range = 150;
 
 
-			let light1 = new BABYLON.SpotLight("spotLight", new BABYLON.Vector3(40, 9, -50), new BABYLON.Vector3(0, -70, 0), Math.PI / 5, 1, scene);
-			light1.diffuse = new BABYLON.Color3(0, 1, 0);
-			light1.specular = new BABYLON.Color3(0, 1, 0);
-			light1.range = 40;
-
-			let light2 = new BABYLON.SpotLight("spotLight", new BABYLON.Vector3(20, 9, -50), new BABYLON.Vector3(0, -70, 0), Math.PI / 3, 1, scene);
-			light2.diffuse = new BABYLON.Color3(0, 0.7, 0.7);
-			light2.specular = new BABYLON.Color3(0.7, 0.7, 0.7);
-			light2.range = 40;
+			// let light1 = new BABYLON.SpotLight("spotLight", new BABYLON.Vector3(40, 9, -50), new BABYLON.Vector3(0, -70, 0), Math.PI / 5, 1, scene);
+			// light1.diffuse = new BABYLON.Color3(0, 1, 0);
+			// light1.specular = new BABYLON.Color3(0, 1, 0);
+			// light1.range = 40;
+			//
+			// let light2 = new BABYLON.SpotLight("spotLight", new BABYLON.Vector3(20, 9, -50), new BABYLON.Vector3(0, -70, 0), Math.PI / 3, 1, scene);
+			// light2.diffuse = new BABYLON.Color3(0, 0.7, 0.7);
+			// light2.specular = new BABYLON.Color3(0.7, 0.7, 0.7);
+			// light2.range = 40;
 
 			//var light = new BABYLON.PointLight("light2", new BABYLON.Vector3(0, 1, -1), scene);
-		
+
 			// Done.
 			return success;
 		}
