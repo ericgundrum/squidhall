@@ -93,26 +93,31 @@
 	// NOTE: Insert code to add other things to the scene here. This is
 	//       where you would be adding your own experiments.
 	
-	SquidSpace.registerPlacerHook("beamplacer", 
+	SquidSpace.attachPlacerHook("beamplacer", 
 		function(areaName, areaOrigin, config, placerName, meshes, data){
 			if (debugVerbose) 
-				console.log(`beamplacer called! ${areaName}, ${areaOrigin}, 
-					        ${config}, ${placerName}, ${data}`);
+				console.log(`beamplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placerName}, ${data}`);
 		});
 
-	SquidSpace.registerPlacerHook("bannerplacer", 
+	SquidSpace.attachPlacerHook("bannerplacer", 
 		function(areaName, areaOrigin, config, placerName, meshes, data){
 			if (debugVerbose) 
-				console.log(`bannerplacer called! ${areaName}, ${areaOrigin}, 
-					        ${config}, ${placerName}, ${data}`);
+				console.log(`bannerplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placerName}, ${data}`);
 		});
 
-	SquidSpace.registerPlacerHook("curtainplacer", 
+	SquidSpace.attachPlacerHook("curtainplacer", 
 		function(areaName, areaOrigin, config, placerName, meshes, data){
 			if (debugVerbose) 
-				console.log(`curtainplacer called! ${areaName}, ${areaOrigin}, 
-					        ${config}, ${placerName}, ${data}`);
-							
+				console.log(`curtainplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placerName}, ${data}`);
+			
+			// NOTE: if you need to verify meshes exist before using them, the 
+			//  	 the following example is one way.
+			//
+			//  if (typeof meshes != "undefined") {
+			//     . . . code here
+			//  }
+			
+			
 			for (curtainmesh of meshes) {
 				curtainmesh.isVisible = false;
 
@@ -143,6 +148,27 @@
 				}
 
 			}
+		});
+
+		SquidSpace.attachPlacerHook("lightplacer", 
+			function(areaName, areaOrigin, config, placerName, meshes, data){
+				if (debugVerbose) 
+					console.log(`lightplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placerName}, ${data}`);
+
+				let gl = new BABYLON.GlowLayer("glow", scene, {});
+				gl.intensity = 1.0;
+
+				let lightFrontFill = new BABYLON.PointLight("pointLight", 
+														SquidSpace.makePointVector(25, 20, 0), scene);
+				lightFrontFill.diffuse = new BABYLON.Color3(1, 1, 1);
+				lightFrontFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
+				lightFrontFill.range = 90;
+
+				let lightTopFill = new BABYLON.PointLight("pointLight", 
+														SquidSpace.makePointVector(25, 20, 60), scene);
+				lightTopFill.diffuse = new BABYLON.Color3(1, 1, 1);
+				lightTopFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
+				lightTopFill.range = 90;
 		});
 		
 	// Here's where we do the magic. 

@@ -215,6 +215,8 @@ var SquidSpace = function() {
 	//
 	// Object Builtins.
 	//
+	// TODO: See if any of these can be moved to hooks.
+	//
 
 	var addFloor = function (x, y, z, w, d, material, scene) {
 		// NOTE: This makes the floor origin/size and the layout-based origin/size the same 
@@ -250,25 +252,6 @@ var SquidSpace = function() {
 	    floorSection.material = material;
 		floorSection.material.backFaceCulling = false;
 		return floorSection;
-	}
-	
-	
-	var addLights = function(scene) {
-
-		let gl = new BABYLON.GlowLayer("glow", scene, {});
-		gl.intensity = 1.0;
-
-		let lightFrontFill = new BABYLON.PointLight("pointLight", 
-												SquidSpace.makePointVector(25, 20, 0), scene);
-		lightFrontFill.diffuse = new BABYLON.Color3(1, 1, 1);
-		lightFrontFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
-		lightFrontFill.range = 90;
-
-		let lightTopFill = new BABYLON.PointLight("pointLight", 
-												SquidSpace.makePointVector(25, 20, 60), scene);
-		lightTopFill.diffuse = new BABYLON.Color3(1, 1, 1);
-		lightTopFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
-		lightTopFill.range = 90;
 	}
 	
 	
@@ -353,26 +336,28 @@ var SquidSpace = function() {
 				let data = getValIfKeyInDict("data", placement, {});
 				
 				// Get meshes.
-				if (objName in objects) {
-					let meshes = objects[objName];
-				
+				if (objName in objects || objName === "_none_") {
+					
 					// Is the placer hooked?
 					if (placer in placerHooks) {
+						// Try to get the meshes.
+						let meshes = SquidSpace.getLoadedObjectMeshes(objName);
 						// TODO: Wrap with try/catch.
-						placerHooks[placer](areaName, areaOrigin, config, placerName, meshes, data);
+						placerHooks[placer](areaName, areaOrigin, config, 
+											placerName, meshes, data);
 					}
 					else if (placerName == "linear-series") {
-						// TODO: Implement.
+						// TODO: Implement with placeObjects().
 					}
 					else if (placerName == "rectangle-series") {
-						// TODO: Implement.
+						// TODO: Implement with placeObjects().
 					}
 					else if (placerName == "single") {
-						// TODO: Implement.
+						// TODO: Implement with placeObjects().
 					}
 					else {
 						// TODO: Throw exception.
-					}					
+					}
 				}
 				else {
 					// TODO: Throw exception or otherwise handle. (Log?)
@@ -590,12 +575,13 @@ var SquidSpace = function() {
 			}
 		},
 
+
 		//
 		// Hooks.
 		//
 		
 		
-		registerPlacerHook: function(hookName, placerFunction) {
+		attachPlacerHook: function(hookName, placerFunction) {
 			placerHooks[hookName] = placerFunction;
 		},
 		
@@ -712,12 +698,7 @@ var SquidSpace = function() {
 			// Create world from spec.
 			objectSpecLoader(world.objects, scene, null);
 			// TODO: material, lights, etc. spec loaders.	
-					
 			layoutSpecLoader(world.layouts, scene);
-
-			// Add lights.
-			// TODO: Move this to the world spec file.
-			addLights(scene);
 
 			// Set gravity for the scene (G force on Y-axis)
 			// See https://doc.babylonjs.com/babylon101/cameras,_mesh_collisions_and_gravity

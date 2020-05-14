@@ -165,6 +165,13 @@
 							"placer": "curtainplacer",
 							"data": {
 							}
+						},
+						{
+							"name": "lights",
+							"object": "_none_",
+							"placer": "lightplacer",
+							"data": {
+							}
 						}
 					]
 				},
