@@ -29,6 +29,10 @@
 	We need to figure out what is required to support tablets and phones and implement that.
 
 	We need to determine if we want to support gamepads.
+
+	SquidSpace, the associated tooling, and the documentation are copyright Jack William Bell 2020. 
+    All other content, including HTML files and 3D assets, are copyright their respective
+    authors.
 */
 
 
@@ -46,11 +50,20 @@ var SquidSpace = function() {
 	//
 
 	// Debug modes.
+	// TODO: Make debug modes dynamic, can turn on and off, and
+	// add a public log function with log levels, that logs 
+	// to the console based on log level and debug mode.
 	var debugCamera = false;
 
 	// This is the NW corner of the arena and the origin for layouts. 
 	var floorOriginNW = [0, 0, 0]; 
 	var floorSize = [0, 0];
+	
+	// TODO: Add a SquidSpace-specific config value and pass a copy of 
+	//       and pass it 'frozen' to all events and hooks.
+	// const temp3 = Object.freeze( {a:3,b:4})
+	// temp3.a = 2 // it wont update the value of a, it still have 3
+	// temp3.c = 6 // still valid but wont change the object
 
 	// TODO: Move these values into the pack file data.
 	var pnlwidth = 1;
@@ -93,44 +106,6 @@ var SquidSpace = function() {
 		return defaultVal;
 	}
 
-
-	/* I want to add this for debugVerbose mode, but it isn't working and I don't have time to figure it out.
-	var showWorldAxis = function showWorldAxis(size, scene) {
-	    var makeTextPlane = function(text, color, size) {
-	        var dynamicTexture = new BABYLON.DynamicTexture("DynamicTexture", 50, scene, true);
-	        dynamicTexture.hasAlpha = true;
-	        dynamicTexture.drawText(text, 5, 40, "bold 36px Arial", color , "transparent", true);
-	        var plane = BABYLON.Mesh.CreatePlane("TextPlane", size, scene, true);
-	        plane.material = new BABYLON.StandardMaterial("TextPlaneMaterial", scene);
-	        plane.material.backFaceCulling = false;
-	        plane.material.specularColor = new BABYLON.Color3(0, 0, 0);
-	        plane.material.diffuseTexture = dynamicTexture;
-	    return plane;
-	     };
-	    var axisX = BABYLON.Mesh.CreateLines("axisX", [ 
-	      BABYLON.Vector3.Zero(), new BABYLON.Vector3(size, 0, 0), new BABYLON.Vector3(size * 0.95, 0.05 * size, 0), 
-	      new BABYLON.Vector3(size, 0, 0), new BABYLON.Vector3(size * 0.95, -0.05 * size, 0)
-	      ], scene);
-	    axisX.color = new BABYLON.Color3(1, 0, 0);
-	    var xChar = makeTextPlane("X", "red", size / 10);
-	    xChar.position = new BABYLON.Vector3(0.9 * size, -0.05 * size, 0);
-	    var axisY = BABYLON.Mesh.CreateLines("axisY", [
-	        BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, size, 0), new BABYLON.Vector3( -0.05 * size, size * 0.95, 0), 
-	        new BABYLON.Vector3(0, size, 0), new BABYLON.Vector3( 0.05 * size, size * 0.95, 0)
-	        ], scene);
-	    axisY.color = new BABYLON.Color3(0, 1, 0);
-	    var yChar = makeTextPlane("Y", "green", size / 10);
-	    yChar.position = new BABYLON.Vector3(0, 0.9 * size, -0.05 * size);
-	    var axisZ = BABYLON.Mesh.CreateLines("axisZ", [
-	        BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, 0, size), new BABYLON.Vector3( 0 , -0.05 * size, size * 0.95),
-	        new BABYLON.Vector3(0, 0, size), new BABYLON.Vector3( 0, 0.05 * size, size * 0.95)
-	        ], scene);
-	    axisZ.color = new BABYLON.Color3(0, 0, 1);
-	    var zChar = makeTextPlane("Z", "blue", size / 10);
-	    zChar.position = new BABYLON.Vector3(0, 0.05 * size, 0.9 * size);
-	};
-	*/
-
 	//
 	// Object spec loader.
 	//
@@ -158,7 +133,7 @@ var SquidSpace = function() {
 					let mn = getValIfKeyInDict("material", data, "");
 					// TODO: Get material from material list by material name
 					//       with a default if not loaded.
-					// TODO: Refactor this into a function
+					// TODO: Refactor this into calls to object builtin hooks.
 					if (tp === "floor") {
 						obj = addFloor(pos[0], pos[1], pos[2], sz[0], sz[1], 
 										materials.macadam, scene);
@@ -174,7 +149,6 @@ var SquidSpace = function() {
 						let targetPos = getValIfKeyInDict("target-position", data, [20, 1.6, 20]);
 						obj = addCamera(pos[0], pos[1], pos[2], 
 										targetPos[0], targetPos[1], targetPos[2], scene);
-						//addFloorSection("hugos", 15, 15, 10, 15, materials.marble, scene);
 						success = true;
 					}
 				}
@@ -213,9 +187,11 @@ var SquidSpace = function() {
 	}
 	
 	//
-	// Object Builtins.
+	// Builtins.
 	//
-	// TODO: See if any of these can be moved to hooks.
+	// TODO: Create 'object' builtin hooks. Move these to builtin hooks.
+	// 
+	// TODO: Create 'texture', 'material', and 'light' builtin hooks. 
 	//
 
 	var addFloor = function (x, y, z, w, d, material, scene) {
@@ -312,8 +288,6 @@ var SquidSpace = function() {
 	
 	
 	// TODO: Spec loaders for materials, lights, etc.
-	
-	// TODO: Builtins for materials, lights, etc.
 	
 
 	//

@@ -1,8 +1,22 @@
 # Squid Hall
 
-This is a project to create a virtual 'exhibits hall' for ConZealand.
+This is a project to create a virtual 'exhibits hall' for ConZealand based on the actual
+TSB Arena in Wellington New Zealand for the ConZealand 2020 Science Fiction Worldcon. 
+The TSB Arena is known to Worldcon staff as 'Squid Hall', thus the 
 
-Note for Developer
+## Developer notes
+
+The SquidSpace module provides a thin runtime controller wrapper around Babylon.js focused on
+creating 'walkthrough simulations' of spaces; recreated from real spaces or imaginary. SquidSpace
+is designed for high extensibility through events and hooks and is driven by 'pack files' containing
+or referencing 3D content and runtime configuration. The pack file specification provides a Domain 
+Specific Language (DSL) useful for applications using 3D content.
+
+### Branching and branch names
+
+This project is using a strategy of making the master the latest integrated code. Version releases
+are assigned to version named branches. The following naming rules and branch purposes apply:
+
 * master - The main branch with the mainline code for the latest version, does not need to pass tests. Once we have a 'version' that does pass tests we create a version branch as described below.
 
 * feature-[feature-name] - Feature-specific development branches. Branch names always start with 'Feature' and are followed with the name of the feature after a dash. Generally these branches should be merged to master once the feature is working. If we have more than one person working on a feature they can create sub-branches named feature-[feature-name]-[developer-name]-[purpose].
@@ -16,3 +30,10 @@ Note for Developer
 * [version-name]-['feature' or 'bug']-[feature name or issue ID] Version branches being worked on to fix bugs in or to backport features from later versions. Branch names always start with the version name and then follow the feature or bug naming convention. These should be merged back to the original version branch and a new version tag created once they pass all tests.
 
 * [developer-name]-[purpose] - Dev playground branches. Branch names always start with the developer name and are followed with the purpose of the branch after a dash. Generally these branches should never be merged to another branch. In most cases code created in these branches should be moved and integrated into other branches by hand in order to avoid introducing unintended dependencies.
+
+
+## Copyright
+
+SquidSpace, which includes squidspace.js, the associated tooling, and the documentation are 
+copyright Jack William Bell 2020. All other content, including HTML files and 3D assets, are 
+copyright their respective authors.

@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Removes unhelpful or unneeded data sections from .babylon files."""
+"""Removes unhelpful or unneeded data sections from .babylon files.
+
+SquidSpace, the associated tooling, and the documentation are copyright Jack William Bell 2020. 
+All other content, including HTML files and 3D assets, are copyright their respective
+authors.
+"""
 
 import sys
 import os

@@ -261,3 +261,9 @@ the SquidSpace documentation.
 NOTE: It is possible to create your own SquidSpace content modules from scratch
 or to edit generated SquidSpace content modules. However, pack files are 
 almost certainly simpler to use.
+
+## Copyright 
+
+SquidSpace, the associated tooling, and the documentation are copyright Jack William Bell 2020. 
+All other content, including HTML files and 3D assets, are copyright their respective
+authors.

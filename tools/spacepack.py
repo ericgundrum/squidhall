@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """Reads in a 'pack' file containing JSON data and, using that data, generates
-a Javascript module."""
+a Javascript module.
+
+SquidSpace, the associated tooling, and the documentation are copyright Jack William Bell 2020. 
+All other content, including HTML files and 3D assets, are copyright their respective
+authors."""
 
 import sys
 import os
