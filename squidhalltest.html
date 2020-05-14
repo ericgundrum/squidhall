@@ -92,6 +92,16 @@
 
 	// NOTE: Insert code to add other things to the scene here. This is
 	//       where you would be adding your own experiments.
+	
+	SquidSpace.registerPlacerHook("beamplacer", 
+		function(areaName, areaOrigin, config, placerName, meshes, data){
+			console.log(`beamplacer called! &{areaName}, &{areaOrigin}, &{config}, &{placerName}, &{data}`);
+		});
+
+	SquidSpace.registerPlacerHook("bannerplacer", 
+		function(areaName, areaOrigin, config, placerName, meshes, data){
+			console.log(`bannerplacer called! &{areaName}, &{areaOrigin}, &{config}, &{placerName}, &{data}`);
+		});
 
 	// Here's where we do the magic. 
 	document.addEventListener("DOMContentLoaded", (event) =>{	

@@ -218,6 +218,11 @@ def insertLoaderData(elem, outFile, config, baseOffset):
     if config.pp: outFile.write("\n" + baseOffset)
     outFile.write("},") 
     
+def insertLayoutData(elem, outFile, config, baseOffset):
+    # TODO: Implement something more specific. 
+    insertDict(elem, outFile, config, baseOffset)
+    outFile.write(",")
+    
     
 def processModule(outDir, module):
     """Processes one module's elements and generates a module file."""
@@ -281,7 +286,17 @@ def processModule(outDir, module):
         mf.write("lights: {")
         for light in module["lights"]:
             insertLoaderData(light, mf, config, baseOffset + offset)
-        mf.write("}")
+        mf.write("},")
+    
+    # Process layouts.
+    if "area-layouts" in module:
+        if config.pp: mf.write("\n" + baseOffset)
+        mf.write("layouts: [")
+        for layout in module["area-layouts"]:
+            if config.pp: mf.write("\n" + baseOffset + offset)
+            insertLayoutData(layout, mf, config, baseOffset + offset)
+        if config.pp: mf.write("\n" + baseOffset)
+        mf.write("]")
     
     # Write module end.
     if config.pp: mf.write("\n" + offset)

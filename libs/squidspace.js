@@ -45,10 +45,12 @@ var SquidSpace = function() {
 	// NOTE: Each unit corresponds to 1 meter, so 1.75 is one and three quarter meters.
 	//
 
+	// Debug modes.
+	var debugCamera = false;
 
 	// This is the NW corner of the arena and the origin for layouts. 
 	var floorOriginNW = [0, 0, 0]; 
-	var floorSize = [0, 0]
+	var floorSize = [0, 0];
 
 	// TODO: Move these values into the pack file data.
 	var pnlwidth = 1;
@@ -75,6 +77,7 @@ var SquidSpace = function() {
 	var materials = {};
 	var objects = {};
 
+	var placerHooks = {};
 
 	//
 	// Helper functions.
@@ -128,11 +131,16 @@ var SquidSpace = function() {
 	};
 	*/
 
+	//
+	// Object spec loader.
+	//
 	
 	var objectSpecLoader = function(objDict, scene, onSuccessFunc) {
 		for (key in objDict) {
-			let obj = undefined;
+			// Assume failure.
 			let success = false;
+			
+			let obj = undefined;
 			let config = undefined;
 			let visible = false;
 			if (typeof objDict[key]["config"] === "object") {
@@ -146,7 +154,7 @@ var SquidSpace = function() {
 					let data = objDict[key]["data"];
 					let tp = getValIfKeyInDict("type", data, "");
 					let sz = getValIfKeyInDict("size", data, [1, 1]);
-					let pos = getValIfKeyInDict("position", data, [0, 0]);
+					let pos = getValIfKeyInDict("position", data, [0, 0, 0]);
 					let mn = getValIfKeyInDict("material", data, "");
 					// TODO: Get material from material list by material name
 					//       with a default if not loaded.
@@ -156,11 +164,18 @@ var SquidSpace = function() {
 										materials.macadam, scene);
 						success = true;
 					}
-					if (tp === "floorSection") {
-						//obj = addFloorSection(mn, pos[0], pos[1], pos[2], sz[0], sz[1], 
-						//					materials.marble, scene);
+					else if (tp === "floorSection") {
+						obj = addFloorSection(key, pos[0], pos[2], sz[0], sz[1], 
+											materials.marble, scene);
 						//addFloorSection("hugos", 15, 15, 10, 15, materials.marble, scene);
-						//success = true;
+						success = true;
+					}
+					else if (tp === "usercamera") {
+						let targetPos = getValIfKeyInDict("target-position", data, [20, 1.6, 20]);
+						obj = addCamera(pos[0], pos[1], pos[2], 
+										targetPos[0], targetPos[1], targetPos[2], scene);
+						//addFloorSection("hugos", 15, 15, 10, 15, materials.marble, scene);
+						success = true;
 					}
 				}
 				else {
@@ -188,21 +203,17 @@ var SquidSpace = function() {
 				});
 			}
 			
-			if (success) {
+			if (success && obj !== undefined) {
 				// Append the config?
 				if (typeof config === "object") {
 					obj["config"] = config;
 				}
-				// Save the object.
-				objects[key] = obj;
 			}			
 		}
 	}
 	
-	// TODO: Spec loaders for materials, lights, etc.
-
 	//
-	// Builtins.
+	// Object Builtins.
 	//
 
 	var addFloor = function (x, y, z, w, d, material, scene) {
@@ -234,12 +245,13 @@ var SquidSpace = function() {
 	var addFloorSection = function(secName, x, z, w, d, material, scene) {
 		var floorSection = BABYLON.MeshBuilder.CreatePlane(secName, 
 												{width: w, height:d}, scene);
-		floorSection.position = new makeLayoutVector(x, 0.001, z, w, d);
+		floorSection.position = new SquidSpace.makeLayoutVector(x, 0.001, z, w, d);
 		floorSection.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
 	    floorSection.material = material;
 		floorSection.material.backFaceCulling = false;
 		return floorSection;
 	}
+	
 	
 	var addLights = function(scene) {
 
@@ -258,7 +270,127 @@ var SquidSpace = function() {
 		lightTopFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
 		lightTopFill.range = 90;
 	}
+	
+	
+	var addCamera = function(x, y, z, targetX, targetY, targetZ, scene) {
 
+		// Add a camera to the scene and attach it to the canvas
+		// TODO: Specify camera in world file.
+		// TODO: Support switching to VirtualJoysticksCamera if running on a tablet or phone.
+		// See https://doc.babylonjs.com/babylon101/cameras#virtual-joysticks-camera
+		let camera = new BABYLON.UniversalCamera("usercamera", 
+												SquidSpace.makePointVector(x, y, x), scene);
+		//var camera = new BABYLON.FreeCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
+		//var camera = new BABYLON.FlyCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
+		camera.setTarget(new SquidSpace.makePointVector(targetX, targetY, targetZ));
+		camera.attachControl(canvas, true);
+
+		//
+		// Enable walking.
+		// TODO: Specify the options in world file, add support code to squidspace.js
+		//
+
+		// Set the ellipsoid around the camera for collision detection.
+		// TODO: Experiment with values to find best.
+		// TODO: Consider making pack file settable.
+		// NOTE: ellipsoid values must be carefully chosen to reduce image tearing when
+		//       up close to objects, while still allowing you to navigate around without
+		//       getting stuck between things. However, this does mean you can't get really
+		//       close to anything straight in front of you.
+		camera.ellipsoid = new BABYLON.Vector3(1.7, 1, 0.3);
+
+		// WASD movement.
+	    camera.keysUp.push(87);    //W
+	    camera.keysDown.push(83)   //D
+	    camera.keysLeft.push(65);  //A
+	    camera.keysRight.push(68); //S
+
+		// Support gamepad.
+		//camera.inputs.add(new BABYLON.FreeCameraGamepadInput());
+		//camera.inputs.attached.gamepad.gamepadAngularSensibility = 250;
+
+		// Apply collisions and gravity to the active camera
+		camera.checkCollisions = true;
+		camera.applyGravity = true;
+
+		// Other camera settings.
+		// TODO: Experiment with values to find best.
+		// TODO: Consider making pack file settable.
+		camera.fov = 1.3;
+		if (!debugCamera) {
+			camera.speed = 0.55; // Lower values slow movement down.
+		    //camera.inertia = 0.2; // Lower values slow movement down, but also affect turning.
+			camera.inertia = 0.4;
+			//camera.inertia = 0.6;
+		}
+		
+		return camera;
+	}
+	
+	
+	// TODO: Spec loaders for materials, lights, etc.
+	
+	// TODO: Builtins for materials, lights, etc.
+	
+
+	//
+	// Layout spec loader.
+	//
+
+	var layoutSpecLoader = function(layoutsList, scene) {
+		for (layout of layoutsList) {
+			let areaName = getValIfKeyInDict("area", layout, "");
+			let areaOrigin = getValIfKeyInDict("origin", layout, [0,0,0]);
+			let config = undefined;
+			if (typeof layout["config"] === "object") {
+				config = layout["config"];
+			}
+			
+			for (placement of layout["object-placements"]) {
+				let placerName =  getValIfKeyInDict("name", placement, "");
+				let placer = getValIfKeyInDict("placer", placement, "");
+				let objName = getValIfKeyInDict("object", placement, "");
+				let data = getValIfKeyInDict("data", placement, {});
+				
+				// Get meshes.
+				if (objName in objects) {
+					let meshes = objects[objName];
+				
+					// Is the placer hooked?
+					//if (placer in placerHooks) {
+					if (placer === "beamplacer") {
+						// TODO: Wrap with try/catch.
+						placerHooks[placer](areaName, areaOrigin, config, placerName, meshes, data);
+					}
+					else if (placerName == "linear-series") {
+						// TODO: Implement.
+					}
+					else if (placerName == "rectangle-series") {
+						// TODO: Implement.
+					}
+					else if (placerName == "single") {
+						// TODO: Implement.
+					}
+					else {
+						// TODO: Throw exception.
+					}					
+				}
+				else {
+					// TODO: Throw exception or otherwise handle. (Log?)
+				}					
+			}
+			
+		}
+	}
+	
+	
+	//
+	// Layout Placers.
+	//
+	
+	// TODO: Implement.
+
+	
 	return {
 		//
 		// Public helper functions.
@@ -275,7 +407,7 @@ var SquidSpace = function() {
 			return [
 				floorOriginNW[0] + x + (w / 2), 
 				floorOriginNW[1] + y, 
-				floorOriginNW[2] + (z * -1) + (d / 2)
+				floorOriginNW[2] + (z * -1) - (d / 2)
 			];
 		},
 
@@ -307,12 +439,14 @@ var SquidSpace = function() {
 			return new BABYLON.Vector3(
 				floorOriginNW[0] + x + (w / 2), 
 				floorOriginNW[1] + y, 
-				floorOriginNW[2] + (z * -1) + (d / 2)
+				floorOriginNW[2] + (z * -1) - (d / 2)
 			);
 		},
 		
 
 		loadObject: function(objName, objData, scene, onSuccessFunc) {
+			let obj = undefined;
+			
 			// Note: You can add this ImportMesh() argument to force a specific 
 			//       loader plugin by file type. 
 			let loaderPluginExtension = null;
@@ -338,14 +472,18 @@ var SquidSpace = function() {
 
 			let meshNameFilter = ""; // Empty string means import *all* meshes in the object.
 
-			return BABYLON.SceneLoader.ImportMesh(meshNameFilter, fr, fn, scene, 
+			obj = BABYLON.SceneLoader.ImportMesh(meshNameFilter, fr, fn, scene, 
 					function(newMeshes) {
 						if (debugVerbose) console.log("'" + objName + 
 							"' mesh import suceeded. Mesh count: " + newMeshes.length);
 			
+						// Force ID of all meshes to the object name.
 						for (m of newMeshes) {
 							m.id = objName;
 						}
+						
+						// Save the meshes for later.
+						objects[objName] = newMeshes;
 			
 						if (typeof onSuccessFunc == "function") onSuccessFunc(newMeshes);
 					}, null,
@@ -355,29 +493,32 @@ var SquidSpace = function() {
 							message.substring(0, 64) + " ... " +  message.substring(message.length - 64) +
 							"\n  Exception: " + exception);
 					}, 
-			loaderPluginExtension); 
+					loaderPluginExtension); 
+			
+			// Done.
+			return obj;
 		},
 		
 		//
 		// Layout helper functions.
 		//
 	
-		addSingleInstanceToLayout: function(instanceName, layout, count, x, z, 
+		addSingleInstanceToPlacements: function(instanceName, placements, count, x, z, 
 												offset, rotation) {
-			layout.push([instanceName, x, z, rotation]);
+			placements.push([instanceName, x, z, rotation]);
 		},
 	
 	
-		/** Adds a count series of layout elements to an existing layout, starting
+		/** Adds a count series of placements elements to an existing placements, starting
 			at the the provided x and z and separated by the provided offset. If across
 			is true the elements start at the west and go east. Otherwise the elements
 			start at the south and go north. The passed rotation is used for all elements
 			in the series.
 		*/
-		addLinearSeriesToLayout: function(seriesName, layout, count, x, z, offset,
+		addLinearSeriesToPlacements: function(seriesName, placements, count, x, z, offset,
 												across, rotation) {
 			for (let i = 0;i < count;i++) {
-				layout.push([seriesName + i, x, z, rotation])
+				placements.push([seriesName + i, x, z, rotation])
 				if (across) {
 					x += offset;
 				}
@@ -388,33 +529,33 @@ var SquidSpace = function() {
 		},
 
 
-		addRectangleSeriesToLayout: function(seriesName, layout, countWide, countDeep,
+		addRectangleSeriesToPlacements: function(seriesName, placements, countWide, countDeep,
 													x, z, lengthOffset, widthOffset) {
 			// Calculate starting positions.
 			let wx = x - widthOffset;
 			let bz = z + (countDeep * lengthOffset) - widthOffset;
 			let rx = x - (countWide * lengthOffset);
 
-			// Do width layout.
+			// Do width placements.
 			for (let i = 0;i < countWide;i++) {
-				addLinearSeriesToLayout(seriesName + "top-", layout, countWide, wx, z,
+				addLinearSeriesToPlacements(seriesName + "top-", placements, countWide, wx, z,
 								lengthOffset, true, norot);
-				addLinearSeriesToLayout(seriesName + "bottom-", layout, countWide, wx, bz,
+				addLinearSeriesToPlacements(seriesName + "bottom-", placements, countWide, wx, bz,
 								lengthOffset, true, norot);
 			}
 
-			// Do depth layout.
+			// Do depth placements.
 			for (let i = 0;i< countDeep;i++) {
-				addLinearSeriesToLayout(seriesName + "left-", layout, countDeep, x + widthOffset, bz - widthOffset,
+				addLinearSeriesToPlacements(seriesName + "left-", placements, countDeep, x + widthOffset, bz - widthOffset,
 								lengthOffset, false, rot);
-				addLinearSeriesToLayout(seriesName + "right-", layout, countDeep, rx, bz - widthOffset,
+				addLinearSeriesToPlacements(seriesName + "right-", placements, countDeep, rx, bz - widthOffset,
 								lengthOffset, false, rot);
 			}
 		},
 
 	
-		layoutObjects: function(objName, layout, material, scene) {
-			// Get the object.
+		placeObjects: function(objName, placements, material, scene) {
+			// Check the object. (Must be loaded by SquidSpace.)
 			let obj = objects[objName];
 			if (typeof obj != "object") throw `Invalid object reference: ''${objName}''.`;
 		
@@ -424,18 +565,28 @@ var SquidSpace = function() {
 				 throw `Mesh not loaded for object reference: ''${objName}''.`;
 		
 			for (mesh of meshes) {
-				for (instance of layout) {
+				for (instance of placements) {
 					let m = mesh.createInstance(instance[0]);
-					pnl.position = makeLayoutVector(instance[1], 0.01, instance[2], pnlwidth, pnldepth);
-					if (layout[3] != 0) {
-						pnl.rotate(BABYLON.Axis.Y, instance[3]);
-						pnl.position.z -= (pnlwidth / 2);
+					m.position = SquidSpace.makeLayoutVector(
+										instance[0], 0.01, instance[2], pnlwidth, pnldepth);
+					if (placements[3] != 0) {
+						m.rotate(BABYLON.Axis.Y, instance[3]);
+						m.position.z -= (pnlwidth / 2);
 					}
-					pnl.checkCollisions = true;
+					m.checkCollisions = true;
 				}
 			}
 		},
 
+		//
+		// Hooks.
+		//
+		
+		
+		registerPlacerHook: function(hookName, placerFunction) {
+			placerHooks[hookName] = placerFunction;
+		},
+		
 		
 		//
 		// Public scene management functions.
@@ -443,6 +594,7 @@ var SquidSpace = function() {
 		
 		/** PoC-specific function to add Babylon.js built-ins and do other setup. */
 		prepareWorld: function(scene, debugVerbose, debugLayer) {
+			
 			// TODO: Figure out how to move this stuff into world spec.
 		
 		
@@ -515,6 +667,11 @@ var SquidSpace = function() {
 			// Assume success.
 			let success = true;
 		 
+			debugCamera = debugVerbose;
+			if (debugVerbose) {
+				//showWorldAxis(10)
+			}
+		 
 			// Verify inputs.
 			// TODO: Add other validation checks, such as object
 			//       member validation.
@@ -542,75 +699,31 @@ var SquidSpace = function() {
 						
 			// Create world from spec.
 			objectSpecLoader(world.objects, scene, null);
-			// TODO: material, lights, etc. spec loaders.			
+			// TODO: material, lights, etc. spec loaders.	
+					
+			layoutSpecLoader(world.layouts, scene);
 
 			// Add lights.
-			// TODO: Move these to the world spec file.
+			// TODO: Move this to the world spec file.
 			addLights(scene);
-
-			// Add a camera to the scene and attach it to the canvas
-			// TODO: Specify camera in world file.
-			// TODO: Support switching to VirtualJoysticksCamera if running on a tablet or phone.
-			// See https://doc.babylonjs.com/babylon101/cameras#virtual-joysticks-camera
-			let camera = new BABYLON.UniversalCamera("default camera", 
-													SquidSpace.makePointVector(2, 1.6, 2), scene);
-			//var camera = new BABYLON.FreeCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
-			//var camera = new BABYLON.FlyCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
-			camera.setTarget(new BABYLON.Vector3(20, 1.6, -60));
-			camera.attachControl(canvas, true);
-
-			//
-			// Enable walking.
-			// TODO: Specify the options in world file, add support code to squidspace.js
-			//
-
-			// Set the ellipsoid around the camera for collision detection.
-			// TODO: Experiment with ellipsoid to find best.
-			// NOTE: ellipsoid values are carefully chosen to reduce image tearing when
-			//       up close to objects, while still allowing you to navigate around without
-			//       getting stuck between things. However, this does mean you can't get really
-			//       close to anything straight in front of you.
-			camera.ellipsoid = new BABYLON.Vector3(1.7, 1, 0.3);
-
-			// WASD movement.
-		    camera.keysUp.push(87);    //W
-		    camera.keysDown.push(83)   //D
-		    camera.keysLeft.push(65);  //A
-		    camera.keysRight.push(68); //S
-
-			// Support gamepad.
-			//camera.inputs.add(new BABYLON.FreeCameraGamepadInput());
-			//camera.inputs.attached.gamepad.gamepadAngularSensibility = 250;
-
-			// Other camera settings.
-			camera.fov = 1.3;
-			if (!debugVerbose) {
-				camera.speed = 0.55; // Lower values slow movement down.
-			    //camera.inertia = 0.2; // Lower values slow movement down, but also affect turning.
-				camera.inertia = 0.4;
-				//camera.inertia = 0.6;
-				showWorldAxis(10)
-			}
 
 			// Set gravity for the scene (G force on Y-axis)
 			// See https://doc.babylonjs.com/babylon101/cameras,_mesh_collisions_and_gravity
 			// TODO: Determine best settings here.
 			if (debugVerbose) {
+				// TODO: Give this it's own argument instead of debugVerbose.
 				// Allow user to fly.
 				scene.gravity = new BABYLON.Vector3(0, 0, 0); 
 			}
 			else {
 				// User walks on ground.
+				// TODO: Configure from pack file?
 				scene.gravity = new BABYLON.Vector3(0, -0.9, 0);
 			}
 
 
 			// Enable Collisions for scene.
 			scene.collisionsEnabled = true;
-
-			// Apply collisions and gravity to the active camera
-			camera.checkCollisions = true;
-			camera.applyGravity = true;
 
 			// Done.
 			return success;

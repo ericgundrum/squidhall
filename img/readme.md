@@ -1,1 +1,1 @@
-Files under 'img' are runtime image and image texture files.
+Files under 'img' are runtime image files for HTML use.

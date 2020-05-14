@@ -35,12 +35,51 @@
 					}
 				},
 				{
-					"name": "artfloorsection",
+					"name": "artsection",
 					"action": "builtin",
 					"data": {
 						"type": "floorSection",
-						"size": [15, 15],
-						"position": [0, 0.01, 3],
+						"size": [14, 15],
+						"position": [3, 0.01, 0],
+						"material": "macadam"
+					},
+					"config": {
+						"space-object": true
+					}
+				},
+				{
+					"name": "historysection",
+					"action": "builtin",
+					"data": {
+						"type": "floorSection",
+						"size": [14, 24],
+						"position": [20, 0.01, 7],
+						"material": "macadam"
+					},
+					"config": {
+						"space-object": true
+					}
+				},
+				{
+					"name": "dealearwestsection",
+					"action": "builtin",
+					"data": {
+						"type": "floorSection",
+						"size": [11, 11],
+						"position": [6, 0.01, 37],
+						"material": "macadam"
+					},
+					"config": {
+						"space-object": true
+					}
+				},
+				{
+					"name": "dealeareasttsection",
+					"action": "builtin",
+					"data": {
+						"type": "floorSection",
+						"size": [11, 11],
+						"position": [20, 0.01, 37],
 						"material": "macadam"
 					},
 					"config": {
@@ -92,7 +131,7 @@
 					"action": "builtin",
 					"data": {
 						"type": "usercamera",
-						"position": [0, 0, 0]
+						"position": [3, 1.6, 3]
 					},
 					"config": {
 						"space-object": true
@@ -102,7 +141,53 @@
 			"textures": [],
 			"materials": [],
 			"lights": [],
-			"layouts": []
+			"area-layouts": [
+				{
+					"area": "rafters",
+					"object-placements": [
+						{
+							"name": "beams",
+							"object": "beam",
+							"placer": "beamplacer",
+							"data": {
+							}
+						},
+						{
+							"name": "banners",
+							"object": "banner",
+							"placer": "bannerplacer",
+							"data": {
+							}
+						}
+					]
+				},
+				{
+					"area": "artshow",
+					"origin": [3, 0, 0],
+					"object-placements": [
+						{
+							"name": "artpnl1",
+							"object": "panel",
+							"placer": "linear-series",
+							"data": {
+								"count": 8,
+								"position": [10, 0.01, 1],
+								"rotation": false
+							}
+						},
+						{
+							"name": "artpnl1-1",
+							"object": "panel",
+							"placer": "linear-series",
+							"data": {
+								"count": 2,
+								"position": [11, 0.01, 1],
+								"rotation": true
+							}
+						}
+					]
+				}
+			]
 		}
 	]
 }

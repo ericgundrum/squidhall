@@ -1,1 +1,1 @@
-Files under 'materials' are image and procedural materials used in the project.
+Files under 'materials' are materials used in the project.
