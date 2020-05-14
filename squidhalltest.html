@@ -107,6 +107,73 @@
 	};
 	*/
 
+	var bannerlayout = {
+		"artshow":{
+			"x":5,
+			"y":11.7,
+			"z":-1 * 8.3 * 2 - 2,
+			"rotateY":0,
+			"texture":"arena-banner-artshow.png"
+		},
+		"artshow2":{
+			"x":20,
+			"y":11.7,
+			"z":-1 * 8.3 * 2 - 2,
+			"rotateY":0,
+			"texture":"arena-banner-artshow.png"
+		},
+		"autograph":{
+			"x":32,
+			"y":11.7,
+			"z":-1 * 8.3 * 5 - 2,
+			"rotateY":-1 * Math.PI/2,
+			"texture":"arena-banner-autographing.png"
+		},
+		"dealers-chatham":{
+			"x":10,
+			"y":11.7,
+			"z":-1 * 8.3 * 4 - 2,
+			"rotateY":0,
+			"texture":"arena-banner-dealers.png"
+		},
+		"dealers-stewart":{
+			"x":10,
+			"y":11.7,
+			"z":-1 * 8.3 * 5 - 2,
+			"rotateY":0,
+			"texture":"arena-banner-dealers.png"
+		},
+		"dealers-north":{
+			"x":26,
+			"y":11.7,
+			"z":-1 * 8.3 * 4 - 2,
+			"rotateY":0,
+			"texture":"arena-banner-dealers.png"
+		},
+		"dealers-south":{
+			"x":24,
+			"y":11.7,
+			"z":-1 * 8.3 * 5 - 2,
+			"rotateY":0,
+			"texture":"arena-banner-dealers.png"
+		},
+		"exhibit":{
+			"x":24,
+			"y":11.7,
+			"z":-1 * 8.3 * 3 - 2,
+			"rotateY":0,
+			"texture":"arena-banner-exhibit.png"
+		},
+		"siteslection":{
+			"x":3,
+			"y":11.7,
+			"z":-1 * 8.3 * 3 - 2,
+			"rotateY":Math.PI / 2,
+			"texture":"arena-banner-siteseleciton.png"
+		},
+	};
+
+
 	//
 	// START BASIC SQUID HALL CODE
 	//
@@ -131,7 +198,7 @@
 	});
 
 	SquidSpace.attachPlacerHook("beamplacer", 
-		function(areaName, areaOrigin, config, placerName, meshes, data){
+		function(areaName, areaOrigin, config, placerName, meshes, data) {
 			if (debugVerbose) 
 				console.log(`beamplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placerName}, ${data}`);                     
 			for (beammesh of meshes){
@@ -144,13 +211,34 @@
         });
 
 	SquidSpace.attachPlacerHook("bannerplacer", 
-		function(areaName, areaOrigin, config, placerName, meshes, data){
+		function(areaName, areaOrigin, config, placerName, meshes, data) {
 			if (debugVerbose) 
 				console.log(`bannerplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placerName}, ${data}`);
+			
+			for (key in bannerlayout) {
+				let bannerinfo = bannerlayout[key];
+				let mat = new BABYLON.StandardMaterial("mat", scene);
+				let bannerTexture = new BABYLON.Texture("./textures/" + bannerinfo.texture, scene);
+				bannerTexture.vScale = -1;
+				// mat.diffuseColor = BABYLON.Color3(1, 1, 1);
+				mat.diffuseTexture = bannerTexture;
+				mat.emissiveTexture = bannerTexture;
+				mat.alpha = 0.9;
+				mat.backFaceCulling = false;
+				for (index = 0; index < meshes.length; index++) {
+			        let bn = meshes[index].createInstance("banner-" + index);
+					bn.material = mat;
+	                bn.position.x = bannerinfo.x;
+	                bn.position.y = bannerinfo.y;
+	                bn.position.z = bannerinfo.z;
+	                bn.rotation.y = bannerinfo.rotateY;
+	                bn.checkCollisions = false;
+				}
+			}
 		});
 
 	SquidSpace.attachPlacerHook("curtainplacer", 
-		function(areaName, areaOrigin, config, placerName, meshes, data){
+		function(areaName, areaOrigin, config, placerName, meshes, data) {
 			if (debugVerbose) 
 				console.log(`curtainplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placerName}, ${data}`);
 		
@@ -165,16 +253,16 @@
 		for (curtainmesh of meshes) {
 			curtainmesh.isVisible = false;
 
-			for (var i = 0; i < 7; i++ ) {
-				var bm = curtainmesh.createInstance("curtain1-" + i);
+			for (i = 0; i < 7; i++ ) {
+				let bm = curtainmesh.createInstance("curtain1-" + i);
 				bm.position.x = 0;
 				bm.position.y = 0;
 				bm.position.z = -1 * i * 10;
 				bm.checkCollisions = false;
 			}
 
-			for (var i = 0; i < 7; i++ ) {
-				var bm = curtainmesh.createInstance("curtain2-" + i);
+			for (i = 0; i < 7; i++ ) {
+				let bm = curtainmesh.createInstance("curtain2-" + i);
 				bm.rotation.y = Math.PI;
 				bm.position.x = 38;
 				bm.position.y = 0;
@@ -182,8 +270,8 @@
 				bm.checkCollisions = false;
 			}
 
-			for (var i = 0; i < 4; i++ ) {
-				var bm = curtainmesh.createInstance("curtain3-" + i);
+			for (i = 0; i < 4; i++ ) {
+				let bm = curtainmesh.createInstance("curtain3-" + i);
 				bm.rotation.y = -1 * Math.PI / 2;
 				bm.position.x = i * 10;
 				bm.position.y = 0;
