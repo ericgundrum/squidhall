@@ -1,0 +1,43 @@
+{
+	"doc": "Pack file for Squid Hall furniture layouts.",
+	"config": {
+		"outdir": "libs/objects/"
+	},
+	"modules": [
+		{
+		    "name": "furniture",
+			"doc": "Squid Hall furniture module.",
+			"config": {
+				"doc": "No config, use defaults."
+			},
+			"area-layouts": [
+				{
+					"area": "artshow",
+					"origin": [3, 0, 0],
+					"object-placements": [
+						{
+							"name": "artpnl1",
+							"object": "panel",
+							"placer": "linear-series",
+							"data": {
+								"count": 8,
+								"position": [10, 0.01, 1],
+								"rotation": false
+							}
+						},
+						{
+							"name": "artpnl1-1",
+							"object": "panel",
+							"placer": "linear-series",
+							"data": {
+								"count": 2,
+								"position": [11, 0.01, 1],
+								"rotation": true
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

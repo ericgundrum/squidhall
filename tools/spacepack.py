@@ -390,5 +390,6 @@ def main(packFileName):
     
     
 if __name__ == '__main__':
-    # TODO: Support command line arguments for pack file name.
+    # TODO: Support command line arguments for pack file name(s).
     main("squidhall.pack.json")
+    main("furniture.pack.json")

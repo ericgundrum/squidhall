@@ -150,54 +150,23 @@
 							"object": "beam",
 							"placer": "beamplacer",
 							"data": {
+								"doc": "Optional data used by the placer goes here."
 							}
 						},
 						{
 							"name": "banners",
 							"object": "banner",
-							"placer": "bannerplacer",
-							"data": {
-							}
+							"placer": "bannerplacer"
 						},
 						{
 							"name": "curtains",
 							"object": "curtain",
-							"placer": "curtainplacer",
-							"data": {
-							}
+							"placer": "curtainplacer"
 						},
 						{
 							"name": "lights",
 							"object": "_none_",
-							"placer": "lightplacer",
-							"data": {
-							}
-						}
-					]
-				},
-				{
-					"area": "artshow",
-					"origin": [3, 0, 0],
-					"object-placements": [
-						{
-							"name": "artpnl1",
-							"object": "panel",
-							"placer": "linear-series",
-							"data": {
-								"count": 8,
-								"position": [10, 0.01, 1],
-								"rotation": false
-							}
-						},
-						{
-							"name": "artpnl1-1",
-							"object": "panel",
-							"placer": "linear-series",
-							"data": {
-								"count": 2,
-								"position": [11, 0.01, 1],
-								"rotation": true
-							}
+							"placer": "lightplacer"
 						}
 					]
 				}

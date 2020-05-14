@@ -90,6 +90,7 @@ var SquidSpace = function() {
 	var materials = {};
 	var objects = {};
 
+	var prepareBuiltinsHook = function(scene){};
 	var placerHooks = {};
 
 	//
@@ -309,7 +310,7 @@ var SquidSpace = function() {
 				let objName = getValIfKeyInDict("object", placement, "");
 				let data = getValIfKeyInDict("data", placement, {});
 				
-				// Get meshes.
+				// Do we have a valid object name?
 				if (objName in objects || objName === "_none_") {
 					
 					// Is the placer hooked?
@@ -320,24 +321,49 @@ var SquidSpace = function() {
 						placerHooks[placer](areaName, areaOrigin, config, 
 											placerName, meshes, data);
 					}
-					else if (placerName == "linear-series") {
-						// TODO: Implement with placeObjects().
-					}
-					else if (placerName == "rectangle-series") {
-						// TODO: Implement with placeObjects().
-					}
-					else if (placerName == "single") {
-						// TODO: Implement with placeObjects().
-					}
 					else {
-						// TODO: Throw exception.
-					}
+						// TODO: Consider making these 'builtin hooks' that
+						//       can be overridden.
+						let x = getValIfKeyInDict("x", data, 0);
+						// TODO: Placements currently do not include 'y'.
+						let z = getValIfKeyInDict("z", data, 0);
+						let rotation = norot;
+						if (getValIfKeyInDict("rotation", data, false)) {
+							rotation = rot;
+						}
+   						let plc = [];
+	   					if (placerName == "linear-series") {
+							let count = getValIfKeyInDict("count", data, 1);
+							let across = getValIfKeyInDict("across", data, true);
+							let offset = getValIfKeyInDict("offset", data, 0);
+	   						SquidSpace.addLinearSeriesToPlacements(
+	   							placerName, plc, count, x, z, offset, across, rotation);
+	   					}
+	   					else if (placerName == "rectangle-series") {
+							let countWide = getValIfKeyInDict("countWide", data, 1);
+							let countDeep = getValIfKeyInDict("countDeep", data, 1);
+							let lengthOffset = getValIfKeyInDict("lengthOffset", data, 0);
+							let widthOffset = getValIfKeyInDict("widthOffset", data, 0);
+	   						SquidSpace.addRectangleSeriesToPlacements(
+								seriesName, placements, countWide, countDeep, x, z, 
+								lengthOffset, widthOffset);
+	   					}
+	   					else if (placerName == "single") {
+	   						SquidSpace.addSingleInstanceToPlacements(
+								instanceName, placements, x, z, rotation);
+	   					}
+	   					else {
+							// TODO: Throw exception or otherwise handle. (Log?)
+	   					}
+						if (plc.length > 0) {
+							placeObjects(objName, plc, undefined, scene);
+						}
+					}					
 				}
 				else {
 					// TODO: Throw exception or otherwise handle. (Log?)
 				}					
 			}
-			
 		}
 	}
 	
@@ -353,7 +379,37 @@ var SquidSpace = function() {
 		//
 		// Public helper functions.
 		//
+
+		/** Returns an array of points in the form [x, y, z], where the points are 
+		    calculated from the passed points using the following rules:
+
+			1. x and z are normalized from the floor origin point, located in the 
+		       NW corner of the floor
+		 */
+		makePointXYX: function(x, y, z) {
+			// TODO: This function was created because I don't understand how Babylon
+			//       does local vectors and was under time pressure, so couldn't do the
+			//       research. At some point we need to use the BJS code instead, but could
+			//       just insert it here without breaking dependent code.
+			// IMPORTANT! The origin specifies the point the floor starts from at the NW corner of
+			// the arena. All layout offsets are calculated from that point!
+
+			return [
+				floorOriginNW[0] + x, 
+				floorOriginNW[1] + y, 
+				floorOriginNW[2] + (z * -1)
+			];
+		},
 		
+		/** Returns an array of points in the form [x, y, z], where the points are 
+		    calculated from the passed points using the following rules:
+			
+			1. x and z are normalized from the floor origin point, located in the 
+		       NW corner of the floor
+		
+			2. x and z are further normalized to the NW corner of the rectangle 
+		       specified by w and d
+		 */
 		makeLayoutXYZ: function(x, y, z, w, d) {
 			// TODO: This function was created because I don't understand how Babylon
 			//       does local vectors and was under time pressure, so couldn't do the
@@ -370,6 +426,12 @@ var SquidSpace = function() {
 		},
 
 
+		/** Returns a Babylon Vector, where the points are 
+		    calculated from the passed points using the following rules:
+	
+			1. x and z are normalized from the floor origin point, located in the 
+		       NW corner of the floor
+		 */
 		makePointVector: function(x, y, z) {
 			// TODO: This function was created because I don't understand how Babylon
 			//       does local vectors and was under time pressure, so couldn't do the
@@ -386,6 +448,15 @@ var SquidSpace = function() {
 		},
 
 
+		/** Returns Babylon Vector, where the points are 
+		    calculated from the passed points using the following rules:
+		
+			1. x and z are normalized from the floor origin point, located in the 
+		       NW corner of the floor
+	
+			2. x and z are further normalized to the NW corner of the rectangle 
+		       specified by w and d
+		 */
 		makeLayoutVector: function(x, y, z, w, d) {
 			// TODO: This function was created because I don't understand how Babylon
 			//       does local vectors and was under time pressure, so couldn't do the
@@ -400,8 +471,18 @@ var SquidSpace = function() {
 				floorOriginNW[2] + (z * -1) - (d / 2)
 			);
 		},
-		
 
+		
+		// TODO: addObject/Texture/Material/Light and load Texture/Material functions.
+
+		/** Loads the named object using the passed object data. Calls the passed success
+		    function if the object is loaded. Adds the object to the internal list, making
+		    it available to the getLoadedObjectMeshes() function. Returns the loaded object
+		    or 'undefined'. 
+		
+		    The object data is a dictionary with the same structure as pack file object
+		    data. 
+		 */
 		loadObject: function(objName, objData, scene, onSuccessFunc) {
 			let obj = undefined;
 			
@@ -458,9 +539,9 @@ var SquidSpace = function() {
 		},
 		
 		/** Returns the meshes for the passed object name, assuming the object was 
-		specified in the pack file or loaded with the loadObject() function. If the
-		object was loaded it returns an array of meshes. If it was not it returns 
-		undefined. */
+		specified in the pack file, loaded with the loadObject() or added with the
+		addObject() function. If the object is available it returns an array of 
+		meshes for the object. If it was not it returns 'undefined'. */
 		getLoadedObjectMeshes: function(objName) {
 			if (objName in objects) {
 				return objects[objName];
@@ -474,15 +555,17 @@ var SquidSpace = function() {
 		// Layout helper functions.
 		//
 	
-		addSingleInstanceToPlacements: function(instanceName, placements, count, x, z, 
-												offset, rotation) {
+		/** Adds a single instance to a placements array at the passed position
+		    and rotation.
+		 */
+		addSingleInstanceToPlacements: function(instanceName, placements, x, z, rotation) {
 			placements.push([instanceName, x, z, rotation]);
 		},
 	
 	
-		/** Adds a count series of placements elements to an existing placements, starting
-			at the the provided x and z and separated by the provided offset. If across
-			is true the elements start at the west and go east. Otherwise the elements
+		/** Adds a count series of placements elements to an existing placements array, 
+			starting at the the provided x and z and separated by the provided offset. If 
+			across is true the elements start at the west and go east. Otherwise the elements
 			start at the south and go north. The passed rotation is used for all elements
 			in the series.
 		*/
@@ -500,6 +583,11 @@ var SquidSpace = function() {
 		},
 
 
+		/** Adds a count wide and count deep series of placements elements to an 
+		    existing placements array in the form of a rectangle, 
+			starting at the the provided x and z and separated by the provided offsets. 
+		    The passed rotation is used for all elements in the series.
+		*/
 		addRectangleSeriesToPlacements: function(seriesName, placements, countWide, countDeep,
 													x, z, lengthOffset, widthOffset) {
 			// Calculate starting positions.
@@ -524,14 +612,16 @@ var SquidSpace = function() {
 			}
 		},
 
-	
-		placeObjects: function(objName, placements, material, scene) {
-			// Check the object. (Must be loaded by SquidSpace.)
-			let obj = objects[objName];
-			if (typeof obj != "object") throw `Invalid object reference: ''${objName}''.`;
+		/** Places instances of the object referred to by object name (string) using 
+		    the passed material name (string, null or undefined), using the locations and 
+		    rotations specified in the passed placements array.
 		
+			TODO: Material not currently supported. Consider removing it, since it isn't
+		          clear which mesh would get the material. (All meshes in object?)
+		 */
+		placeObjects: function(objName, placements, matName, scene) {
 			// Get the meshes.
-			let meshes = objects[objName];
+			let meshes = SquidSpace.getLoadedObjectMeshes(objName);
 			if ((typeof meshes != "object") && !(meshes instanceof Array) && (meshes.length < 1))
 				 throw `Mesh not loaded for object reference: ''${objName}''.`;
 		
@@ -555,8 +645,22 @@ var SquidSpace = function() {
 		//
 		
 		
-		attachPlacerHook: function(hookName, placerFunction) {
-			placerHooks[hookName] = placerFunction;
+	 	/** The PrepareBuiltinsHook is called during prepareWorld() processing
+		    to add builtin 3D content.
+		
+		    Signature: hookFunction(scene)
+		 */
+		attachPrepareBuiltinsHook: function(hookFunction) {
+			prepareBuiltinsHook = hookFunction;
+		},
+		
+	 	/** The PlacerHook is called by name during layout processing to perform complex
+		    or custom object placements.
+		
+		    Signature: hookFunction(areaName, areaOrigin, config, placerName, meshes, data)
+		 */
+		attachPlacerHook: function(hookName, hookFunction) {
+			placerHooks[hookName] = hookFunction;
 		},
 		
 		
@@ -567,9 +671,6 @@ var SquidSpace = function() {
 		/** PoC-specific function to add Babylon.js built-ins and do other setup. */
 		prepareWorld: function(scene, debugVerbose, debugLayer) {
 			
-			// TODO: Figure out how to move this stuff into world spec.
-		
-		
 			if (debugVerbose) {
 				// Log plugin activations.
 				BABYLON.SceneLoader.OnPluginActivatedObservable.add(function (plugin) {
@@ -604,8 +705,9 @@ var SquidSpace = function() {
 
 			// TODO: Make this dynamic somehow.
 			if (debugLayer) scene.debugLayer.show();
-		
-			// Add some materials we'll be using.
+			
+			// Add some procedural materials we'll be using to the scene.
+			// TODO: Move these to a hook. (Need addTexture() and addMaterial() functions.)
 			// TODO: Determine if we want to use ambient or diffuse textures. Currently using
 			//       ambient on marble and diffuse on macadam. See:
 			// * https://gamedev.stackexchange.com/questions/14334/the-difference-between-diffuse-texture-and-ambient-occlusion-texture
@@ -626,10 +728,8 @@ var SquidSpace = function() {
 			materials.wood.backFaceCulling = false;
 		    materials.wood.diffuseTexture = textures.wood;
 			
-			
-			// Add some builtin objects we'll be using.
-			//objects.floorsection = BABYLON.MeshBuilder.CreatePlane("floorsection", 
-			//							{width: width, size:depth, tileSize:1}, scene);
+			// Call prepare hooks.
+			prepareBuiltinsHook();
 		},
 	
 		/** PoC-specific function to load the passed scene from the world 
@@ -670,8 +770,9 @@ var SquidSpace = function() {
 			}
 						
 			// Create world from spec.
+			// TODO: material, lights, etc. spec loaders. Textures should be first,
+			// layouts should be last.	
 			objectSpecLoader(world.objects, scene, null);
-			// TODO: material, lights, etc. spec loaders.	
 			layoutSpecLoader(world.layouts, scene);
 
 			// Set gravity for the scene (G force on Y-axis)

@@ -2,7 +2,16 @@
 
 This is a project to create a virtual 'exhibits hall' for ConZealand based on the actual
 TSB Arena in Wellington New Zealand for the ConZealand 2020 Science Fiction Worldcon. 
-The TSB Arena is known to Worldcon staff as 'Squid Hall', thus the 
+The TSB Arena is known to Worldcon staff as 'Squid Hall', thus the name of the project.
+
+One of the main goals of the Squid Hall to enable the ability to 'data drive' the 
+exhibits in the hall from an external source, in this case a web site to which 
+the exhibiters can upload pictures and 3D models. To this end the project has 
+adopted a 'file driven' approach using JSON data input to generate Javascript files.
+
+These files can either link to content or contain the content internally. In the latter
+case, this means you can open a Squid Hall HTML file from the file system and not
+have issues with CORS the way you would if the content was loaded from a link.
 
 ## Developer notes
 
