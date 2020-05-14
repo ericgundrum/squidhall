@@ -95,14 +95,56 @@
 	
 	SquidSpace.registerPlacerHook("beamplacer", 
 		function(areaName, areaOrigin, config, placerName, meshes, data){
-			console.log(`beamplacer called! &{areaName}, &{areaOrigin}, &{config}, &{placerName}, &{data}`);
+			if (debugVerbose) 
+				console.log(`beamplacer called! ${areaName}, ${areaOrigin}, 
+					        ${config}, ${placerName}, ${data}`);
 		});
 
 	SquidSpace.registerPlacerHook("bannerplacer", 
 		function(areaName, areaOrigin, config, placerName, meshes, data){
-			console.log(`bannerplacer called! &{areaName}, &{areaOrigin}, &{config}, &{placerName}, &{data}`);
+			if (debugVerbose) 
+				console.log(`bannerplacer called! ${areaName}, ${areaOrigin}, 
+					        ${config}, ${placerName}, ${data}`);
 		});
 
+	SquidSpace.registerPlacerHook("curtainplacer", 
+		function(areaName, areaOrigin, config, placerName, meshes, data){
+			if (debugVerbose) 
+				console.log(`curtainplacer called! ${areaName}, ${areaOrigin}, 
+					        ${config}, ${placerName}, ${data}`);
+							
+			for (curtainmesh of meshes) {
+				curtainmesh.isVisible = false;
+
+				for (var i = 0; i < 7; i++ ) {
+					var bm = curtainmesh.createInstance("curtain1-" + i);
+					bm.position.x = 0;
+					bm.position.y = 0;
+					bm.position.z = -1 * i * 10;
+					bm.checkCollisions = false;
+				}
+
+				for (var i = 0; i < 7; i++ ) {
+					var bm = curtainmesh.createInstance("curtain2-" + i);
+					bm.rotation.y = Math.PI;
+					bm.position.x = 38;
+					bm.position.y = 0;
+					bm.position.z = -1 * i * 10 - 10;
+					bm.checkCollisions = false;
+				}
+
+				for (var i = 0; i < 4; i++ ) {
+					var bm = curtainmesh.createInstance("curtain3-" + i);
+					bm.rotation.y = -1 * Math.PI / 2;
+					bm.position.x = i * 10;
+					bm.position.y = 0;
+					bm.position.z = -64;
+					bm.checkCollisions = false;
+				}
+
+			}
+		});
+		
 	// Here's where we do the magic. 
 	document.addEventListener("DOMContentLoaded", (event) =>{	
 		// Create and activate the world space.

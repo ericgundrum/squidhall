@@ -357,8 +357,7 @@ var SquidSpace = function() {
 					let meshes = objects[objName];
 				
 					// Is the placer hooked?
-					//if (placer in placerHooks) {
-					if (placer === "beamplacer") {
+					if (placer in placerHooks) {
 						// TODO: Wrap with try/catch.
 						placerHooks[placer](areaName, areaOrigin, config, placerName, meshes, data);
 					}
@@ -498,6 +497,19 @@ var SquidSpace = function() {
 			// Done.
 			return obj;
 		},
+		
+		/** Returns the meshes for the passed object name, assuming the object was 
+		specified in the pack file or loaded with the loadObject() function. If the
+		object was loaded it returns an array of meshes. If it was not it returns 
+		undefined. */
+		getLoadedObjectMeshes: function(objName) {
+			if (objName in objects) {
+				return objects[objName];
+			}
+			
+			return undefined;
+		},
+		
 		
 		//
 		// Layout helper functions.
