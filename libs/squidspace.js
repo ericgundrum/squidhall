@@ -352,7 +352,7 @@ var SquidSpace = function() {
 							let widthOffset = getValIfKeyInDict("widthOffset", data, 0);
 							// TODO: Placements currently do not include 'y'.
 	   						SquidSpace.addRectangleSeriesToPlacements(
-								seriesName, plc, countWide, countDeep, position[0], position[2], 
+								placeName, plc, countWide, countDeep, position[0], position[2], 
 								lengthOffset, widthOffset);
 	   					}
 	   					else if (placer == "single") {
@@ -627,18 +627,18 @@ var SquidSpace = function() {
 
 			// Do width placements.
 			for (let i = 0;i < countWide;i++) {
-				addLinearSeriesToPlacements(seriesName + "top-", placements, countWide, wx, z,
-								lengthOffset, true, norot);
-				addLinearSeriesToPlacements(seriesName + "bottom-", placements, countWide, wx, bz,
-								lengthOffset, true, norot);
+				SquidSpace.addLinearSeriesToPlacements(seriesName + "-top-", placements, 
+													countWide, wx, z, lengthOffset, true, norot);
+				SquidSpace.addLinearSeriesToPlacements(seriesName + "-bottom-", placements, 
+													countWide, wx, bz, lengthOffset, true, norot);
 			}
 
 			// Do depth placements.
 			for (let i = 0;i< countDeep;i++) {
-				addLinearSeriesToPlacements(seriesName + "left-", placements, countDeep, x + widthOffset, bz - widthOffset,
-								lengthOffset, false, rot);
-				addLinearSeriesToPlacements(seriesName + "right-", placements, countDeep, rx, bz - widthOffset,
-								lengthOffset, false, rot);
+				SquidSpace.addLinearSeriesToPlacements(seriesName + "-left-", placements, 
+								countDeep, x + widthOffset, bz - widthOffset, lengthOffset, false, rot);
+				SquidSpace.addLinearSeriesToPlacements(seriesName + "-right-", placements, 
+								countDeep, rx, bz - widthOffset, lengthOffset, false, rot);
 			}
 		},
 

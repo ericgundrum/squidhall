@@ -39,6 +39,18 @@
 							}
 						},
 						{
+							"name": "rectangleexample",
+							"object": "panel",
+							"placer": "rectangle-series",
+							"data": {
+								"position": [10, 0.01, 37],
+								"countWide": 5,
+								"countDeep": 6,
+								"lengthOffset": 1.3,
+								"widthOffset": 0.1
+							}
+						},
+						{
 							"name": "lonelypanelexample",
 							"object": "panel",
 							"placer": "single",
