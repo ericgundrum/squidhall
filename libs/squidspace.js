@@ -621,9 +621,9 @@ var SquidSpace = function() {
 		addRectangleSeriesToPlacements: function(seriesName, placements, countWide, countDeep,
 													x, z, lengthOffset, widthOffset) {
 			// Calculate starting positions.
-			let wx = x - widthOffset;
+			let wx = x + widthOffset;
 			let bz = z + (countDeep * lengthOffset) - widthOffset;
-			let rx = x - (countWide * lengthOffset);
+			let rx = x + (countWide * lengthOffset) - lengthOffset;
 
 			// Do width placements.
 			for (let i = 0;i < countWide;i++) {
@@ -636,9 +636,9 @@ var SquidSpace = function() {
 			// Do depth placements.
 			for (let i = 0;i< countDeep;i++) {
 				SquidSpace.addLinearSeriesToPlacements(seriesName + "-left-", placements, 
-								countDeep, x + widthOffset, bz - widthOffset, lengthOffset, false, rot);
+								countDeep, x - lengthOffset, z + lengthOffset, lengthOffset, false, rot);
 				SquidSpace.addLinearSeriesToPlacements(seriesName + "-right-", placements, 
-								countDeep, rx, bz - widthOffset, lengthOffset, false, rot);
+								countDeep, rx, z + lengthOffset, lengthOffset, false, rot);
 			}
 		},
 
