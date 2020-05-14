@@ -303,12 +303,18 @@ var SquidSpace = function() {
 			if (typeof layout["config"] === "object") {
 				config = layout["config"];
 			}
+
+			// DEBUG: Comment out for production.
+			console.log(`layoutSpecLoader: ${areaName}`);
 			
 			for (placement of layout["object-placements"]) {
-				let placerName =  getValIfKeyInDict("name", placement, "");
+				let placeName =  getValIfKeyInDict("name", placement, "");
 				let placer = getValIfKeyInDict("placer", placement, "");
 				let objName = getValIfKeyInDict("object", placement, "");
 				let data = getValIfKeyInDict("data", placement, {});
+				
+				// DEBUG: Comment out for production.
+				console.log(`layoutSpecLoader placement: ${placeName}/${placer}/${objName}`);
 				
 				// Do we have a valid object name?
 				if (objName in objects || objName === "_none_") {
@@ -319,44 +325,50 @@ var SquidSpace = function() {
 						let meshes = SquidSpace.getLoadedObjectMeshes(objName);
 						// TODO: Wrap with try/catch.
 						placerHooks[placer](areaName, areaOrigin, config, 
-											placerName, meshes, data);
+											placeName, meshes, data);
 					}
 					else {
 						// TODO: Consider making these 'builtin hooks' that
 						//       can be overridden.
-						let x = getValIfKeyInDict("x", data, 0);
-						// TODO: Placements currently do not include 'y'.
-						let z = getValIfKeyInDict("z", data, 0);
+						let position = getValIfKeyInDict("position", data, 0);
 						let rotation = norot;
 						if (getValIfKeyInDict("rotation", data, false)) {
 							rotation = rot;
 						}
    						let plc = [];
-	   					if (placerName == "linear-series") {
+	   					if (placer == "linear-series") {
 							let count = getValIfKeyInDict("count", data, 1);
 							let across = getValIfKeyInDict("across", data, true);
 							let offset = getValIfKeyInDict("offset", data, 0);
+							// TODO: Placements currently do not include 'y'.
 	   						SquidSpace.addLinearSeriesToPlacements(
-	   							placerName, plc, count, x, z, offset, across, rotation);
+	   							placeName, plc, count, position[0], position[2], 
+								offset, across, rotation);
 	   					}
-	   					else if (placerName == "rectangle-series") {
+	   					else if (placer == "rectangle-series") {
 							let countWide = getValIfKeyInDict("countWide", data, 1);
 							let countDeep = getValIfKeyInDict("countDeep", data, 1);
 							let lengthOffset = getValIfKeyInDict("lengthOffset", data, 0);
 							let widthOffset = getValIfKeyInDict("widthOffset", data, 0);
+							// TODO: Placements currently do not include 'y'.
 	   						SquidSpace.addRectangleSeriesToPlacements(
-								seriesName, placements, countWide, countDeep, x, z, 
+								seriesName, plc, countWide, countDeep, position[0], position[2], 
 								lengthOffset, widthOffset);
 	   					}
-	   					else if (placerName == "single") {
+	   					else if (placer == "single") {
+							// TODO: Placements currently do not include 'y'.
 	   						SquidSpace.addSingleInstanceToPlacements(
-								instanceName, placements, x, z, rotation);
+								placeName, plc, position[0], position[2], rotation);
 	   					}
 	   					else {
 							// TODO: Throw exception or otherwise handle. (Log?)
 	   					}
+						
+						// DEBUG: Comment out for production.
+						console.log(`layoutSpecLoader placer count: ${plc.length}`);
+						
 						if (plc.length > 0) {
-							placeObjects(objName, plc, undefined, scene);
+							SquidSpace.placeObjects(objName, plc, undefined, scene);
 						}
 					}					
 				}
@@ -557,6 +569,11 @@ var SquidSpace = function() {
 	
 		/** Adds a single instance to a placements array at the passed position
 		    and rotation.
+		
+		    TODO: Support y.
+		
+		    TODO: Currently only supports horizontally aligned placements, add ability 
+		    to do vertical.
 		 */
 		addSingleInstanceToPlacements: function(instanceName, placements, x, z, rotation) {
 			placements.push([instanceName, x, z, rotation]);
@@ -568,6 +585,11 @@ var SquidSpace = function() {
 			across is true the elements start at the west and go east. Otherwise the elements
 			start at the south and go north. The passed rotation is used for all elements
 			in the series.
+		
+		    TODO: Support y.
+		
+		    TODO: Currently only supports horizontally aligned placements, add ability 
+		    to do vertical.
 		*/
 		addLinearSeriesToPlacements: function(seriesName, placements, count, x, z, offset,
 												across, rotation) {
@@ -587,6 +609,14 @@ var SquidSpace = function() {
 		    existing placements array in the form of a rectangle, 
 			starting at the the provided x and z and separated by the provided offsets. 
 		    The passed rotation is used for all elements in the series.
+		
+		    TODO: Support y.
+		
+		    TODO: Currently only supports horizontally aligned placements, add ability 
+		    to do vertical.
+		
+		    TODO: Currently only supports horizontally aligned placements, add ability 
+		    to do vertical.
 		*/
 		addRectangleSeriesToPlacements: function(seriesName, placements, countWide, countDeep,
 													x, z, lengthOffset, widthOffset) {
@@ -628,13 +658,17 @@ var SquidSpace = function() {
 			for (mesh of meshes) {
 				for (instance of placements) {
 					let m = mesh.createInstance(instance[0]);
+					
+					// TODO: Fix this. IMPORTANT!
+					//let bv = m.getBoundingInfo().boundingBox.minimum;
 					m.position = SquidSpace.makeLayoutVector(
-										instance[0], 0.01, instance[2], pnlwidth, pnldepth);
+										instance[1], 0.01, instance[2], m.scaling.x, m.scaling.y);
 					if (placements[3] != 0) {
 						m.rotate(BABYLON.Axis.Y, instance[3]);
 						m.position.z -= (pnlwidth / 2);
 					}
 					m.checkCollisions = true;
+					m.visible = true;
 				}
 			}
 		},
@@ -772,8 +806,12 @@ var SquidSpace = function() {
 			// Create world from spec.
 			// TODO: material, lights, etc. spec loaders. Textures should be first,
 			// layouts should be last.	
-			objectSpecLoader(world.objects, scene, null);
-			layoutSpecLoader(world.layouts, scene);
+			objectSpecLoader(getValIfKeyInDict("objects", worldSpec, {}), scene, null);
+			layoutSpecLoader(getValIfKeyInDict("layouts", worldSpec, []), scene);
+			for (spec of contentSpecs) {
+				objectSpecLoader(getValIfKeyInDict("objects", spec, {}), scene, null);
+				layoutSpecLoader(getValIfKeyInDict("layouts", spec, []), scene);
+			}
 
 			// Set gravity for the scene (G force on Y-axis)
 			// See https://doc.babylonjs.com/babylon101/cameras,_mesh_collisions_and_gravity
@@ -788,7 +826,6 @@ var SquidSpace = function() {
 				// TODO: Configure from pack file?
 				scene.gravity = new BABYLON.Vector3(0, -0.9, 0);
 			}
-
 
 			// Enable Collisions for scene.
 			scene.collisionsEnabled = true;
