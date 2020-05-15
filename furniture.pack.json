@@ -16,6 +16,11 @@
 					"origin": [3, 0, 0],
 					"object-placements": [
 						{
+	                        "name": "signhalfs",
+	                        "object": "signhalf",
+	                        "placer": "signhalfplacer"
+						},						
+						{
 	                        "name": "signfulls",
 	                        "object": "signfull",
 	                        "placer": "signfullplacer"

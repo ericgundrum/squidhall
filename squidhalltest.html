@@ -287,7 +287,46 @@
             "texture":"DisCon_III.jpg"
         },
     };
-		
+	
+	
+    var signhalflayout = {
+       "PropSimonTam":{
+           "x":6,
+           "y":0,
+           "z":-10,
+           "rotateY":1 * Math.PI / 4,
+           "texture":"sign-half-Prop_Simon_Tam.png"
+       },
+       "Orodurin":{
+           "x":8,
+           "y":0,
+           "z":-10,
+           "rotateY":1 * Math.PI / 4,
+           "texture":"sign-half-Orodruin.png"
+       },
+       "Kadath":{
+           "x":10,
+           "y":0,
+           "z":-10,
+           "rotateY":1 * Math.PI / 4,
+           "texture":"sign-half-Kadath.png"
+       },
+       "Genosha":{
+           "x":12,
+           "y":0,
+           "z":-10,
+           "rotateY":1 * Math.PI / 4,
+           "texture":"sign-half-Genosha.png"
+       },
+       "Gallifrey":{
+           "x":14,
+           "y":0,
+           "z":-10,
+           "rotateY":1 * Math.PI / 4,
+           "texture":"sign-half-Gallifrey.jpg"
+       },
+   };
+   
 	//
 	// START BASIC SQUID HALL CODE
 	//
@@ -410,8 +449,8 @@
 	
 	SquidSpace.attachPlacerHook("signfullplacer",
       	function(areaName, areaOrigin, config, placerName, meshes, data) {
-          if (debugVerbose)
-              console.log(`signfullplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placerName}, ${data}`);
+       	if (debugVerbose)
+			console.log(`signfullplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placerName}, ${data}`);
 
           for (key in signfulllayout) {
               let signfullinfo = signfulllayout[key];
@@ -435,6 +474,34 @@
               }
           }
       });
+	  
+	  SquidSpace.attachPlacerHook("signhalfplacer",
+      		function(areaName, areaOrigin, config, placerName, meshes, data) {
+            if (debugVerbose)
+                console.log(`signhalfplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placerName}, ${data}`);
+
+            for (key in signhalflayout) {
+                let signhalfinfo = signhalflayout[key];
+                let mat = new BABYLON.StandardMaterial("mat", scene);
+                let signhalfTexture = new BABYLON.Texture("./textures/" + signhalfinfo.texture, scene);
+                signhalfTexture.vScale = -1;
+                // mat.diffuseColor = BABYLON.Color3(1, 1, 1);
+                mat.diffuseTexture = signhalfTexture;
+                mat.emissiveTexture = signhalfTexture;
+                mat.alpha = 0.9;
+                mat.backFaceCulling = false;
+                for (index = 0; index < meshes.length; index++) {
+                    let bn = meshes[index].clone("sign-" + index);
+                        if(index == 1) bn.material = mat;
+                        bn.position.x = signhalfinfo.x;
+                        bn.position.y = signhalfinfo.y;
+                        bn.position.z = signhalfinfo.z;
+                        bn.rotation.y = signhalfinfo.rotateY;
+                        bn.checkCollisions = true;
+                    bn.isVisible = true;
+                }
+            }
+        });
 
 	SquidSpace.attachPlacerHook("lightplacer", 
 		function(areaName, areaOrigin, config, placerName, meshes, data){
