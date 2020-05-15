@@ -56,20 +56,34 @@
 			    animation-duration: 0.4s
 			}
 			.mpopup-head {
-			    padding: 2px 16px;
+			    padding: 2px 8px;
 			    background-color: #337000;
 			    color: white;
+			}
+			.mpopup-close {
+				cursor: pointer;
+				font-size: x-large;
+				//color: gold;
+				padding: 0;
+				//padding: 1px;
+				margin: 0;
+				//border: solid 2px black;
+			}
+			//.mpopup-close:hover {color: antiquewhite}
+			#mpopup-title {
+				text-align: center;
+				margin: 0;
 			}
 			.mpopup-main {padding: 2px 16px;}
 			.mpopup-foot {
 			    padding: 2px 16px;
 			    background-color: #337000;
-			    color: #ffffff;
+			    color: white;
 			}
-			.mpopup-foot a:link {color: antiquewhite;}
+			.mpopup-foot a:link {color: gold;}
 			.mpopup-foot a:visited {color: lightblue;}
-			.mpopup-foot a:hover {color: gold}
-			.mpopup-foot a:active {color: gold}
+			.mpopup-foot a:hover {color: antiquewhite}
+			.mpopup-foot a:active {color: antiquewhite}
 
 			/* add animation effects */
 			@-webkit-keyframes animatetop {
@@ -122,7 +136,7 @@
 		<div id="mpopupBox" class="mpopup">
 		    <div class="mpopup-content">
 		        <div class="mpopup-head">
-		            <span class="mpopup-close">&#10005;</span>
+		            <span class="mpopup-close">&#x274E;</span>
 		            <h2 id="mpopup-title">Simple Modal Popup</h2>
 		        </div>
 		        <div class="mpopup-main" id="mpopup-text">
@@ -136,15 +150,20 @@
 			
 		<div id="fpsLabel"></div> 
 		
-		<canvas id="renderCanvas" touch-action="none"></canvas><!-- touch-action="none" for best results from PEP -->
+		<!-- touch-action="none" for best results from PEP -->
+		<canvas id="renderCanvas" touch-action="none"></canvas>
 		
 <script>
 //<![CDATA[
 	
+	//
+	// Web Page Stuff.
+	//
+	
 	var mpopup = document.getElementById('mpopupBox');
 	var close = document.getElementsByClassName("mpopup-close")[0];
 	
-	showPopup = function(data) {
+	showMessagePopup = function(data) {
 		let mainText = data[`<p>${data["text"]}</p>`];
 		let linkText = undefined;
 		
@@ -178,6 +197,18 @@
 	        mpopup.style.display = "none";
 	    }
 	}
+	
+	showMessagePopup(
+		{
+			"title": "Welcome to Squid Hall - A VR re-creation of the TSB Arena",
+		 	"text": "Your mouse controls the direction you are facing. The arrow keys or the W, A, S, and D keys control movement forward/back, and left/right. You can click on some of the objects to learn more about them.<br/><br/>Click the close button or outside this message box to start."
+		}
+	);
+	
+	
+	//
+	// 3D Stuff.
+	//	
 	
 	/* I want to add this for debugVerbose mode, but it isn't working and I don't have time to figure it out.
 	var showWorldAxis = function showWorldAxis(size, scene) {
@@ -557,7 +588,7 @@
 
 			// Show popup events.
 			SquidSpace.addEventHandler("onClickShowPopup", function(source, data){
-				showPopup(data);
+				showMessagePopup(data);
 			});
 			SquidSpace.attachClickEventToObject("lonelypanelexample", "onClickShowPopup",
 				{
@@ -614,7 +645,7 @@
 	//
 	// END BASIC SQUID HALL CODE
 	//
-
+	
 //]]>
 </script>
 	</body>
