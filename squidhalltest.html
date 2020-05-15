@@ -28,6 +28,24 @@
 				background:#606;
 			    cursor: default;
 			}
+			
+			/* Hide the Popup form */
+			#tellMeMore {
+				display: none; /* Hidden by default */
+				position: fixed; /* Stay in place */
+				z-index: 1; /* Sit on top */
+				padding-top: 100px; /* Location of the box */
+				left: 50;
+				top: 50;
+				width: 150px;
+				height: 150px;
+				overflow: auto; /* Enable scroll if needed */
+				background-color: rgb(5,5,5); /* Fallback color */
+				background-color: rgba(5,5,5,0.4); /* Black w/ opacity */	
+		        border: 2px solid #666;
+				display: none;		
+			    cursor: default;
+			}
 		</style>
 		<!-- SCRIPTS START -->
 
@@ -66,9 +84,26 @@
 	</head>
 	<body>
 		<div id="fpsLabel"></div> 
+		<div id="tellMeMore" class="popup">
+			<h2>"Tell me more!"</h2>
+			<p id="moreToTell"></p>
+		</div> 
 		<canvas id="renderCanvas" touch-action="none"></canvas><!-- touch-action="none" for best results from PEP -->
 		<script>
 //<![CDATA[
+	
+	function showTellMeMore(data) {
+        document.getElementById("tellMeMore").style.display="block";
+	}
+	
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+      var modal = document.getElementById('tellMeMore');
+      if (event.target != modal) {
+        modal.style.display= "none"
+      }
+    }
+	
 
 	/* I want to add this for debugVerbose mode, but it isn't working and I don't have time to figure it out.
 	var showWorldAxis = function showWorldAxis(size, scene) {
@@ -339,13 +374,15 @@
 
 			// Add SquidSpace events for custom features.
 			// TODO: Once these are stabilized, move them to a Javascript module and just set them here.
-			// NOTE: Must come after buildWorld call, because the objects have to be loaded before
+			// NOTE: Must come after buildWorld call, because the objects must be loaded before
 			//       you can attach events to them.
 
 			SquidSpace.attachClickEventToObject("lonelypanelexample", "panel-clicked",
-											{"which-panel": "lonelypanelexample"}, scene);
-			SquidSpace.addEventHandler("panel-clicked", function(data){
-				console.log(`A panel was clicked! panel: ${data["which-panel"]}`);
+											{"foo?": "bar!"}, scene);
+			SquidSpace.addEventHandler("panel-clicked", function(source, data){
+				if (debugVerbose) console.log(`'panel-clicked' event source: ${source}`);
+				
+				showTellMeMore(data);
 			});
 			
 	

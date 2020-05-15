@@ -107,6 +107,11 @@
 					"file": "objects/panel.babylon"
 				},
 				{
+					"name": "table",
+					"action": "insert",
+					"file": "objects/table.babylon"
+				},
+				{
 					"name": "banner",
 					"action": "insert",
 					"file": "objects/banner.babylon"
