@@ -8,7 +8,7 @@ notes/*.html_backup
 
 # Generated files
 
-libs/objects/world.js
+libs/objects/*.js
 
 # Logs
 logs
