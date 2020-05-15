@@ -19,7 +19,7 @@
 		        height: 100%;
 		        touch-action: none;
 		    }
-			
+
 			#fpsLabel {
 			    position: absolute;
 			    right: 20px;
@@ -28,7 +28,7 @@
 				background:#606;
 			    cursor: default;
 			}
-			
+
 			/* Modal Popup box style */
 			.mpopup {
 			    display: none;
@@ -105,7 +105,7 @@
 		<script src="libs/babylonjs/babylonjs.proceduralTextures.min.js"></script>
 		<script src="libs/babylonjs/babylonjs.materials.min.js"></script>
 		<script src="libs/babylonjs/loaders/babylonjs.loaders.min.js"></script>
-		
+
 
 		<!-- CDN for production and final testing.
 		<script src="https://cdn.babylonjs.com/babylon.js"></script>
@@ -113,8 +113,8 @@
 		<script src="https://cdn.babylonjs.com/babylonjs.materials.min.js"></script>
 		<script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
 		-->
-		
-			
+
+
 		<!-- Babylon.js support libraries END -->
 
 		<!-- Other libraries START -->
@@ -132,7 +132,7 @@
 		<!-- SCRIPTS END -->
 	</head>
 	<body>
-		
+
 		<div id="mpopupBox" class="mpopup">
 		    <div class="mpopup-content">
 		        <div class="mpopup-head">
@@ -145,71 +145,71 @@
 		        </div>
 		        <div class="mpopup-foot" id="mpopup-link">
 		        </div>
-		    </div>		
-		</div>	
-			
-		<div id="fpsLabel"></div> 
-		
+		    </div>
+		</div>
+
+		<div id="fpsLabel"></div>
+
 		<!-- touch-action="none" for best results from PEP -->
 		<canvas id="renderCanvas" touch-action="none"></canvas>
-		
+
 <script>
 //<![CDATA[
-	
+
 	//
 	// Web Page Stuff.
 	//
-	
+
 	var mpopup = document.getElementById('mpopupBox');
 	var close = document.getElementsByClassName("mpopup-close")[0];
-	
+
 	showMessagePopup = function(data) {
 		let mainText = data[`<p>${data["text"]}</p>`];
 		let linkText = undefined;
-		
+
 		if ("title" in data) {
 			document.getElementById('mpopup-title').innerHTML = data["title"];
 		}
 		else {
 			document.getElementById('mpopup-title').innerHTML = "Attention!";
 		}
-		
+
 		if ("text" in data) {
 			document.getElementById('mpopup-text').innerHTML = `<p>${data["text"]}</p>`;
 		}
 		else {
 			document.getElementById('mpopup-text').innerHTML = "<p>Normally a message would be here.</p>";
 		}
-		
+
 		if ("link" in data && "link-text" in data) {
 			document.getElementById('mpopup-link').innerHTML = `<p>See more here: <a href='${data["link"]}' target='_blank'>${data["link-text"]}</a></p>`;
 		}
-		
+
 		mpopup.style.display = "block";
 	}
-	
+
 	close.onclick = function() {
 	    mpopup.style.display = "none";
 	}
-	
+
 	window.onclick = function(event) {
 	    if (event.target == mpopup) {
 	        mpopup.style.display = "none";
 	    }
 	}
-	
+
 	showMessagePopup(
 		{
 			"title": "Welcome to Squid Hall - A VR re-creation of the TSB Arena",
 		 	"text": "Your mouse controls the direction you are facing. The arrow keys or the W, A, S, and D keys control movement forward/back, and left/right. You can click on some of the objects to learn more about them.<br/><br/>Click the close button or outside this message box to start."
 		}
 	);
-	
-	
+
+
 	//
 	// 3D Stuff.
-	//	
-	
+	//
+
 	/* I want to add this for debugVerbose mode, but it isn't working and I don't have time to figure it out.
 	var showWorldAxis = function showWorldAxis(size, scene) {
 	    var makeTextPlane = function(text, color, size) {
@@ -223,15 +223,15 @@
 	        plane.material.diffuseTexture = dynamicTexture;
 	    return plane;
 	     };
-	    var axisX = BABYLON.Mesh.CreateLines("axisX", [ 
-	      BABYLON.Vector3.Zero(), new BABYLON.Vector3(size, 0, 0), new BABYLON.Vector3(size * 0.95, 0.05 * size, 0), 
+	    var axisX = BABYLON.Mesh.CreateLines("axisX", [
+	      BABYLON.Vector3.Zero(), new BABYLON.Vector3(size, 0, 0), new BABYLON.Vector3(size * 0.95, 0.05 * size, 0),
 	      new BABYLON.Vector3(size, 0, 0), new BABYLON.Vector3(size * 0.95, -0.05 * size, 0)
 	      ], scene);
 	    axisX.color = new BABYLON.Color3(1, 0, 0);
 	    var xChar = makeTextPlane("X", "red", size / 10);
 	    xChar.position = new BABYLON.Vector3(0.9 * size, -0.05 * size, 0);
 	    var axisY = BABYLON.Mesh.CreateLines("axisY", [
-	        BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, size, 0), new BABYLON.Vector3( -0.05 * size, size * 0.95, 0), 
+	        BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, size, 0), new BABYLON.Vector3( -0.05 * size, size * 0.95, 0),
 	        new BABYLON.Vector3(0, size, 0), new BABYLON.Vector3( 0.05 * size, size * 0.95, 0)
 	        ], scene);
 	    axisY.color = new BABYLON.Color3(0, 1, 0);
@@ -321,15 +321,21 @@
             "rotateY":-1 * Math.PI / 4,
             "texture":"sign-Chicago2022.jpg"
         },
-        "DisCon_III":{
+				"DisCon_III":{
             "x":5,
             "y":0,
             "z":-25,
             "rotateY":-1 * Math.PI / 4,
             "texture":"DisCon_III.jpg"
         },
+				"Glasgow":{
+            "x":5,
+            "y":0,
+            "z":-30,
+            "rotateY":-1 * Math.PI / 4,
+            "texture":"Glasgow.jpg"
+        },
     };
-	
 	
     var signhalflayout = {
        "PropSimonTam":{
@@ -368,7 +374,7 @@
            "texture":"sign-half-Gallifrey.jpg"
        },
    };
-   
+
 	//
 	// START BASIC SQUID HALL CODE
 	//
@@ -376,7 +382,7 @@
 	//
 
 	// Debug settings. If 'debugVerbose' is true then more information is logged
-	// to the console. if 'debugLayer' is true then a set of scene debug panels are 
+	// to the console. if 'debugLayer' is true then a set of scene debug panels are
 	// added to the screen.
 	// TODO: Come up with a way to turn these on and off at runtime.
 	//var debugVerbose = false;
@@ -388,25 +394,25 @@
 	var canvas = document.getElementById("renderCanvas"); // Get the canvas element
 	var engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
 	var scene = new BABYLON.Scene(engine);
-	
+
 	// Here we do basic preparation.
 	SquidSpace.prepareWorld(scene, debugVerbose, debugLayer);
 
 	// NOTE: Insert code to add other things to the scene here. This is
 	//       where you would be adding your own experiments.
-	
+
 	// Set SquidSpace hooks for custom features.
 	// TODO: Once these are stabilized, move them to a Javascript module and just set them here.
-	
+
 	SquidSpace.attachPrepareBuiltinsHook(function(scene){
-		if (debugVerbose) 
-			console.log("Preparing builtins.");		
+		if (debugVerbose)
+			console.log("Preparing builtins.");
 	});
 
-	SquidSpace.attachPlacerHook("beamplacer", 
+	SquidSpace.attachPlacerHook("beamplacer",
 		function(areaName, areaOrigin, config, placerName, meshes, data, objName) {
-		if (debugVerbose) 
-			console.log(`beamplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placerName}, ${data}`);                     
+		if (debugVerbose)
+			console.log(`beamplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placerName}, ${data}`);
 		for (beammesh of meshes){
             for (var i = 0; i < 8; i++ ) {
                 var bm = beammesh.createInstance("beam1-" + i);
@@ -416,11 +422,11 @@
         }
     });
 
-	SquidSpace.attachPlacerHook("bannerplacer", 
+	SquidSpace.attachPlacerHook("bannerplacer",
 		function(areaName, areaOrigin, config, placerName, meshes, data, objName) {
-		if (debugVerbose) 
+		if (debugVerbose)
 			console.log(`bannerplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placerName}, ${data}`);
-		
+
 		for (key in bannerlayout) {
 			let bannerinfo = bannerlayout[key];
 			let mat = new BABYLON.StandardMaterial("mat", scene);
@@ -441,24 +447,24 @@
                 bn.position.z = bannerinfo.z;
                 bn.rotation.y = bannerinfo.rotateY;
                 bn.checkCollisions = false;
-				bn.isVisible = true; 
+				bn.isVisible = true;
 			}
 		}
 	});
 
-	SquidSpace.attachPlacerHook("curtainplacer", 
+	SquidSpace.attachPlacerHook("curtainplacer",
 		function(areaName, areaOrigin, config, placerName, meshes, data, objName) {
-			if (debugVerbose) 
+			if (debugVerbose)
 				console.log(`curtainplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placerName}, ${data}`);
-		
-		// NOTE: if you need to verify meshes exist before using them, the 
+
+		// NOTE: if you need to verify meshes exist before using them, the
 		//  	 the following example is one way.
 		//
 		//  if (typeof meshes != "undefined") {
 		//     . . . code here
 		//  }
-		
-		
+
+
 		for (curtainmesh of meshes) {
 			curtainmesh.isVisible = false;
 
@@ -489,7 +495,7 @@
 			}
 		}
 	});
-	
+
 	SquidSpace.attachPlacerHook("signfullplacer",
       	function(areaName, areaOrigin, config, placerName, meshes, data, objName) {
 		if (debugVerbose)
@@ -505,8 +511,8 @@
 			mat.emissiveTexture = signfullTexture;
 			mat.alpha = 0.9;
 			mat.backFaceCulling = false;
-					
-			// Using SquidSpace.cloneObject() here because we *are* adding events to these objects. 
+
+			// Using SquidSpace.cloneObject() here because we *are* adding events to these objects.
 			let cloneMeshes = SquidSpace.cloneObject(objName, key);
 
 			for (index = 0; index < cloneMeshes.length; index++) {
@@ -521,7 +527,7 @@
 			}
 		}
 	});
-	  
+
 	SquidSpace.attachPlacerHook("signhalfplacer",
     	function(areaName, areaOrigin, config, placerName, meshes, data, objName) {
         if (debugVerbose)
@@ -553,29 +559,29 @@
         }
     });
 
-	SquidSpace.attachPlacerHook("lightplacer", 
+	SquidSpace.attachPlacerHook("lightplacer",
 		function(areaName, areaOrigin, config, placerName, meshes, data, objName){
-		if (debugVerbose) 
+		if (debugVerbose)
 			console.log(`lightplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placerName}, ${data}`);
 
 		let gl = new BABYLON.GlowLayer("glow", scene, {});
 		gl.intensity = 1.0;
 
-		let lightFrontFill = new BABYLON.PointLight("pointLight", 
+		let lightFrontFill = new BABYLON.PointLight("pointLight",
 												SquidSpace.makePointVector(25, 20, 0), scene);
 		lightFrontFill.diffuse = new BABYLON.Color3(1, 1, 1);
 		lightFrontFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
 		lightFrontFill.range = 90;
 
-		let lightTopFill = new BABYLON.PointLight("pointLight", 
+		let lightTopFill = new BABYLON.PointLight("pointLight",
 												SquidSpace.makePointVector(25, 20, 60), scene);
 		lightTopFill.diffuse = new BABYLON.Color3(1, 1, 1);
 		lightTopFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
 		lightTopFill.range = 90;
 	});
-	
-	// Here's where we do the magic. 
-	document.addEventListener("DOMContentLoaded", (event) =>{	
+
+	// Here's where we do the magic.
+	document.addEventListener("DOMContentLoaded", (event) =>{
 		// Create and activate the world space.
 		if (SquidSpace.buildWorld(world, [furniture], scene, debugVerbose)) {
 			// Register a render loop to repeatedly render the world space.
@@ -618,7 +624,7 @@
 				}, scene
 			);
 
-			engine.runRenderLoop(function() {		
+			engine.runRenderLoop(function() {
 				scene.render();
 
 				// Update FPS on screen if it has changed.
@@ -627,12 +633,12 @@
 					currFPS = newFPS;
 				    fpsLabel.innerHTML = `&nbsp;${currFPS} fps&nbsp;`;
 				}
-			});	
-			
+			});
+
 			// Alternate render loop without FPS label.
-			//engine.runRenderLoop(function() {		
+			//engine.runRenderLoop(function() {
 			//	scene.render();
-			//});	
+			//});
 
 			// Watch for browser/canvas resize events
 			window.addEventListener("resize", function() {
@@ -648,7 +654,7 @@
 	//
 	// END BASIC SQUID HALL CODE
 	//
-	
+
 //]]>
 </script>
 	</body>
