@@ -92,6 +92,8 @@ var SquidSpace = function() {
 
 	var prepareBuiltinsHook = function(scene){};
 	var placerHooks = {};
+	
+	var eventHandlers = {};
 
 	//
 	// Helper functions.
@@ -368,7 +370,7 @@ var SquidSpace = function() {
 						console.log(`layoutSpecLoader placer count: ${plc.length}`);
 						
 						if (plc.length > 0) {
-							SquidSpace.placeObjects(objName, plc, undefined, scene);
+							SquidSpace.placeObjectInstances(objName, plc, undefined, scene);
 						}
 					}					
 				}
@@ -527,14 +529,9 @@ var SquidSpace = function() {
 					function(newMeshes) {
 						if (debugVerbose) console.log("'" + objName + 
 							"' mesh import suceeded. Mesh count: " + newMeshes.length);
-			
-						// Force ID of all meshes to the object name.
-						for (m of newMeshes) {
-							m.id = objName;
-						}
 						
 						// Save the meshes for later.
-						objects[objName] = newMeshes;
+						SquidSpace.addObjectInstance(objName, newMeshes);
 			
 						if (typeof onSuccessFunc == "function") onSuccessFunc(newMeshes);
 					}, null,
@@ -649,28 +646,47 @@ var SquidSpace = function() {
 			TODO: Material not currently supported. Consider removing it, since it isn't
 		          clear which mesh would get the material. (All meshes in object?)
 		 */
-		placeObjects: function(objName, placements, matName, scene) {
+		placeObjectInstances: function(objName, placements, matName, scene) {
 			// Get the meshes.
 			let meshes = SquidSpace.getLoadedObjectMeshes(objName);
 			if ((typeof meshes != "object") && !(meshes instanceof Array) && (meshes.length < 1))
 				 throw `Mesh not loaded for object reference: ''${objName}''.`;
 		
-			for (mesh of meshes) {
-				for (instance of placements) {
+			for (instance of placements) {
+				let newMeshes = [];
+				for (mesh of meshes) {
+					// Create an instance and add it to the new meshes.
 					let m = mesh.createInstance(instance[0]);
+					newMeshes.push(m);
 					
-					// TODO: Fix this. IMPORTANT!
-					//let bv = m.getBoundingInfo().boundingBox.minimum;
+					// Set placement values.
 					m.position = SquidSpace.makeLayoutVector(
 										instance[1], 0.01, instance[2], m.scaling.x, m.scaling.y);
 					if (placements[3] != 0) {
 						m.rotate(BABYLON.Axis.Y, instance[3]);
 						m.position.z -= (pnlwidth / 2);
 					}
+					
+					// Set other values.
+					// TODO: Do we want to add these to placement somehow?
 					m.checkCollisions = true;
 					m.visible = true;
+					// TODO: Fix this. IMPORTANT!
+					//let bv = m.getBoundingInfo().boundingBox.minimum;
 				}
+				SquidSpace.addObjectInstance(instance[0], newMeshes);			
 			}
+		},
+		
+		
+		addObjectInstance: function(objName, meshes) {
+			// Force ID of all meshes to the object name.
+			for (m of meshes) {
+				m.id = objName;
+			}
+			
+			// Keep a local reference to the object.
+			objects[objName] = meshes;
 		},
 
 
@@ -697,10 +713,59 @@ var SquidSpace = function() {
 			placerHooks[hookName] = hookFunction;
 		},
 		
+
+		//
+		// Events.
+		//
+
+		
+		attachClickEventToObject: function(objName, eventName, eventData, scene) {
+			meshes = SquidSpace.getLoadedObjectMeshes(objName);
+			
+			if (typeof meshes != "undefined") {
+				for (mesh of meshes) {
+					// TODO: Wrap with try-catch and then raise custom error or log or something.
+					mesh.actionManager = new BABYLON.ActionManager(scene);
+					mesh.actionManager.registerAction(
+						new BABYLON.ExecuteCodeAction(
+							{
+								trigger: BABYLON.ActionManager.OnPickTrigger
+							},
+							function () {SquidSpace.fireEvent(eventName, eventData);}
+						),
+					);
+				}
+			}
+		},
+		
+		
+		fireEvent: function(eventName, eventData) {
+			if (eventName in eventHandlers) {
+				for (event of eventHandlers[eventName]) {
+					event(eventData);
+				}
+			}
+		},
+		
+
+		addEventHandler: function(eventName, handlerFunc) {
+			if (!(eventName in eventHandlers)) {
+				// Initialize the event name with an empty array.
+				eventHandlers[eventName] = [];
+			}
+			
+			// Add the event to the array.
+			eventHandlers[eventName].push(handlerFunc);
+		},
+		
+		
+		// TODO: Remove event handler.
+		
 		
 		//
 		// Public scene management functions.
 		//
+		
 		
 		/** PoC-specific function to add Babylon.js built-ins and do other setup. */
 		prepareWorld: function(scene, debugVerbose, debugLayer) {

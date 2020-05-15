@@ -293,6 +293,7 @@
 
 		}
 	});
+	
 
 	SquidSpace.attachPlacerHook("lightplacer", 
 		function(areaName, areaOrigin, config, placerName, meshes, data){
@@ -334,6 +335,19 @@
 				    fpsLabel.innerHTML = `&nbsp;${currFPS} fps&nbsp;`;
 				}
 			});
+			
+
+			// Add SquidSpace events for custom features.
+			// TODO: Once these are stabilized, move them to a Javascript module and just set them here.
+			// NOTE: Must come after buildWorld call, because the objects have to be loaded before
+			//       you can attach events to them.
+
+			SquidSpace.attachClickEventToObject("lonelypanelexample", "panel-clicked",
+											{"which-panel": "lonelypanelexample"}, scene);
+			SquidSpace.addEventHandler("panel-clicked", function(data){
+				console.log(`A panel was clicked! panel: ${data["which-panel"]}`);
+			});
+			
 	
 			/* Alternative render loop with no FPS label.
 			engine.runRenderLoop(function() {		
