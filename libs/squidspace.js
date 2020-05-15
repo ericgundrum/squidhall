@@ -335,7 +335,7 @@ var SquidSpace = function() {
 						let meshes = SquidSpace.getLoadedObjectMeshes(objName);
 						// TODO: Wrap with try/catch.
 						placerHooks[placer](areaName, areaOrigin, config, 
-											placeName, meshes, data);
+											placeName, meshes, data, objName);
 					}
 					else {
 						// TODO: Consider making these 'builtin hooks' that
