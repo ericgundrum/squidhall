@@ -16,6 +16,11 @@
 					"origin": [3, 0, 0],
 					"object-placements": [
 						{
+	                        "name": "signfulls",
+	                        "object": "signfull",
+	                        "placer": "signfullplacer"
+						},						
+						{
 							"name": "artpnl1",
 							"object": "panel",
 							"placer": "linear-series",

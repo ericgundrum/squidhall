@@ -29,22 +29,53 @@
 			    cursor: default;
 			}
 			
-			/* Hide the Popup form */
-			#tellMeMore {
-				display: none; /* Hidden by default */
-				position: fixed; /* Stay in place */
-				z-index: 1; /* Sit on top */
-				padding-top: 100px; /* Location of the box */
-				left: 50;
-				top: 50;
-				width: 150px;
-				height: 150px;
-				overflow: auto; /* Enable scroll if needed */
-				background-color: rgb(5,5,5); /* Fallback color */
-				background-color: rgba(5,5,5,0.4); /* Black w/ opacity */	
-		        border: 2px solid #666;
-				display: none;		
-			    cursor: default;
+			/* Modal Popup box style */
+			.mpopup {
+			    display: none;
+			    position: fixed;
+			    z-index: 1;
+			    padding-top: 100px;
+			    left: 0;
+			    top: 0;
+			    width: 100%;
+			    height: 100%;
+			    overflow: auto;
+			    background-color: rgb(0,0,0);
+			    background-color: rgba(0,0,0,0.4);
+			}
+			.mpopup-content {
+			    position: relative;
+			    background-color: #fefefe;
+			    margin: auto;
+			    padding: 0;
+			    width: 60%;
+			    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+			    -webkit-animation-name: animatetop;
+			    -webkit-animation-duration: 0.4s;
+			    animation-name: animatetop;
+			    animation-duration: 0.4s
+			}
+			.mpopup-head {
+			    padding: 2px 16px;
+			    background-color: #457000;
+			    color: white;
+			}
+			.mpopup-main {padding: 2px 16px;}
+			.mpopup-foot {
+			    padding: 2px 16px;
+			    background-color: #457000;
+			    color: #ffffff;
+			}
+
+			/* add animation effects */
+			@-webkit-keyframes animatetop {
+			    from {top:-300px; opacity:0}
+			    to {top:0; opacity:1}
+			}
+
+			@keyframes animatetop {
+			    from {top:-300px; opacity:0}
+			    to {top:0; opacity:1}
 			}
 		</style>
 		<!-- SCRIPTS START -->
@@ -83,28 +114,60 @@
 		<!-- SCRIPTS END -->
 	</head>
 	<body>
+		
+		<div id="mpopupBox" class="mpopup">
+		    <div class="mpopup-content">
+		        <div class="mpopup-head">
+		            <span class="close">&#10005;</span>
+		            <h2 id="mpopup-title">Simple Modal Popup</h2>
+		        </div>
+		        <div class="mpopup-main" id="mpopup-text">
+		            <p>This is a simple modal popup using JavaScript and CSS</p>
+		            <p>Foo and Bar!</p>
+		        </div>
+		        <div class="mpopup-foot" id="mpopup-link">
+		        </div>
+		    </div>		
+		</div>	
+			
 		<div id="fpsLabel"></div> 
-		<div id="tellMeMore" class="popup">
-			<h2>"Tell me more!"</h2>
-			<p id="moreToTell"></p>
-		</div> 
+		
 		<canvas id="renderCanvas" touch-action="none"></canvas><!-- touch-action="none" for best results from PEP -->
+		
 		<script>
 //<![CDATA[
 	
-	function showTellMeMore(data) {
-        document.getElementById("tellMeMore").style.display="block";
+	var mpopup = document.getElementById('mpopupBox');
+	var close = document.getElementsByClassName("close")[0];
+	function showPopup(data) {
+		let mainText = data[`<p>${data["text"]}</p>`];
+		let linkText = undefined;
+		if ("title" in data) {
+			document.getElementById('mpopup-title').innerHTML = data["title"];
+		}
+		else {
+			document.getElementById('mpopup-title').innerHTML = "Attention!";
+		}
+		if ("text" in data) {
+			document.getElementById('mpopup-text').innerHTML = `<p>${data["text"]}</p>`;
+		}
+		else {
+			document.getElementById('mpopup-text').innerHTML = "<p>Normally a message would be here.</p>";
+		}
+		if ("link" in data && "link-text" in data) {
+			document.getElementById('mpopup-link').innerHTML = `<p>See more here: <a href='${data["link"]}' target='_blank'>${data["link-text"]}</a></p>`;
+		}
+		mpopup.style.display = "block";
+	}
+	close.onclick = function() {
+	    mpopup.style.display = "none";
+	}
+	window.onclick = function(event) {
+	    if (event.target == mpopup) {
+	        mpopup.style.display = "none";
+	    }
 	}
 	
-    // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
-      var modal = document.getElementById('tellMeMore');
-      if (event.target != modal) {
-        modal.style.display= "none"
-      }
-    }
-	
-
 	/* I want to add this for debugVerbose mode, but it isn't working and I don't have time to figure it out.
 	var showWorldAxis = function showWorldAxis(size, scene) {
 	    var makeTextPlane = function(text, color, size) {
@@ -208,7 +271,23 @@
 		},
 	};
 
-
+	var signfulllayout = {
+        "Chicago2022":{
+            "x":5,
+            "y":0,
+            "z":-20,
+            "rotateY":-1 * Math.PI / 4,
+            "texture":"sign-Chicago2022.jpg"
+        },
+        "DisCon_III":{
+            "x":5,
+            "y":0,
+            "z":-25,
+            "rotateY":-1 * Math.PI / 4,
+            "texture":"DisCon_III.jpg"
+        },
+    };
+		
 	//
 	// START BASIC SQUID HALL CODE
 	//
@@ -329,6 +408,33 @@
 		}
 	});
 	
+	SquidSpace.attachPlacerHook("signfullplacer",
+      	function(areaName, areaOrigin, config, placerName, meshes, data) {
+          if (debugVerbose)
+              console.log(`signfullplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placerName}, ${data}`);
+
+          for (key in signfulllayout) {
+              let signfullinfo = signfulllayout[key];
+              let mat = new BABYLON.StandardMaterial("mat", scene);
+              let signfullTexture = new BABYLON.Texture("./textures/" + signfullinfo.texture, scene);
+              signfullTexture.vScale = -1;
+              // mat.diffuseColor = BABYLON.Color3(1, 1, 1);
+              mat.diffuseTexture = signfullTexture;
+              mat.emissiveTexture = signfullTexture;
+              mat.alpha = 0.9;
+              mat.backFaceCulling = false;
+              for (index = 0; index < meshes.length; index++) {
+                  let bn = meshes[index].clone("sign-" + index);
+                      if(index == 1) bn.material = mat;
+                      bn.position.x = signfullinfo.x;
+                      bn.position.y = signfullinfo.y;
+                      bn.position.z = signfullinfo.z;
+                      bn.rotation.y = signfullinfo.rotateY;
+                      bn.checkCollisions = true;
+                  bn.isVisible = true;
+              }
+          }
+      });
 
 	SquidSpace.attachPlacerHook("lightplacer", 
 		function(areaName, areaOrigin, config, placerName, meshes, data){
@@ -378,11 +484,16 @@
 			//       you can attach events to them.
 
 			SquidSpace.attachClickEventToObject("lonelypanelexample", "panel-clicked",
-											{"foo?": "bar!"}, scene);
+				{
+					"title": "Welcome to Squid Hall",
+				 	"text": "You clicked on an object and this message came up! How cool is that?",
+					"link-text": "Squid Hall",
+					"link": "https://squid.fanac.com/"
+				}, scene);
 			SquidSpace.addEventHandler("panel-clicked", function(source, data){
 				if (debugVerbose) console.log(`'panel-clicked' event source: ${source}`);
 				
-				showTellMeMore(data);
+				showPopup(data);
 			});
 			
 	
