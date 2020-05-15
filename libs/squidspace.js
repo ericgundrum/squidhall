@@ -785,10 +785,10 @@ var SquidSpace = function() {
 		},
 		
 		
-		fireEvent: function(eventName, eventSource, eventData) {
+		fireEvent: function(eventName, sourceObjectName, eventData) {
 			if (eventName in eventHandlers) {
 				for (event of eventHandlers[eventName]) {
-					event(eventSource, eventData);
+					event(sourceObjectName, eventData);
 				}
 			}
 		},
