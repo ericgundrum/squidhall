@@ -57,15 +57,19 @@
 			}
 			.mpopup-head {
 			    padding: 2px 16px;
-			    background-color: #457000;
+			    background-color: #337000;
 			    color: white;
 			}
 			.mpopup-main {padding: 2px 16px;}
 			.mpopup-foot {
 			    padding: 2px 16px;
-			    background-color: #457000;
+			    background-color: #337000;
 			    color: #ffffff;
 			}
+			.mpopup-foot a:link {color: antiquewhite;}
+			.mpopup-foot a:visited {color: lightblue;}
+			.mpopup-foot a:hover {color: gold}
+			.mpopup-foot a:active {color: gold}
 
 			/* add animation effects */
 			@-webkit-keyframes animatetop {
@@ -118,7 +122,7 @@
 		<div id="mpopupBox" class="mpopup">
 		    <div class="mpopup-content">
 		        <div class="mpopup-head">
-		            <span class="close">&#10005;</span>
+		            <span class="mpopup-close">&#10005;</span>
 		            <h2 id="mpopup-title">Simple Modal Popup</h2>
 		        </div>
 		        <div class="mpopup-main" id="mpopup-text">
@@ -138,7 +142,7 @@
 //<![CDATA[
 	
 	var mpopup = document.getElementById('mpopupBox');
-	var close = document.getElementsByClassName("close")[0];
+	var close = document.getElementsByClassName("mpopup-close")[0];
 	function showPopup(data) {
 		let mainText = data[`<p>${data["text"]}</p>`];
 		let linkText = undefined;

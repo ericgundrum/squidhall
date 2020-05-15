@@ -61,6 +61,24 @@
 							}
 						},
 						{
+							"name": "plinth1",
+							"object": "plinth",
+							"placer": "single",
+							"data": {
+								"position": [20, 0.01, 20],
+								"rotation": true
+							}
+						},
+						{
+							"name": "plinth2",
+							"object": "plinth",
+							"placer": "single",
+							"data": {
+								"position": [16, 0.01, 16],
+								"rotation": true
+							}
+						},
+						{
 							"name": "lonelypanelexample",
 							"object": "panel",
 							"placer": "single",

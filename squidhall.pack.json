@@ -112,6 +112,11 @@
 					"file": "objects/table.babylon"
 				},
 				{
+					"name": "plinth",
+					"action": "insert",
+					"file": "objects/plinth.babylon"
+				},
+				{
 					"name": "banner",
 					"action": "insert",
 					"file": "objects/banner.babylon"
