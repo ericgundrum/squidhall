@@ -138,34 +138,41 @@
 		
 		<canvas id="renderCanvas" touch-action="none"></canvas><!-- touch-action="none" for best results from PEP -->
 		
-		<script>
+<script>
 //<![CDATA[
 	
 	var mpopup = document.getElementById('mpopupBox');
 	var close = document.getElementsByClassName("mpopup-close")[0];
-	function showPopup(data) {
+	
+	showPopup = function(data) {
 		let mainText = data[`<p>${data["text"]}</p>`];
 		let linkText = undefined;
+		
 		if ("title" in data) {
 			document.getElementById('mpopup-title').innerHTML = data["title"];
 		}
 		else {
 			document.getElementById('mpopup-title').innerHTML = "Attention!";
 		}
+		
 		if ("text" in data) {
 			document.getElementById('mpopup-text').innerHTML = `<p>${data["text"]}</p>`;
 		}
 		else {
 			document.getElementById('mpopup-text').innerHTML = "<p>Normally a message would be here.</p>";
 		}
+		
 		if ("link" in data && "link-text" in data) {
 			document.getElementById('mpopup-link').innerHTML = `<p>See more here: <a href='${data["link"]}' target='_blank'>${data["link-text"]}</a></p>`;
 		}
+		
 		mpopup.style.display = "block";
 	}
+	
 	close.onclick = function() {
 	    mpopup.style.display = "none";
 	}
+	
 	window.onclick = function(event) {
 	    if (event.target == mpopup) {
 	        mpopup.style.display = "none";
@@ -367,44 +374,44 @@
 
 	SquidSpace.attachPlacerHook("beamplacer", 
 		function(areaName, areaOrigin, config, placerName, meshes, data) {
-			if (debugVerbose) 
-				console.log(`beamplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placerName}, ${data}`);                     
-			for (beammesh of meshes){
-                for (var i = 0; i < 8; i++ ) {
-                    var bm = beammesh.createInstance("beam1-" + i);
-                    bm.position.z = -1 * i * 8.3;
-                    bm.checkCollisions = false;
-                }
+		if (debugVerbose) 
+			console.log(`beamplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placerName}, ${data}`);                     
+		for (beammesh of meshes){
+            for (var i = 0; i < 8; i++ ) {
+                var bm = beammesh.createInstance("beam1-" + i);
+                bm.position.z = -1 * i * 8.3;
+                bm.checkCollisions = false;
             }
-        });
+        }
+    });
 
 	SquidSpace.attachPlacerHook("bannerplacer", 
 		function(areaName, areaOrigin, config, placerName, meshes, data) {
-			if (debugVerbose) 
-				console.log(`bannerplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placerName}, ${data}`);
-			
-			for (key in bannerlayout) {
-				let bannerinfo = bannerlayout[key];
-				let mat = new BABYLON.StandardMaterial("mat", scene);
-				let bannerTexture = new BABYLON.Texture("./textures/" + bannerinfo.texture, scene);
-				bannerTexture.vScale = -1;
-				// mat.diffuseColor = BABYLON.Color3(1, 1, 1);
-				mat.diffuseTexture = bannerTexture;
-				mat.emissiveTexture = bannerTexture;
-				mat.alpha = 0.9;
-				mat.backFaceCulling = false;
-				for (index = 0; index < meshes.length; index++) {
-			        let bn = meshes[index].clone("banner-" + index);
-					bn.material = mat;
-	                bn.position.x = bannerinfo.x;
-	                bn.position.y = bannerinfo.y;
-	                bn.position.z = bannerinfo.z;
-	                bn.rotation.y = bannerinfo.rotateY;
-	                bn.checkCollisions = false;
-					bn.isVisible = true; 
-				}
+		if (debugVerbose) 
+			console.log(`bannerplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placerName}, ${data}`);
+		
+		for (key in bannerlayout) {
+			let bannerinfo = bannerlayout[key];
+			let mat = new BABYLON.StandardMaterial("mat", scene);
+			let bannerTexture = new BABYLON.Texture("./textures/" + bannerinfo.texture, scene);
+			bannerTexture.vScale = -1;
+			// mat.diffuseColor = BABYLON.Color3(1, 1, 1);
+			mat.diffuseTexture = bannerTexture;
+			mat.emissiveTexture = bannerTexture;
+			mat.alpha = 0.9;
+			mat.backFaceCulling = false;
+			for (index = 0; index < meshes.length; index++) {
+		        let bn = meshes[index].clone("banner-" + index);
+				bn.material = mat;
+                bn.position.x = bannerinfo.x;
+                bn.position.y = bannerinfo.y;
+                bn.position.z = bannerinfo.z;
+                bn.rotation.y = bannerinfo.rotateY;
+                bn.checkCollisions = false;
+				bn.isVisible = true; 
 			}
-		});
+		}
+	});
 
 	SquidSpace.attachPlacerHook("curtainplacer", 
 		function(areaName, areaOrigin, config, placerName, meshes, data) {
@@ -456,78 +463,83 @@
        	if (debugVerbose)
 			console.log(`signfullplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placerName}, ${data}`);
 
-          for (key in signfulllayout) {
-              let signfullinfo = signfulllayout[key];
-              let mat = new BABYLON.StandardMaterial("mat", scene);
-              let signfullTexture = new BABYLON.Texture("./textures/" + signfullinfo.texture, scene);
-              signfullTexture.vScale = -1;
-              // mat.diffuseColor = BABYLON.Color3(1, 1, 1);
-              mat.diffuseTexture = signfullTexture;
-              mat.emissiveTexture = signfullTexture;
-              mat.alpha = 0.9;
-              mat.backFaceCulling = false;
-              for (index = 0; index < meshes.length; index++) {
-                  let bn = meshes[index].clone("sign-" + index);
-                      if(index == 1) bn.material = mat;
-                      bn.position.x = signfullinfo.x;
-                      bn.position.y = signfullinfo.y;
-                      bn.position.z = signfullinfo.z;
-                      bn.rotation.y = signfullinfo.rotateY;
-                      bn.checkCollisions = true;
-                  bn.isVisible = true;
-              }
-          }
-      });
+		for (key in signfulllayout) {
+		  let signfullinfo = signfulllayout[key];
+		  let mat = new BABYLON.StandardMaterial("mat", scene);
+		  let signfullTexture = new BABYLON.Texture("./textures/" + signfullinfo.texture, scene);
+		  signfullTexture.vScale = -1;
+		  // mat.diffuseColor = BABYLON.Color3(1, 1, 1);
+		  mat.diffuseTexture = signfullTexture;
+		  mat.emissiveTexture = signfullTexture;
+		  mat.alpha = 0.9;
+		  mat.backFaceCulling = false;
+		  // TODO: Refactor to use cloneObject() or addObject() so events will work. 
+		  for (index = 0; index < meshes.length; index++) {
+			  // TODO: Create a clone method in Squidspace that 
+			  //       properly saves the new object. Change the 
+			  //       name here as well. That way the even handlers
+			  //       will work!
+		      let bn = meshes[index].clone("sign-" + index);
+		          if(index == 1) bn.material = mat;
+		          bn.position.x = signfullinfo.x;
+		          bn.position.y = signfullinfo.y;
+		          bn.position.z = signfullinfo.z;
+		          bn.rotation.y = signfullinfo.rotateY;
+		          bn.checkCollisions = true;
+		      bn.isVisible = true;
+		  }
+		}
+	});
 	  
-	  SquidSpace.attachPlacerHook("signhalfplacer",
-      		function(areaName, areaOrigin, config, placerName, meshes, data) {
-            if (debugVerbose)
-                console.log(`signhalfplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placerName}, ${data}`);
+	SquidSpace.attachPlacerHook("signhalfplacer",
+    	function(areaName, areaOrigin, config, placerName, meshes, data) {
+        if (debugVerbose)
+            console.log(`signhalfplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placerName}, ${data}`);
 
-            for (key in signhalflayout) {
-                let signhalfinfo = signhalflayout[key];
-                let mat = new BABYLON.StandardMaterial("mat", scene);
-                let signhalfTexture = new BABYLON.Texture("./textures/" + signhalfinfo.texture, scene);
-                signhalfTexture.vScale = -1;
-                // mat.diffuseColor = BABYLON.Color3(1, 1, 1);
-                mat.diffuseTexture = signhalfTexture;
-                mat.emissiveTexture = signhalfTexture;
-                mat.alpha = 0.9;
-                mat.backFaceCulling = false;
-                for (index = 0; index < meshes.length; index++) {
-                    let bn = meshes[index].clone("sign-" + index);
-                        if(index == 1) bn.material = mat;
-                        bn.position.x = signhalfinfo.x;
-                        bn.position.y = signhalfinfo.y;
-                        bn.position.z = signhalfinfo.z;
-                        bn.rotation.y = signhalfinfo.rotateY;
-                        bn.checkCollisions = true;
-                    bn.isVisible = true;
-                }
+        for (key in signhalflayout) {
+            let signhalfinfo = signhalflayout[key];
+            let mat = new BABYLON.StandardMaterial("mat", scene);
+            let signhalfTexture = new BABYLON.Texture("./textures/" + signhalfinfo.texture, scene);
+            signhalfTexture.vScale = -1;
+            // mat.diffuseColor = BABYLON.Color3(1, 1, 1);
+            mat.diffuseTexture = signhalfTexture;
+            mat.emissiveTexture = signhalfTexture;
+            mat.alpha = 0.9;
+            mat.backFaceCulling = false;
+            for (index = 0; index < meshes.length; index++) {
+                let bn = meshes[index].clone("sign-" + index);
+                    if(index == 1) bn.material = mat;
+                    bn.position.x = signhalfinfo.x;
+                    bn.position.y = signhalfinfo.y;
+                    bn.position.z = signhalfinfo.z;
+                    bn.rotation.y = signhalfinfo.rotateY;
+                    bn.checkCollisions = true;
+                bn.isVisible = true;
             }
-        });
+        }
+    });
 
 	SquidSpace.attachPlacerHook("lightplacer", 
 		function(areaName, areaOrigin, config, placerName, meshes, data){
-			if (debugVerbose) 
-				console.log(`lightplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placerName}, ${data}`);
+		if (debugVerbose) 
+			console.log(`lightplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placerName}, ${data}`);
 
-			let gl = new BABYLON.GlowLayer("glow", scene, {});
-			gl.intensity = 1.0;
+		let gl = new BABYLON.GlowLayer("glow", scene, {});
+		gl.intensity = 1.0;
 
-			let lightFrontFill = new BABYLON.PointLight("pointLight", 
-													SquidSpace.makePointVector(25, 20, 0), scene);
-			lightFrontFill.diffuse = new BABYLON.Color3(1, 1, 1);
-			lightFrontFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
-			lightFrontFill.range = 90;
+		let lightFrontFill = new BABYLON.PointLight("pointLight", 
+												SquidSpace.makePointVector(25, 20, 0), scene);
+		lightFrontFill.diffuse = new BABYLON.Color3(1, 1, 1);
+		lightFrontFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
+		lightFrontFill.range = 90;
 
-			let lightTopFill = new BABYLON.PointLight("pointLight", 
-													SquidSpace.makePointVector(25, 20, 60), scene);
-			lightTopFill.diffuse = new BABYLON.Color3(1, 1, 1);
-			lightTopFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
-			lightTopFill.range = 90;
+		let lightTopFill = new BABYLON.PointLight("pointLight", 
+												SquidSpace.makePointVector(25, 20, 60), scene);
+		lightTopFill.diffuse = new BABYLON.Color3(1, 1, 1);
+		lightTopFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
+		lightTopFill.range = 90;
 	});
-		
+	
 	// Here's where we do the magic. 
 	document.addEventListener("DOMContentLoaded", (event) =>{	
 		// Create and activate the world space.
@@ -537,42 +549,56 @@
 			let currFPS = 0;
 			let newFPS = 0;
 		    var fpsLabel = document.getElementById("fpsLabel");
-			engine.runRenderLoop(function() {		
-				scene.render();
-		
-				// Update FPS on screen if it has changed.
-				newFPS = engine.getFps().toFixed();
-				if (currFPS != newFPS) {
-					currFPS = newFPS;
-				    fpsLabel.innerHTML = `&nbsp;${currFPS} fps&nbsp;`;
-				}
-			});
-			
 
 			// Add SquidSpace events for custom features.
 			// TODO: Once these are stabilized, move them to a Javascript module and just set them here.
 			// NOTE: Must come after buildWorld call, because the objects must be loaded before
 			//       you can attach events to them.
 
-			SquidSpace.attachClickEventToObject("lonelypanelexample", "panel-clicked",
+			// Show popup events.
+			SquidSpace.addEventHandler("onClickShowPopup", function(source, data){
+				showPopup(data);
+			});
+			SquidSpace.attachClickEventToObject("lonelypanelexample", "onClickShowPopup",
 				{
 					"title": "Welcome to Squid Hall",
 				 	"text": "You clicked on an object and this message came up! How cool is that?",
 					"link-text": "Squid Hall",
 					"link": "https://squid.fanac.com/"
-				}, scene);
-			SquidSpace.addEventHandler("panel-clicked", function(source, data){
-				if (debugVerbose) console.log(`'panel-clicked' event source: ${source}`);
-				
-				showPopup(data);
-			});
-			
-	
-			/* Alternative render loop with no FPS label.
+				}, scene
+			);
+			SquidSpace.attachClickEventToObject("Chicago2022", "onClickShowPopup",
+				{
+					"title": "Chicago 2022!",
+				 	"text": "Chicago is bidding for the 2022 Worldcon. The theme for the bid is “Take to the Stars”.",
+					"link-text": "Chicago 2022 Bid",
+					"link": "https://chicagoworldconbid.org/"
+				}, scene
+			);
+			SquidSpace.attachClickEventToObject("DisCon_III", "onClickShowPopup",
+				{
+					"title": "DisCon III!",
+				 	"text": "DisCon III, the 79th World Science Fiction Convention in 2021! Nancy Kress – Author Guest of Honor.",
+					"link-text": "DisCon III",
+					"link": "https://discon3.org/"
+				}, scene
+			);
+
 			engine.runRenderLoop(function() {		
 				scene.render();
-			});
-			*/
+
+				// Update FPS on screen if it has changed.
+				newFPS = engine.getFps().toFixed();
+				if (currFPS != newFPS) {
+					currFPS = newFPS;
+				    fpsLabel.innerHTML = `&nbsp;${currFPS} fps&nbsp;`;
+				}
+			});	
+			
+			// Alternate render loop without FPS label.
+			//engine.runRenderLoop(function() {		
+			//	scene.render();
+			//});	
 
 			// Watch for browser/canvas resize events
 			window.addEventListener("resize", function() {
@@ -590,6 +616,6 @@
 	//
 
 //]]>
-		</script>
+</script>
 	</body>
 </html>

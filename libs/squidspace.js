@@ -277,13 +277,21 @@ var SquidSpace = function() {
 
 		// Other camera settings.
 		// TODO: Experiment with values to find best.
-		// TODO: Consider making pack file settable.
+		// TODO: Consider making pack file settable or even dynamically settable.
 		camera.fov = 1.3;
 		if (!debugCamera) {
-			camera.speed = 0.55; // Lower values slow movement down.
-		    //camera.inertia = 0.2; // Lower values slow movement down, but also affect turning.
-			camera.inertia = 0.4;
+			//camera.speed = 0.15; // Lower values slow movement down.
+			camera.speed = 0.20;
+			//camera.speed = 0.25; .
+			//camera.speed = 0.55; 
+		    //camera.inertia = 0.2; // Lower values slow movement down, but also affect look/turning.
+			//camera.inertia = 0.4;
 			//camera.inertia = 0.6;
+			camera.inertia = 0.8;
+			//camera.inertia = 1; // DO NOT USE - you will not like it.
+			//camera.angularSensibility = 500; // Lower values increase look/turning speed, default is 2000.
+			camera.angularSensibility = 750;
+			//camera.angularSensibility = 1000;
 		}
 		
 		return camera;
@@ -486,8 +494,12 @@ var SquidSpace = function() {
 			);
 		},
 
+		// TODO: Texture/Material/Light management functions.
+
+		//
+		// Object management functions.
+		//
 		
-		// TODO: addObject/Texture/Material/Light and load Texture/Material functions.
 
 		/** Loads the named object using the passed object data. Calls the passed success
 		    function if the object is loaded. Adds the object to the internal list, making
@@ -547,10 +559,51 @@ var SquidSpace = function() {
 			return obj;
 		},
 		
+		
+		/** Makes a cloned copy of the object for the passed object name, assinging the 
+		    passed clone object name to the new object. Returns the cloned meshes or 
+		    'undefined' if it fails. */
+		cloneObject: function(objName, cloneObjName) {
+			let meshes = SquidSpace.getLoadedObjectMeshes(objName);
+			let clone = [];
+			
+			// If we have meshes, clone them.
+			if (typeof meshes != "undefined") {
+				for (m of meshes) {
+					clone.push(m.clone(cloneObjName));
+				}
+			}
+
+			// Did we get anything?
+			if (clone.length > 0) {
+				// Add the cloned object to the internal list.
+				SquidSpace.addObjectInstance(cloneObjName, clone);
+				
+				// We are good!
+				return clone;
+			}
+			
+			return undefined;
+		},
+
+		
+		addObjectInstance: function(objName, meshes) {
+			// Force ID of all meshes to the object name.
+			for (m of meshes) {
+				m.id = objName;
+			}
+			
+			// TODO: Check if objName already exists. Decide how to handle. (Error?)
+			
+			// Keep a local reference to the object.
+			objects[objName] = meshes;
+		},
+		
+		
 		/** Returns the meshes for the passed object name, assuming the object was 
-		specified in the pack file, loaded with the loadObject() or added with the
-		addObject() function. If the object is available it returns an array of 
-		meshes for the object. If it was not it returns 'undefined'. */
+		specified in the pack file, loaded with the loadObject(), cloned with cloneObject,
+		or added with the addObject() function. If the object is available it returns 
+		an array of meshes for the object. If it was not it returns 'undefined'. */
 		getLoadedObjectMeshes: function(objName) {
 			if (objName in objects) {
 				return objects[objName];
@@ -563,6 +616,7 @@ var SquidSpace = function() {
 		//
 		// Layout helper functions.
 		//
+
 	
 		/** Adds a single instance to a placements array at the passed position
 		    and rotation.
@@ -677,17 +731,6 @@ var SquidSpace = function() {
 				SquidSpace.addObjectInstance(instance[0], newMeshes);			
 			}
 		},
-		
-		
-		addObjectInstance: function(objName, meshes) {
-			// Force ID of all meshes to the object name.
-			for (m of meshes) {
-				m.id = objName;
-			}
-			
-			// Keep a local reference to the object.
-			objects[objName] = meshes;
-		},
 
 
 		//
@@ -735,6 +778,9 @@ var SquidSpace = function() {
 						),
 					);
 				}
+			}
+			else {
+				// TODO: error or log or something.
 			}
 		},
 		
