@@ -1,5 +1,31 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
+	<!-- 
+		
+		This is Squid Hall!
+		
+		Squid Hall was created for ConZealand as a virtual replacement for the 
+		Wellington TSB Arena after the 2020 coronavirus pandemic led to the 
+		cancellation of large events worldwide. Conzealand didn't cancel outright, 
+		instead it moved online in every way it could possibly do so, from video
+		meetings to text chat to web pages to even Virtual Reality.
+		
+		This is just one of those projects. We hope you enjoy it. 
+		
+		=== CREDITS ===
+		
+		Chief Propeller Head: Tom Becker
+		
+		Cyberspace Architect: Jack William Bell
+		
+		3D Team:
+		
+			* Taiyo Fujii
+		
+			* Ryan Casal
+		
+			* Dan Campbell 
+	-->
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>
@@ -225,11 +251,12 @@
 		// NOTE: Comment this out to run the experiment.
 		//return;
 		
+		//*
 		// Place object on object.
 		// See https://www.babylonjs-playground.com/#0UJYJQ#6
 		let height = 0;
 		let teapot = SquidSpace.cloneObject("teapot", "displayteapot");
-		let plinth = SquidSpace.getLoadedObjectMeshes("plinth1");
+		let plinth = SquidSpace.getLoadedObjectMeshes("plinth11");
 		// Find max height for plinth.
 		for (pmesh of plinth) {
 			let bi = pmesh.getBoundingInfo().boundingBox.vectorsWorld;
@@ -258,44 +285,92 @@
 				"link": "https://en.wikipedia.org/wiki/Utah_teapot"
 			}, scene
 		);   	
+		//*/
 		
 			
 		/*
 		// Decal placement on objects.
 		// See https://www.babylonjs-playground.com/#1BAPRM#73
 		// See https://doc.babylonjs.com/how_to/decals
+		let scalingFactor = 0.0015;
 		let decalData = [
 			{
-				"texture": "/textures/broadmore1.jpg",
-				"size": [10, 10, 10]
+				texture: "/textures/broadmore1.jpg",
+				position: [1.95, 0.05],
+				// Image is 680x386, working it this way gets us a decent scale.
+				size: [680 * scalingFactor, 386 * scalingFactor] 
 			},
 			{
-				"texture": "/textures/broadmore2.jpg",
-				"size": [10, 10, 10]
+				texture: "/textures/broadmorebio.png",
+				position: [1.75, 0.75],
+				// We are scaling this one to 3/4  size.
+				size: [722 * scalingFactor * 0.75, 925 * scalingFactor * 0.75]
 			},
 			{
-				"texture": "/textures/broadmore3.jpg",
-				"size": [10, 10, 10]
+				texture: "/textures/broadmore2.jpg",
+				position: [1.2, 0.05],
+				size: [680 * scalingFactor, 880 * scalingFactor]
 			},
 			{
-				"texture": "/textures/broadmore4.jpg",
-				"size": [10, 10, 10]
+				texture: "/textures/broadmore3.jpg",
+				position: [0.75, 0.65],
+				size: [680 * scalingFactor, 1043 * scalingFactor]
 			},
 			{
-				"texture": "/textures/broadmorebio.png",
-				"size": [10, 10, 10]
-			}
+				texture: "/textures/broadmore4.jpg",
+				position: [0.7, 0.05],
+				size: [680 * scalingFactor, 494 * scalingFactor]
+			},
 		]
 		let panel = SquidSpace.getLoadedObjectMeshes("lonelypanelexample");
-		for (dd of decalData) {
+		//let dd = decalData[0]; // do only one
+		for (dd of decalData) { // do all in loop
 			let decalMaterial = new BABYLON.StandardMaterial("broadmoremat", scene);
-			decalMaterial.diffuseTexture = new BABYLON.Texture(dd["texture"], scene);
-			decalMaterial.diffuseTexture.hasAlpha = true;
+			let decalTexture = new BABYLON.Texture(dd.texture, scene);
+			
+			decalTexture.vScale = -1;
+			
+			// Texture size returns 0, 0 for a loaded texture. Not helpful.
+			//let tsize = decalTexture.getSize();
+			//console.log(`Texture size - w: ${tsize.width} h: ${tsize.width}`);
+			
+			// Self lighting. Also puts decal on both sides of panel.
+			//decalMaterial.emissiveTexture = decalTexture; 
+			
+			// Needs lighting, but works.
+			decalMaterial.diffuseTexture = decalTexture; 
+			
+			// Don't use.
+			//decalMaterial.diffuseTexture.hasAlpha = true; 
+			
+			// Doesn't seem to help.
+			//decalMaterial.alpha = 0.9; 
+			
+			// No difference I can see. 
+			decalMaterial.backFaceCulling = false; 
+			
+			// This is required to make it look good.
 			decalMaterial.zOffset = -2;
-			//let decalSize = new BABYLON.Vector3(dd["size"][0], dd["size"][1], dd["size"][2]);
-			//let decal = BABYLON.MeshBuilder.CreateDecal("decal", panel[1], {position: [], normal: [], size: decalSize}, scene);
-			let decal = BABYLON.MeshBuilder.CreateDecal("decal", panel[1], {position: [0, 0, 0]}, scene);
+			
+			// x affects decal width, y doesn't matter but can't be 0, z affects height.
+			let decalSize = new BABYLON.Vector3(dd.size[0], 1, dd.size[1]); 
+			
+			let decal = BABYLON.MeshBuilder.CreateDecal("decal", panel[0], 
+					{
+						position: panel[0].position,
+						//position: new BABYLON.Vector3(dd["position"][0], dd["position"][1], dd["position"][2]),
+						//size: new BABYLON.Vector3(dd["size"][0], dd["size"][1], dd["size"][2])
+						size: decalSize
+					}, 
+					scene
+			);
 			decal.material = decalMaterial;
+			
+			// NOTE: Whether to use x or z to position horizontally and whether to 
+			//       add or subtract might depend on the panel rotation.
+			//decal.position.x += 1; // This moves it away.
+			decal.position.y += dd.position[0]; // Move it up.
+			decal.position.z += dd.position[1]; // Move it over.
 		}
 	
 		// Add an event to the panel.
@@ -307,47 +382,45 @@
 				"link": "https://conzealand.nz/greg-broadmore-guest"
 			}, scene
 		);   	
-		*/
-		
-	}
-	
+		//*/
 
-	/* I want to add this for debugVerbose mode, but it isn't working and I don't have time to figure it out.
-	var showWorldAxis = function showWorldAxis(size, scene) {
-	    var makeTextPlane = function(text, color, size) {
-	        var dynamicTexture = new BABYLON.DynamicTexture("DynamicTexture", 50, scene, true);
-	        dynamicTexture.hasAlpha = true;
-	        dynamicTexture.drawText(text, 5, 40, "bold 36px Arial", color , "transparent", true);
-	        var plane = BABYLON.Mesh.CreatePlane("TextPlane", size, scene, true);
-	        plane.material = new BABYLON.StandardMaterial("TextPlaneMaterial", scene);
-	        plane.material.backFaceCulling = false;
-	        plane.material.specularColor = new BABYLON.Color3(0, 0, 0);
-	        plane.material.diffuseTexture = dynamicTexture;
-	    return plane;
-	     };
-	    var axisX = BABYLON.Mesh.CreateLines("axisX", [
-	      BABYLON.Vector3.Zero(), new BABYLON.Vector3(size, 0, 0), new BABYLON.Vector3(size * 0.95, 0.05 * size, 0),
-	      new BABYLON.Vector3(size, 0, 0), new BABYLON.Vector3(size * 0.95, -0.05 * size, 0)
-	      ], scene);
-	    axisX.color = new BABYLON.Color3(1, 0, 0);
-	    var xChar = makeTextPlane("X", "red", size / 10);
-	    xChar.position = new BABYLON.Vector3(0.9 * size, -0.05 * size, 0);
-	    var axisY = BABYLON.Mesh.CreateLines("axisY", [
-	        BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, size, 0), new BABYLON.Vector3( -0.05 * size, size * 0.95, 0),
-	        new BABYLON.Vector3(0, size, 0), new BABYLON.Vector3( 0.05 * size, size * 0.95, 0)
-	        ], scene);
-	    axisY.color = new BABYLON.Color3(0, 1, 0);
-	    var yChar = makeTextPlane("Y", "green", size / 10);
-	    yChar.position = new BABYLON.Vector3(0, 0.9 * size, -0.05 * size);
-	    var axisZ = BABYLON.Mesh.CreateLines("axisZ", [
-	        BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, 0, size), new BABYLON.Vector3( 0 , -0.05 * size, size * 0.95),
-	        new BABYLON.Vector3(0, 0, size), new BABYLON.Vector3( 0, 0.05 * size, size * 0.95)
-	        ], scene);
-	    axisZ.color = new BABYLON.Color3(0, 0, 1);
-	    var zChar = makeTextPlane("Z", "blue", size / 10);
-	    zChar.position = new BABYLON.Vector3(0, 0.05 * size, 0.9 * size);
-	};
-	*/
+		/* I want to add this for debugVerbose mode, but it isn't working and I don't have time to figure it out.
+		var showWorldAxis = function showWorldAxis(size, scene) {
+		    var makeTextPlane = function(text, color, size) {
+		        var dynamicTexture = new BABYLON.DynamicTexture("DynamicTexture", 50, scene, true);
+		        dynamicTexture.hasAlpha = true;
+		        dynamicTexture.drawText(text, 5, 40, "bold 36px Arial", color , "transparent", true);
+		        var plane = BABYLON.Mesh.CreatePlane("TextPlane", size, scene, true);
+		        plane.material = new BABYLON.StandardMaterial("TextPlaneMaterial", scene);
+		        plane.material.backFaceCulling = false;
+		        plane.material.specularColor = new BABYLON.Color3(0, 0, 0);
+		        plane.material.diffuseTexture = dynamicTexture;
+		    return plane;
+		     };
+		    var axisX = BABYLON.Mesh.CreateLines("axisX", [
+		      BABYLON.Vector3.Zero(), new BABYLON.Vector3(size, 0, 0), new BABYLON.Vector3(size * 0.95, 0.05 * size, 0),
+		      new BABYLON.Vector3(size, 0, 0), new BABYLON.Vector3(size * 0.95, -0.05 * size, 0)
+		      ], scene);
+		    axisX.color = new BABYLON.Color3(1, 0, 0);
+		    var xChar = makeTextPlane("X", "red", size / 10);
+		    xChar.position = new BABYLON.Vector3(0.9 * size, -0.05 * size, 0);
+		    var axisY = BABYLON.Mesh.CreateLines("axisY", [
+		        BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, size, 0), new BABYLON.Vector3( -0.05 * size, size * 0.95, 0),
+		        new BABYLON.Vector3(0, size, 0), new BABYLON.Vector3( 0.05 * size, size * 0.95, 0)
+		        ], scene);
+		    axisY.color = new BABYLON.Color3(0, 1, 0);
+		    var yChar = makeTextPlane("Y", "green", size / 10);
+		    yChar.position = new BABYLON.Vector3(0, 0.9 * size, -0.05 * size);
+		    var axisZ = BABYLON.Mesh.CreateLines("axisZ", [
+		        BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, 0, size), new BABYLON.Vector3( 0 , -0.05 * size, size * 0.95),
+		        new BABYLON.Vector3(0, 0, size), new BABYLON.Vector3( 0, 0.05 * size, size * 0.95)
+		        ], scene);
+		    axisZ.color = new BABYLON.Color3(0, 0, 1);
+		    var zChar = makeTextPlane("Z", "blue", size / 10);
+		    zChar.position = new BABYLON.Vector3(0, 0.05 * size, 0.9 * size);
+		};
+		*/
+	}
 	
 	//
 	// Data for placer hooks.
@@ -420,66 +493,50 @@
 	};
 
 	var signfulllayout = {
-	    "Chicago2022":{
-	        "x":5,
-	        "y":0,
-	        "z":-20,
-	        "rotateY":-1 * Math.PI / 4,
-	        "texture":"sign-Chicago2022.jpg"
-	    },
-		"DisCon_III":{
-	        "x":5,
-	        "y":0,
-	        "z":-25,
-	        "rotateY":-1 * Math.PI / 4,
-	        "texture":"DisCon_III.jpg"
-	    },
+        "Chicago2022":{
+           "pos": [22, 0, 36.3],
+            "rotateY":-1 * Math.PI / 4,
+            "texture":"sign-Chicago2022.jpg"
+        },
+        "DisCon_III":{
+           "pos": [27, 0, 36.3],
+            "rotateY":-1 * Math.PI / 4,
+            "texture":"DisCon_III.jpg"
+        },
 		"Glasgow":{
-	        "x":5,
-	        "y":0,
-	        "z":-30,
+           "pos": [33, 0, 36.3],
 	        "rotateY":-1 * Math.PI / 4,
 	        "texture":"sign-glasgow.png"
 	    },
 	};
 
-	var signhalflayout = {
-	   "PropSimonTam":{
-	       "x":6,
-	       "y":0,
-	       "z":-10,
-	       "rotateY":1 * Math.PI / 4,
-	       "texture":"sign-half-Prop_Simon_Tam.png"
-	   },
-	   "Orodurin":{
-	       "x":8,
-	       "y":0,
-	       "z":-10,
-	       "rotateY":1 * Math.PI / 4,
-	       "texture":"sign-half-Orodruin.png"
-	   },
-	   "Kadath":{
-	       "x":10,
-	       "y":0,
-	       "z":-10,
-	       "rotateY":1 * Math.PI / 4,
-	       "texture":"sign-half-Kadath.png"
-	   },
-	   "Genosha":{
-	       "x":12,
-	       "y":0,
-	       "z":-10,
-	       "rotateY":1 * Math.PI / 4,
-	       "texture":"sign-half-Genosha.png"
-	   },
-	   "Gallifrey":{
-	       "x":14,
-	       "y":0,
-	       "z":-10,
-	       "rotateY":1 * Math.PI / 4,
-	       "texture":"sign-half-Gallifrey.jpg"
-	   },
-	};
+    var signhalflayout = {
+       "PropSimonTam":{
+           "pos": [19.1, 0, 10],
+           "rotateY":1 * Math.PI / 4,
+           "texture":"sign-half-Prop_Simon_Tam.png"
+       },
+       "Orodurin":{
+           "pos": [19.1, 0, 20],
+           "rotateY":1 * Math.PI / 4,
+           "texture":"sign-half-Orodruin.png"
+       },
+       "Kadath":{
+           "pos": [19.1, 0, 30],
+           "rotateY":1 * Math.PI / 4,
+           "texture":"sign-half-Kadath.png"
+       },
+       "Genosha":{
+           "pos": [19.9, 0, 40],
+           "rotateY":1 * Math.PI / 4,
+           "texture":"sign-half-Genosha.png"
+       },
+       "Gallifrey":{
+           "pos": [19.9, 0, 50],
+           "rotateY":1 * Math.PI / 4,
+           "texture":"sign-half-Gallifrey.jpg"
+       },
+   };
 	
 	//
 	// Placer hooks.
@@ -615,9 +672,10 @@
 				for (index = 0; index < cloneMeshes.length; index++) {
 					let bn = cloneMeshes[index];
 					if(index == 1) bn.material = mat;
-					bn.position.x = signfullinfo.x;
-					bn.position.y = signfullinfo.y;
-					bn.position.z = signfullinfo.z;
+					bn.position = SquidSpace.makePointVector(
+															signfullinfo.pos[0],
+															signfullinfo.pos[1],
+															signfullinfo.pos[2]);
 					bn.rotation.y = signfullinfo.rotateY;
 					bn.checkCollisions = true;
 					bn.isVisible = true;
@@ -646,9 +704,10 @@
 	            for (index = 0; index < meshes.length; index++) {
 	                let bn = meshes[index].clone("sign-" + index);
 	                if(index == 1) bn.material = mat;
-	                bn.position.x = signhalfinfo.x;
-	                bn.position.y = signhalfinfo.y;
-	                bn.position.z = signhalfinfo.z;
+	                bn.position = SquidSpace.makePointVector(
+															signhalfinfo.pos[0],
+															signhalfinfo.pos[1],
+															signhalfinfo.pos[2]);
 	                bn.rotation.y = signhalfinfo.rotateY;
 	                bn.checkCollisions = true;
 	                bn.isVisible = true;
@@ -785,8 +844,14 @@
 			});
 		}
 		else {
-			// TODO: Add 'Failed to load' message to page with HTML.
 			console.log("Failed to load squid space.")
+
+			showMessagePopup(
+				{
+					"title": "Squid Hall 3D Space Failed to Load",
+				 	"text": "We apologize! Something happened while loading the 3D simulation space. It's possible your computer or web browser do not support WebGL or other features required to make it work. Please try again with a different browser or computer."
+				}
+			);
 		}
 	});
 
