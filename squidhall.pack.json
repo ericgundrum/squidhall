@@ -39,7 +39,7 @@
 					"action": "builtin",
 					"data": {
 						"type": "floorSection",
-						"size": [14, 15],
+						"size": [14, 17],
 						"position": [3, 0.01, 0],
 						"material": "macadam"
 					},
@@ -52,8 +52,8 @@
 					"action": "builtin",
 					"data": {
 						"type": "floorSection",
-						"size": [14, 24],
-						"position": [20, 0.01, 7],
+						"size": [13, 27.5],
+						"position": [21.6, 0.01, 6.5],
 						"material": "macadam"
 					},
 					"config": {
