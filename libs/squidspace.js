@@ -259,7 +259,7 @@ var SquidSpace = function() {
 		//       up close to objects, while still allowing you to navigate around without
 		//       getting stuck between things. However, this does mean you can't get really
 		//       close to anything straight in front of you.
-		camera.ellipsoid = new BABYLON.Vector3(1.7, 1, 0.3);
+		camera.ellipsoid = new BABYLON.Vector3(1, 1, 1);
 
 		// WASD movement.
 	    camera.keysUp.push(87);    //W
