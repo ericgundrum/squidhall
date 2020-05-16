@@ -65,8 +65,8 @@
 					"action": "builtin",
 					"data": {
 						"type": "floorSection",
-						"size": [11, 11],
-						"position": [6, 0.01, 37],
+						"size": [13, 17.5],
+						"position": [4.5, 0.01, 39],
 						"material": "macadam"
 					},
 					"config": {
@@ -78,8 +78,8 @@
 					"action": "builtin",
 					"data": {
 						"type": "floorSection",
-						"size": [11, 11],
-						"position": [20, 0.01, 37],
+						"size": [13, 17.5],
+						"position": [22.5, 0.01, 39],
 						"material": "macadam"
 					},
 					"config": {
