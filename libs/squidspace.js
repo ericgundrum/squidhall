@@ -774,7 +774,7 @@ var SquidSpace = function() {
 							{
 								trigger: BABYLON.ActionManager.OnPickTrigger
 							},
-							function () {SquidSpace.fireEvent(eventName, objName, eventData);}
+							function () {SquidSpace.fireOnClickEvent(eventName, objName, eventData);}
 						),
 					);
 				}
@@ -785,10 +785,10 @@ var SquidSpace = function() {
 		},
 		
 		
-		fireEvent: function(eventName, sourceObjectName, eventData) {
+		fireOnClickEvent: function(eventName, sourceObjectName, eventData) {
 			if (eventName in eventHandlers) {
-				for (event of eventHandlers[eventName]) {
-					event(sourceObjectName, eventData);
+				for (hdlr of eventHandlers[eventName]) {
+					hdlr(sourceObjectName, eventData);
 				}
 			}
 		},
