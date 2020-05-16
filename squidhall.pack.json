@@ -142,6 +142,11 @@
 					"file": "objects/utahteapot.babylon"
 				},
 				{
+					"name": "hugo",
+					"action": "insert",
+					"file": "objects/hugo.babylon"
+				},
+				{
 					"name": "user",
 					"action": "builtin",
 					"data": {

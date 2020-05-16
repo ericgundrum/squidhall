@@ -20,11 +20,11 @@
 		
 		3D Team:
 		
-			* Taiyo Fujii
+			* Virtual Arena Designer: Taiyo Fujii
 		
-			* Ryan Casal
+			* Vertex Herder: Ryan Casal
 		
-			* Dan Campbell 
+			* Vertex Herder: Dan Campbell 
 	-->
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -275,6 +275,7 @@
 			tmesh.checkCollisions = false;
 			tmesh.isVisible = true;
 		}
+		//*/
 		
 		// Add an event to the teapot.
 		SquidSpace.attachClickEventToObject("displayteapot", "onClickShowPopup",
@@ -283,6 +284,31 @@
 			 	"text": "The Utah teapot, or the Newell teapot, is a 3D test model that has become a standard reference object and an in-joke within the computer graphics community.",
 				"link-text": "Utah Teapot on Wikipedia",
 				"link": "https://en.wikipedia.org/wiki/Utah_teapot"
+			}, scene
+		);   	
+
+		//*
+		let hugo = SquidSpace.cloneObject("hugo", "displayhugo");
+		plinth = SquidSpace.getLoadedObjectMeshes("plinth10");
+		
+		for (hmesh of hugo) {
+			// First scale it (won't be needed after we properly scale the model).
+			//hmesh.scaling = new BABYLON.Vector3(0.2,0.2,0.2);
+			
+			// Now position it.
+	   	 	hmesh.position.copyFrom(plinth[0].position);
+	        hmesh.position.y = height;
+			hmesh.checkCollisions = false;
+			hmesh.isVisible = true;
+		}
+		
+		// Add an event to the hugo.
+		SquidSpace.attachClickEventToObject("displayhugo", "onClickShowPopup",
+			{
+				"title": "Hugo Award Base",
+			 	"text": "The 2020 Hugo Award base was designed by John Flower.",
+				"link-text": "Hugo Award Base by John Flower",
+				"link": "https://conzealand.nz/blog/2020/04/04/kiwi-artists-design-hugo-award-bases"
 			}, scene
 		);   	
 		//*/
@@ -507,6 +533,11 @@
            "pos": [33, 0, 36.3],
 	        "rotateY":-1 * Math.PI / 4,
 	        "texture":"sign-glasgow.png"
+	    },
+		"credits":{
+           "pos": [25, 0, 65.5],
+	        "rotateY": 0,
+	        "texture":"creditsposter.png"
 	    },
 	};
 
@@ -751,7 +782,7 @@
 	   		"title": "Chicago 2022!",
 	   	 	"text": "Chicago is bidding for the 2022 Worldcon. The theme for the bid is “Take to the Stars”.",
 	   		"link-text": "Chicago 2022 Bid",
-	   		"link": "https://squid.fanac.com/fan-tables/discon3/"
+	   		"link": "https://squid.fanac.com/fan-tables/chicago2022/"
 	   	}, scene
 	   );
 	   SquidSpace.attachClickEventToObject("DisCon_III", "onClickShowPopup",
@@ -759,7 +790,7 @@
 	   		"title": "DisCon III!",
 	   	 	"text": "DisCon III, the 79th World Science Fiction Convention in 2021! Nancy Kress – Author Guest of Honor.",
 	   		"link-text": "DisCon III",
-	   		"link": "https://squid.fanac.com/fan-tables/chicago2022/"
+	   		"link": "https://squid.fanac.com/fan-tables/discon3/"
 	   	}, scene
 	   );
 	   SquidSpace.attachClickEventToObject("Glasgow", "onClickShowPopup",
