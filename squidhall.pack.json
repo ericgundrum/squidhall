@@ -137,6 +137,11 @@
 					"file": "objects/sign-twin.babylon"
 				},
 				{
+					"name": "teapot",
+					"action": "insert",
+					"file": "objects/utahteapot.babylon"
+				},
+				{
 					"name": "user",
 					"action": "builtin",
 					"data": {

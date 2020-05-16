@@ -17,8 +17,9 @@ def cleanData(data):
     
     if "cameras" in data:
         #del data["cameras"]
-        data["cameras"] = [] # Make it an empty list.
-        dirty = True
+        if len(data["cameras"]) > 0:
+            data["cameras"] = [] # Make it an empty list.
+            dirty = True
         
     if "activeCameraID" in data:
         del data["activeCameraID"]
@@ -30,8 +31,9 @@ def cleanData(data):
 
     if "lights" in data:
         #del data["lights"]
-        data["lights"] = [] # Make it an empty list.
-        dirty = True
+        if len(data["lights"]) > 0:
+            data["lights"] = [] # Make it an empty list.
+            dirty = True
         
     # Add other sections we want to remove here.
     
@@ -60,9 +62,12 @@ def processFile(filePath):
                     # TODO: This writes it packed, do we want a 'pretty print' option?
                     with open(filePath, 'w') as babFile:
                         json.dump(data, babFile)
+                    print("Babylon file cleaned.");print("")
                 except Exception:
                     # TODO: Upgrade error handling and pass exception up.
                     pass
+            else:
+                print("Babylon did not require cleaning.");print("")
         except json.JSONDecodeError:
             # TODO: Pass exception up, do not handle here.
             print("Error loading .babylon file:", sys.exc_info()[1])        

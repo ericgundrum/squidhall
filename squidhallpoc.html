@@ -222,6 +222,92 @@
 	
 	// Anything inside this function is executed after SquidSpace.buildWorld().
 	var experimentAfterWorldBuild = function(scene) {
+		// NOTE: Comment this out to run the experiment.
+		//return;
+		
+		// Place object on object.
+		// See https://www.babylonjs-playground.com/#0UJYJQ#6
+		let height = 0;
+		let teapot = SquidSpace.cloneObject("teapot", "displayteapot");
+		let plinth = SquidSpace.getLoadedObjectMeshes("plinth1");
+		// Find max height for plinth.
+		for (pmesh of plinth) {
+			let bi = pmesh.getBoundingInfo().boundingBox.vectorsWorld;
+			let meshHeight = Number(bi[1].y-(bi[0].y));
+			if (height < meshHeight) height = meshHeight;
+		}
+		console.log(`Plinth height is ${height}.`)
+		
+		for (tmesh of teapot) {
+			// First scale it (won't be needed after we properly scale the model).
+			tmesh.scaling = new BABYLON.Vector3(0.2,0.2,0.2);
+			
+			// Now position it.
+	   	 	tmesh.position.copyFrom(plinth[0].position);
+	        tmesh.position.y = height;
+			tmesh.checkCollisions = false;
+			tmesh.isVisible = true;
+		}
+		
+		// Add an event to the teapot.
+		SquidSpace.attachClickEventToObject("displayteapot", "onClickShowPopup",
+			{
+				"title": "Utah Teapot",
+			 	"text": "The Utah teapot, or the Newell teapot, is a 3D test model that has become a standard reference object and an in-joke within the computer graphics community.",
+				"link-text": "Utah Teapot on Wikipedia",
+				"link": "https://en.wikipedia.org/wiki/Utah_teapot"
+			}, scene
+		);   	
+		
+			
+		/*
+		// Decal placement on objects.
+		// See https://www.babylonjs-playground.com/#1BAPRM#73
+		// See https://doc.babylonjs.com/how_to/decals
+		let decalData = [
+			{
+				"texture": "/textures/broadmore1.jpg",
+				"size": [10, 10, 10]
+			},
+			{
+				"texture": "/textures/broadmore2.jpg",
+				"size": [10, 10, 10]
+			},
+			{
+				"texture": "/textures/broadmore3.jpg",
+				"size": [10, 10, 10]
+			},
+			{
+				"texture": "/textures/broadmore4.jpg",
+				"size": [10, 10, 10]
+			},
+			{
+				"texture": "/textures/broadmorebio.png",
+				"size": [10, 10, 10]
+			}
+		]
+		let panel = SquidSpace.getLoadedObjectMeshes("lonelypanelexample");
+		for (dd of decalData) {
+			let decalMaterial = new BABYLON.StandardMaterial("broadmoremat", scene);
+			decalMaterial.diffuseTexture = new BABYLON.Texture(dd["texture"], scene);
+			decalMaterial.diffuseTexture.hasAlpha = true;
+			decalMaterial.zOffset = -2;
+			//let decalSize = new BABYLON.Vector3(dd["size"][0], dd["size"][1], dd["size"][2]);
+			//let decal = BABYLON.MeshBuilder.CreateDecal("decal", panel[1], {position: [], normal: [], size: decalSize}, scene);
+			let decal = BABYLON.MeshBuilder.CreateDecal("decal", panel[1], {position: [0, 0, 0]}, scene);
+			decal.material = decalMaterial;
+		}
+	
+		// Add an event to the panel.
+		SquidSpace.attachClickEventToObject("lonelypanelexample", "onClickShowPopup",
+			{
+				"title": "Greg Broadmore – Artist Guest of Honour",
+			 	"text": "Greg Broadmore, aka 'The King of Fatboss', is the ConZealand Artist Guest of Honour.",
+				"link-text": "Greg Broadmore",
+				"link": "https://conzealand.nz/greg-broadmore-guest"
+			}, scene
+		);   	
+		*/
 		
 	}
 	
@@ -601,14 +687,6 @@
 	   //       you can attach events to them.
 
 	   // Show Popup events.
-	   SquidSpace.attachClickEventToObject("lonelypanelexample", "onClickShowPopup",
-	   	{
-	   		"title": "Welcome to Squid Hall",
-	   	 	"text": "You clicked on an object and this message came up! How cool is that?",
-	   		"link-text": "Squid Hall",
-	   		"link": "https://squid.fanac.com/"
-	   	}, scene
-	   );
 	   SquidSpace.attachClickEventToObject("Chicago2022", "onClickShowPopup",
 	   	{
 	   		"title": "Chicago 2022!",
@@ -627,9 +705,9 @@
 	   );
 	   SquidSpace.attachClickEventToObject("Glasgow", "onClickShowPopup",
 	   	{
-	   		"title": "Glasgow in 2024!",
-	   	 	"text": "Glasgow in 2024 – A Worldcon for Our Futures.<br>Join us! 8th-12th August 2024.",
-	   		"link-text": "Glasgow in 2024",
+	   		"title": "Glasgow 2024!",
+	   	 	"text": "Glasgow in 2024 – A Worldcon for Our Futures. Join us! 8th-12th August 2024.",
+	   		"link-text": "Glasgow 2024",
 	   		"link": "https://squid.fanac.com/fan-tables/glasgow2024/"
 	   	}, scene
 	   );   	
