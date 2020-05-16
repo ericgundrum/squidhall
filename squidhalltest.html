@@ -1,5 +1,31 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
+	<!-- 
+		
+		This is Squid Hall!
+		
+		Squid Hall was created for ConZealand as a virtual replacement for the 
+		Wellington TSB Arena after the 2020 coronavirus pandemic led to the 
+		cancellation of large events worldwide. Conzealand didn't cancel outright, 
+		instead it moved online in every way it could possibly do so, from video
+		meetings to text chat to web pages to even Virtual Reality.
+		
+		This is just one of those projects. We hope you enjoy it. 
+		
+		=== CREDITS ===
+		
+		Chief Propeller Head: Tom Becker
+		
+		Cyberspace Architect: Jack William Bell
+		
+		3D Team:
+		
+			* Taiyo Fujii
+		
+			* Ryan Casal
+		
+			* Dan Campbell 
+	-->
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>
@@ -468,23 +494,17 @@
 
 	var signfulllayout = {
         "Chicago2022":{
-            "x":5,
-            "y":0,
-            "z":-20,
+           "pos": [22, 0, 34.5],
             "rotateY":-1 * Math.PI / 4,
             "texture":"sign-Chicago2022.jpg"
         },
         "DisCon_III":{
-            "x":5,
-            "y":0,
-            "z":-25,
+           "pos": [27, 0, 34.5],
             "rotateY":-1 * Math.PI / 4,
             "texture":"DisCon_III.jpg"
         },
 		"Glasgow":{
-	        "x":5,
-	        "y":0,
-	        "z":-30,
+           "pos": [33, 0, 34.5],
 	        "rotateY":-1 * Math.PI / 4,
 	        "texture":"sign-glasgow.png"
 	    },
@@ -492,37 +512,27 @@
 
     var signhalflayout = {
        "PropSimonTam":{
-           "x":6,
-           "y":0,
-           "z":-10,
+           "pos": [18.8, 0, 10],
            "rotateY":1 * Math.PI / 4,
            "texture":"sign-half-Prop_Simon_Tam.png"
        },
        "Orodurin":{
-           "x":8,
-           "y":0,
-           "z":-10,
+           "pos": [18.8, 0, 20],
            "rotateY":1 * Math.PI / 4,
            "texture":"sign-half-Orodruin.png"
        },
        "Kadath":{
-           "x":10,
-           "y":0,
-           "z":-10,
+           "pos": [18.8, 0, 30],
            "rotateY":1 * Math.PI / 4,
            "texture":"sign-half-Kadath.png"
        },
        "Genosha":{
-           "x":12,
-           "y":0,
-           "z":-10,
+           "pos": [19.7, 0, 40],
            "rotateY":1 * Math.PI / 4,
            "texture":"sign-half-Genosha.png"
        },
        "Gallifrey":{
-           "x":14,
-           "y":0,
-           "z":-10,
+           "pos": [19.7, 0, 50],
            "rotateY":1 * Math.PI / 4,
            "texture":"sign-half-Gallifrey.jpg"
        },
@@ -662,9 +672,10 @@
 				for (index = 0; index < cloneMeshes.length; index++) {
 					let bn = cloneMeshes[index];
 					if(index == 1) bn.material = mat;
-					bn.position.x = signfullinfo.x;
-					bn.position.y = signfullinfo.y;
-					bn.position.z = signfullinfo.z;
+					bn.position = SquidSpace.makePointVector(
+															signfullinfo.pos[0],
+															signfullinfo.pos[1],
+															signfullinfo.pos[2]);
 					bn.rotation.y = signfullinfo.rotateY;
 					bn.checkCollisions = true;
 					bn.isVisible = true;
@@ -693,9 +704,10 @@
 	            for (index = 0; index < meshes.length; index++) {
 	                let bn = meshes[index].clone("sign-" + index);
 	                if(index == 1) bn.material = mat;
-	                bn.position.x = signhalfinfo.x;
-	                bn.position.y = signhalfinfo.y;
-	                bn.position.z = signhalfinfo.z;
+	                bn.position = SquidSpace.makePointVector(
+															signhalfinfo.pos[0],
+															signhalfinfo.pos[1],
+															signhalfinfo.pos[2]);
 	                bn.rotation.y = signhalfinfo.rotateY;
 	                bn.checkCollisions = true;
 	                bn.isVisible = true;
@@ -832,8 +844,14 @@
 			});
 		}
 		else {
-			// TODO: Add 'Failed to load' message to page with HTML.
 			console.log("Failed to load squid space.")
+
+			showMessagePopup(
+				{
+					"title": "Squid Hall 3D Space Failed to Load",
+				 	"text": "We apologize! Something happened while loading the 3D simulation space. It's possible your computer or web browser do not support WebGL or other features required to make it work. Please try again with a different browser or computer."
+				}
+			);
 		}
 	});
 
