@@ -13,6 +13,10 @@ These files can either link to content or contain the content internally. In the
 case, this means you can open a Squid Hall HTML file from the file system and not
 have issues with CORS the way you would if the content was loaded from a link.
 
+## Releases
+
+* Tag: version-20200516.0 [Alpha 0.0] Initial Proof of Concept (PoC). 
+
 ## Developer notes
 
 The SquidSpace module provides a thin runtime controller wrapper around Babylon.js focused on
