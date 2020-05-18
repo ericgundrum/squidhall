@@ -8,7 +8,7 @@ These files can either link to content or contain the content internally. In the
 
 ## Releases
 
-* Tag: version-20200516.0 [Alpha 0.0] Initial Proof of Concept (PoC). 
+1. [version-20200516.0](https://github.com/jackwilliambell/squidhall/releases/tag/version-20200516.0) [Alpha 0.0] Initial Proof of Concept (PoC)
 
 ## Developer notes
 
@@ -40,7 +40,17 @@ The SquidSpace library, documentation, and tools in this repo are periodically u
 
 The most common workflow for adding features to Squid Hall is to create a feature branch. (See Branching and branch names below.) Then, inside the feature branch, copy the squidhallexperiments.html file and add your features to it. Test and debug until the feature is working properly. 
 
-When your feature is ready to be moved into master (or some other integration branch) you refactor the new code from your experiments page into squidhall.js and/or some other javascript file, make any changes required to the three main .html files (ideally these files would not require changes), perform testing on the main .html files, and then submit a Pull Request.
+When your feature is ready to be moved into master (or some other integration branch) you must do the following: 
+
+1. Refactor the new code from your experiments page into squidhall.js and/or some other javascript file
+
+2. Make any changes required to the three main .html files (ideally these files would not require changes)
+
+3. Perform testing on the main .html files, fix any problems found
+
+4. Delete any remaining experiments pages
+
+5. Submit a Pull Request against the appropriate integration branch
 
 ### Playgrounds
 
@@ -51,13 +61,13 @@ Developers are encouraged to create 'playground' branches where they can experim
 This project is using a strategy of making the master the latest integrated code. Version releases
 are assigned to version named branches. The following naming rules and branch purposes apply:
 
-* master - The main integration branch with the mainline code for the latest version, does not need to pass tests. Once we have a 'version' that does pass tests we create a version branch as described below.
+* master - The main integration branch with the mainline code for the latest version in progress, does not need to pass tests, but ideally should pass tests for all features currently integrated. Once all features slated for the version in progress are complete, integrated, and pass all tests we create a version branch as described below.
 
 * feature-[feature-name] - Feature-specific development branches. Branch names always start with 'Feature' and are followed with the name of the feature after a dash. Generally these branches should be merged to master once the feature is working. If we have more than one person working on a feature they can create sub-branches named feature-[feature-name]-[developer-name]-[purpose].
 
 * bug-[issue-ID] - Bug/Issue-specific development branches. Branch names always start with 'Feature' and are followed with the name of the feature after a dash. Generally these branches should be merged to master once the bug is fixed. If we have more than one person working on a bug they can create sub-branches named bug-[issue-ID]-[developer-name]-[purpose].
 
-* version-[date in yyymmdd format] - Version integration branches, created from master whenever we decide we have reached all goals for a particular version, using the date the decision was made as part of the name. Must pass all tests when being tagged. (See below.)
+* version-[date in yyymmdd format] - Version integration branches, created from master whenever we decide we have reached all goals for a particular version, using the date the branch was created as part of the name. Must pass all tests when being tagged. (See below.)
 
 * Version branches themselves are separately versioned using tags named [version-name].[version-number] where version-number follows the version name and a dot (.), starting at 0 and incremented for each version tag. For example, a version branch created on July 1, 2020 would be named 'version-20200701' and would have an initial tag of 'version-20200701.0'. If we later fixed a couple of bugs and backported a feature we would create a new tag of 'version-20200701.1' once all tests are passed. Metadata about the version should be included in the tag description.
 
