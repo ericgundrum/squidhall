@@ -90,7 +90,8 @@ var SquidSpace = function() {
 	var materials = {};
 	var objects = {};
 
-	var prepareBuiltinsHook = function(scene){};
+	var prepareHook = undefined;
+	var buildHook = undefined;
 	var placerHooks = {};
 	
 	var eventHandlers = {};
@@ -334,8 +335,8 @@ var SquidSpace = function() {
 						// Try to get the meshes.
 						let meshes = SquidSpace.getLoadedObjectMeshes(objName);
 						// TODO: Wrap with try/catch.
-						placerHooks[placer](areaName, areaOrigin, config, 
-											placeName, meshes, data, objName);
+						placerHooks[placer](areaName, areaOrigin, config, placeName, 
+											data, objName, meshes, scene);
 					}
 					else {
 						// TODO: Consider making these 'builtin hooks' that
@@ -738,22 +739,40 @@ var SquidSpace = function() {
 		//
 		
 		
-	 	/** The PrepareBuiltinsHook is called during prepareWorld() processing
-		    to add builtin 3D content.
+	 	/** The prepareHook is called at the end of prepareWorld() processing
+		    to add builtin 3D content or do other things to the scene in 
+		    preparation for building the world.
 		
 		    Signature: hookFunction(scene)
 		 */
-		attachPrepareBuiltinsHook: function(hookFunction) {
-			prepareBuiltinsHook = hookFunction;
+		attachPrepareHook: function(hookFunction) {
+			let oldHook = prepareHook;
+			prepareHook = hookFunction;
+			return oldHook;
+		},
+		
+	 	/** The prepareHook is called at the end of buildWorld() processing
+		    to add extra 3D content, attach events or do other things to the scene in 
+		    preparation for running the world.
+		
+		    Signature: hookFunction(scene)
+		 */
+		attachBuildHook: function(hookFunction) {
+			let oldHook = prepareHook;
+			buildHook = hookFunction;
+			return oldHook;
 		},
 		
 	 	/** The PlacerHook is called by name during layout processing to perform complex
 		    or custom object placements.
 		
-		    Signature: hookFunction(areaName, areaOrigin, config, placerName, meshes, data)
+		    Signature: hookFunction(areaName, areaOrigin, config, placeName, data, 
+		                            objName, meshes, scene)
 		 */
 		attachPlacerHook: function(hookName, hookFunction) {
+			let oldHook = placerHooks[hookName];
 			placerHooks[hookName] = hookFunction;
+			return oldHook;
 		},
 		
 
@@ -817,6 +836,8 @@ var SquidSpace = function() {
 		prepareWorld: function(scene, debugVerbose, debugLayer) {
 			
 			if (debugVerbose) {
+				// TODO: Improve debug handling.
+				// TODO: Either make this optional or move it to a hook.
 				// Log plugin activations.
 				BABYLON.SceneLoader.OnPluginActivatedObservable.add(function (plugin) {
 				    console.log(`Plugin Activated: ${plugin.name}`);
@@ -824,6 +845,7 @@ var SquidSpace = function() {
 			}
 		
 			// Turn on optimizaton.
+			// TODO: Either make these optional or move them to a hook.
 			var options = new BABYLON.SceneOptimizerOptions();
 			options.addOptimization(new BABYLON.HardwareScalingOptimization(0, 1));
 			/* Set Degredation Level - TODO: Come up with a way to make this user settable.
@@ -849,10 +871,13 @@ var SquidSpace = function() {
 			//optimizer.start(); // Don't need?
 
 			// TODO: Make this dynamic somehow.
+			// TODO: Either make this optional or move it to a hook.
 			if (debugLayer) scene.debugLayer.show();
 			
-			// Add some procedural materials we'll be using to the scene.
-			// TODO: Move these to a hook. (Need addTexture() and addMaterial() functions.)
+		
+			// Add some procedural materials  we'll be using as 'builtins' to the scene.
+			// TODO: Add texture and material code to SquidSpace and either move these to 
+			//       squidhall.js or to a pack file.
 			// TODO: Determine if we want to use ambient or diffuse textures. Currently using
 			//       ambient on marble and diffuse on macadam. See:
 			// * https://gamedev.stackexchange.com/questions/14334/the-difference-between-diffuse-texture-and-ambient-occlusion-texture
@@ -873,8 +898,9 @@ var SquidSpace = function() {
 			materials.wood.backFaceCulling = false;
 		    materials.wood.diffuseTexture = textures.wood;
 			
-			// Call prepare hooks.
-			prepareBuiltinsHook();
+			// Call prepare hook.
+			// TODO: try/catch.
+			prepareHook(scene);
 		},
 	
 		/** PoC-specific function to load the passed scene from the world 
@@ -940,6 +966,10 @@ var SquidSpace = function() {
 
 			// Enable Collisions for scene.
 			scene.collisionsEnabled = true;
+			
+			// Call build hook.
+			// TODO: try/catch.
+			buildHook(scene);
 
 			// Done.
 			return success;

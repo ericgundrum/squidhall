@@ -1,4 +1,4 @@
-# Pack Files
+# Pack File Specification
 
 Pack Files let you specify one or more modules, which are then used to generate
 Javascript modules to be loaded into a 3d application controller. (See also, 
@@ -8,9 +8,7 @@ A Pack File consists of JSON data containing the following top-level sections:
 
 1. "doc" – [optional] – Documentation for the file, use to describe what the file is for 
 
-2. "config" – [required] – Configuration details for the entire file, currently 
-   supported configuration values include:
-	 - "outdir" – [required] – Directory to write output modules to
+2. "config" – [required] – Global configuration details for the entire file (See also, Configuation below)
 	 
 3. "modules" – [required] – A specification for each module to be generated (see also, 
 	Module Section below)
@@ -79,14 +77,27 @@ Pack File example:
 						]
 					}
 				],
-				"hooks": {
-				},
-				"events": [
+				wiring [
+					"mod": "squidmmo"
+					"config": {},
+					"options": {},
 				]
 			}
 		]
 	}
 	
+
+## Configuration
+
+TODO:
+
+### Global Configuration
+
+TODO:
+
+Required global configuration values include:
+
+* "outdir" – [required] – Directory to write output modules to
 
 ## Module Section
 
@@ -211,6 +222,12 @@ TODO: Implement and Document.
 
 TODO: Implement and Document.
 
+### Builtins
+
+Builtins are 3D content 'built in' to Babylon.js, SquidSpace or SquidSpace
+Plugins with prepare handlers. What builtins are available depends on the 
+particular plugins loaded. See the SquidSpace documentation for a list 
+of the default builtins and their expected data layouts.
 
 ### Area Layouts
 
@@ -220,20 +237,13 @@ TODO: Implement and Document.
 
 TODO: Implement and Document.
 
-### Hooks
+### Wiring
 
 TODO: Implement and Document.
 
-### Events
+#### Mods
 
 TODO: Implement and Document.
-
-### Builtins
-
-Builtins are 3D content 'built in' to Babylon.js, SquidSpace or SquidSpace
-Plugins with prepare handlers. What builtins are available depends on the 
-particular plugins loaded. See the SquidSpace documentation for a list 
-of the default builtins and their expected data layouts.
 
 ## Pack Files as a DSL
 

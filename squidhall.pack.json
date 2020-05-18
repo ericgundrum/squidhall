@@ -102,51 +102,6 @@
 					"file": "objects/squid.babylon"
 				},
 				{
-					"name": "panel",
-					"action": "insert",
-					"file": "objects/panel.babylon"
-				},
-				{
-					"name": "table",
-					"action": "insert",
-					"file": "objects/table.babylon"
-				},
-				{
-					"name": "plinth",
-					"action": "insert",
-					"file": "objects/plinth.babylon"
-				},
-				{
-					"name": "banner",
-					"action": "insert",
-					"file": "objects/banner.babylon"
-				},
-				{
-					"name": "signhalf",
-					"action": "insert",
-					"file": "objects/sign-half.babylon"
-				},
-				{
-					"name": "signfull",
-					"action": "insert",
-					"file": "objects/sign-full.babylon"
-				},
-				{
-					"name": "signtwin",
-					"action": "insert",
-					"file": "objects/sign-twin.babylon"
-				},
-				{
-					"name": "teapot",
-					"action": "insert",
-					"file": "objects/utahteapot.babylon"
-				},
-				{
-					"name": "hugo",
-					"action": "insert",
-					"file": "objects/hugo.babylon"
-				},
-				{
 					"name": "user",
 					"action": "builtin",
 					"data": {
