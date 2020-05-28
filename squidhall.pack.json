@@ -92,6 +92,11 @@
 					"file": "objects/beam.babylon"
 				},
 				{
+					"name": "banner",
+					"action": "insert",
+					"file": "objects/banner.babylon"
+				},
+				{
 					"name": "curtain",
 					"action": "insert",
 					"file": "objects/curtain.babylon"

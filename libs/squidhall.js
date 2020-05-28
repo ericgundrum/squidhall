@@ -165,8 +165,8 @@ var SquidHall = function() {
 
 		squidSpace.attachPlacerHook("beamplacer",
 			function(areaName, areaOrigin, config, placeName, data, objName, meshes, scene) {
-			// TODO: Implement logging via SquidSpace with debug control.
-			console.log(`beamplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placeName}, ${data}`);
+			
+			squidSpace.logDebug(`beamplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placeName}, ${data}`);
 			for (beammesh of meshes){
 	            for (var i = 0; i < 8; i++ ) {
 	                var bm = beammesh.createInstance("beam1-" + i);
@@ -178,8 +178,8 @@ var SquidHall = function() {
 
 		squidSpace.attachPlacerHook("bannerplacer",
 			function(areaName, areaOrigin, config, placeName, data, objName, meshes, scene) {
-			// TODO: Implement logging via SquidSpace with debug control.
-			console.log(`bannerplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placeName}, ${data}`);
+			
+			squidSpace.logDebug(`bannerplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placeName}, ${data}`);
 
 			for (key in bannerlayout) {
 				let bannerinfo = bannerlayout[key];
@@ -208,8 +208,8 @@ var SquidHall = function() {
 
 		squidSpace.attachPlacerHook("curtainplacer",
 			function(areaName, areaOrigin, config, placeName, data, objName, meshes, scene) {
-			// TODO: Implement logging via SquidSpace with debug control.
-			console.log(`curtainplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placeName}, ${data}`);
+			
+			squidSpace.logDebug(`curtainplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placeName}, ${data}`);
 
 			// NOTE: if you need to verify meshes exist before using them, the
 			//  	 the following example is one way.
@@ -252,8 +252,8 @@ var SquidHall = function() {
 
 		squidSpace.attachPlacerHook("squidplacer",
 			function(areaName, areaOrigin, config, placeName, data, objName, meshes, scene) {
-			// TODO: Implement logging via SquidSpace with debug control.
-			console.log(`squidplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placeName}, ${data}`);
+			
+			squidSpace.logDebug(`squidplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placeName}, ${data}`);
 			for (squidmesh of meshes){
 		        for (var i = 0; i < 1; i++ ) {
 		            var bm = squidmesh.createInstance("squid1-" + i);
@@ -265,8 +265,8 @@ var SquidHall = function() {
 	
 		squidSpace.attachPlacerHook("signfullplacer",
 	      	function(areaName, areaOrigin, config, placeName, data, objName, meshes, scene) {
-			// TODO: Implement logging via SquidSpace with debug control.
-			console.log(`signfullplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placeName}, ${data}`);
+			
+			squidSpace.logDebug(`signfullplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placeName}, ${data}`);
 
 			for (key in signfulllayout) {
 				let signfullinfo = signfulllayout[key];
@@ -298,8 +298,8 @@ var SquidHall = function() {
 
 		squidSpace.attachPlacerHook("signhalfplacer",
 	    	function(areaName, areaOrigin, config, placeName, data, objName, meshes, scene) {
-			// TODO: Implement logging via SquidSpace with debug control.
-	        console.log(`signhalfplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placeName}, ${data}`);
+			
+	        squidSpace.logDebug(`signhalfplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placeName}, ${data}`);
 
 	        for (key in signhalflayout) {
 	            let signhalfinfo = signhalflayout[key];
@@ -329,8 +329,8 @@ var SquidHall = function() {
 	    });
 		squidSpace.attachPlacerHook("lightplacer",
 			function(areaName, areaOrigin, config, placeName, data, objName, meshes, scene){
-			// TODO: Implement logging via SquidSpace with debug control.
-			console.log(`lightplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placeName}, ${data}`);
+			
+			squidSpace.logDebug(`lightplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placeName}, ${data}`);
 
 			let gl = new BABYLON.GlowLayer("glow", scene, {});
 			gl.intensity = 1.0;
@@ -355,8 +355,8 @@ var SquidHall = function() {
 	
 	var attachPrepareHook = function(squidSpace){
 		squidSpace.attachPrepareHook(function(scene){
-			// TODO: Implement logging via SquidSpace with debug control.
-			console.log("Preparing builtins.");
+			
+			squidSpace.logDebug("Preparing builtins.");
 			
 			// Add some procedural materials  we'll be using as 'builtins' to the scene.
 			// TODO: Add texture and material code to SquidSpace and either move these to 
@@ -401,8 +401,8 @@ var SquidHall = function() {
 	
 	var attachBuildHook = function(squidSpace){
 		squidSpace.attachBuildHook(function(scene){
-			// TODO: Implement logging via SquidSpace with debug control.
-			console.log("Building World.");
+			
+			squidSpace.logDebug("Building World.");
 	
 			//
 			// Events.
@@ -456,7 +456,7 @@ var SquidHall = function() {
 	   			let meshHeight = Number(bi[1].y-(bi[0].y));
 	   			if (height < meshHeight) height = meshHeight;
 	   		}
-	   		console.log(`Plinth height is ${height}.`)
+	   		squidSpace.logDebug(`Plinth height is ${height}.`)
 		
 	   		for (tmesh of teapot) {
 	   			// First scale it (won't be needed after we properly scale the model).
@@ -509,7 +509,7 @@ var SquidHall = function() {
 	}
 	
 	return {
-		wireSquidSpace: function(config, options, squidSpace) {
+		wireSquidSpace: function(options, data, squidSpace) {
 			attachPrepareHook(squidSpace);
 			attachBuildHook(squidSpace);
 			attachPlacerHooks(squidSpace);

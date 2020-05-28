@@ -27,11 +27,6 @@
 					"file": "objects/plinth.babylon"
 				},
 				{
-					"name": "banner",
-					"action": "insert",
-					"file": "objects/banner.babylon"
-				},
-				{
 					"name": "signhalf",
 					"action": "insert",
 					"file": "objects/sign-half.babylon"

@@ -10,6 +10,26 @@ These files can either link to content or contain the content internally. In the
 
 1. [version-20200516.0](https://github.com/jackwilliambell/squidhall/releases/tag/version-20200516.0) [Alpha 0.0] Initial Proof of Concept (PoC)
 
+## 3D modelling notes
+
+* Features: https://doc.babylonjs.com/features
+
+* Resources, including 3D modelling app plugins: https://doc.babylonjs.com/resources/
+
+* How to: https://doc.babylonjs.com/how_to/
+
+### Object File Types
+
+The preferred object file type is .babylon; which is the native format for Babylon.js. Babylon.js also provides loader plugins for the following types:
+
+* .jlTF (and the binary version .glb)
+
+* .obj
+
+* .stl
+
+See: https://doc.babylonjs.com/how_to/load_from_any_file_type
+
 ## Developer notes
 
 All Squid Hall specific code is locatated in the libs/squidhall.js module. 
