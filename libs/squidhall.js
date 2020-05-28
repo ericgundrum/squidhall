@@ -14,6 +14,26 @@ TODO: Refactor in as much code from squidhalltest.html as possible
 var SquidHall = function() {
 	
 	//
+	// Some size variables we need for calculations.
+	//
+	// NOTE: Each unit corresponds to 1 meter, so 1.75 is one and three quarter meters.
+	//
+
+	// TODO: Refactor to remove these.
+	var pnlwidth = 1;
+	var pnldepth = 0.005;
+	var pnlSpacing = pnlwidth + 0.3;
+	var tblwidth = 1.8;
+	var tbldepth = 0.75;
+	var tblheight = 0.05;
+	var tblSpacing = tblwidth + 0.02;
+	var bmWidth = 1;
+	var bmSpacing = bmWidth + 10;
+	var norot = 0; // Do not rotate.
+	var rot = Math.PI / 2; // Rotate 90 degrees.
+	
+	
+	//
 	// Data for placer hooks.
 	//
 
@@ -338,6 +358,40 @@ var SquidHall = function() {
 			// TODO: Implement logging via SquidSpace with debug control.
 			console.log("Preparing builtins.");
 			
+			// Add some procedural materials  we'll be using as 'builtins' to the scene.
+			// TODO: Add texture and material code to SquidSpace and either move these to 
+			//       squidhall.js or to a pack file.
+			// TODO: Determine if we want to use ambient or diffuse textures. Currently using
+			//       ambient on marble and diffuse on macadam. See:
+			// * https://gamedev.stackexchange.com/questions/14334/the-difference-between-diffuse-texture-and-ambient-occlusion-texture
+			// * https://www.quora.com/What-is-the-difference-between-Ambient-Diffuse-and-Specular-Light-in-OpenGL-Figures-for-illustration-are-encouraged?share=1
+			
+		    let matMacadam = new BABYLON.StandardMaterial("macadam", scene);
+		    let texMacadam = new BABYLON.RoadProceduralTexture("macadamtext", 2048, scene);
+			matMacadam.backFaceCulling = false;
+		    matMacadam.diffuseTexture = texMacadam;
+
+			squidSpace.addTextureInstance("macadam", texMacadam);
+			squidSpace.addMaterialInstance("macadam", matMacadam);			
+
+		    let matMarble = new BABYLON.StandardMaterial("marble", scene);
+		    let texMarble = new BABYLON.MarbleProceduralTexture("marbletext", 512, scene);
+		    matMarble.ambientTexture = texMarble;
+		    //matMarble.numberOfBricksHeight = 1; // Doesn't seem to do anything?
+		    //matMarble.numberOfBricksWidth = 1; // Doesn't seem to do anything?
+
+			squidSpace.addTextureInstance("marble", texMarble);
+			squidSpace.addMaterialInstance("marble", matMarble);
+
+		    let matWood = new BABYLON.StandardMaterial("wood", scene);
+		    let texWood = new BABYLON.WoodProceduralTexture("woodtext", 1048, scene);
+			matWood.ampScale = 256; // TODO: Experiment with this, read docs again.
+			matWood.woodColor = new BABYLON.Color3(0.8, 0.8, 0.8);
+			matWood.backFaceCulling = false;
+		    matWood.diffuseTexture = texWood;
+
+			squidSpace.addTextureInstance("wood", texWood);
+			squidSpace.addMaterialInstance("wood", matWood);			
 		});
 	}
 	

@@ -239,15 +239,6 @@
 	// Wire in the SquidHall custom code.
 	SquidHall.wireSquidSpace(null, null, SquidSpace);
 
-	// Here we do basic preparation.
-	SquidSpace.prepareWorld(scene, debugVerbose, debugLayer);
-
-	// Add page-specific event handlers. (The events themselves are added after 
-	// SquidSpace.buildWorld() is called.)
-	SquidSpace.addEventHandler("onClickShowPopup", function(sourceObjectName, data){
-		showMessagePopup(data);
-	});
-
 	// Here's where we do the magic.
 	document.addEventListener("DOMContentLoaded", (event) =>{
 		// Create and activate the world space.
@@ -258,6 +249,12 @@
 			let newFPS = 0;
 		    var fpsLabel = document.getElementById("fpsLabel");
 
+			// Add page-specific event handlers. (The events themselves are added when 
+			// SquidSpace.buildWorld() is called.)
+			SquidSpace.addEventHandler("onClickShowPopup", function(sourceObjectName, data){
+				showMessagePopup(data);
+			});
+			
 			engine.runRenderLoop(function() {
 				scene.render();
 
