@@ -27,6 +27,15 @@
 			#fpsLabel {
 			    position: absolute;
 			    right: 20px;
+			    top: 10px;
+			    color: #8AA;
+				background:#606;
+			    cursor: default;
+			}
+
+			#controlPanel {
+			    position: absolute;
+			    right: 20px;
 			    top: 20px;
 			    color: #8AA;
 				background:#606;
@@ -118,7 +127,6 @@
 		<script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
 		-->
 
-
 		<!-- Babylon.js support libraries END -->
 
 		<!-- Other libraries START -->
@@ -126,6 +134,8 @@
 
 		<!-- Squidspace START -->
 		<script src="libs/squidspace.js"></script>
+		<script src="libs/squidmods/squidcommon.js"></script>
+		<script src="libs/squidmods/squiddebug.js"></script>
 		<!-- Squidspace END -->
 
 		<!-- World START -->
@@ -154,6 +164,8 @@
 		</div>
 
 		<div id="fpsLabel"></div>
+
+		<div id="controlPanel">TODO</div>
 
 		<!-- touch-action="none" for best results from PEP -->
 		<canvas id="renderCanvas" touch-action="none"></canvas>
@@ -222,27 +234,24 @@
 	//       with extra test and debug functionality.
 	//
 
-	// Debug settings. If 'debugVerbose' is true then more information is logged
-	// to the console. if 'debugLayer' is true then a set of scene debug panels are
-	// added to the screen.
-	// TODO: Come up with a way to turn these on and off at runtime.
-	//var debugVerbose = false;
-	var debugVerbose = true;
-	var debugLayer = false;
-	//var debugLayer = true;
-
 	// Set up Babylon.js.
 	var canvas = document.getElementById("renderCanvas"); // Get the canvas element
 	var engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
 	var scene = new BABYLON.Scene(engine);
 	
-	// Wire in the SquidHall custom code.
-	SquidHall.wireSquidSpace(null, null, SquidSpace);
+	// Wire in the SquidSpace common code.
+	SquidCommon.wireSquidSpace(null, null, SquidSpace);
+	
+	// Wire in the SquidSpace common code.
+	SquidCommon.wireSquidSpace(null, null, SquidSpace);
+	
+	// Wire in the SquidHall debug code.
+	SquidDebug.wireSquidSpace(null, null, SquidSpace);
 
 	// Here's where we do the magic.
 	document.addEventListener("DOMContentLoaded", (event) =>{
 		// Create and activate the world space.
-		if (SquidSpace.buildWorld(world, [furniture], scene, debugVerbose)) {
+		if (SquidSpace.buildWorld(world, [furniture], scene)) {
 			// Register a render loop to repeatedly render the world space.
 			// NOTE: Use commented out render loop below if you don't want FPS label.
 			let currFPS = 0;

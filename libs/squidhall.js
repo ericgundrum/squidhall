@@ -32,6 +32,34 @@ var SquidHall = function() {
 	var norot = 0; // Do not rotate.
 	var rot = Math.PI / 2; // Rotate 90 degrees.
 	
+	//
+	// Helper Functions.
+	//
+
+	var addFloorSection = function(secName, x, z, w, d, material, scene) {
+		var floorSection = BABYLON.MeshBuilder.CreatePlane(secName, 
+												{width: w, height:d}, scene);
+		floorSection.position = new SquidSpace.makeLayoutVector(x, 0.001, z, w, d);
+		floorSection.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
+	    floorSection.material = material;
+		floorSection.material.backFaceCulling = false;
+		return floorSection;
+	}
+	
+	//
+	// Object Loader Hooks
+	//
+	
+	var attachObjectLoaderHooks = function(squidSpace){
+		squidSpace.attachObjectLoaderHook("floorSection",
+			function(objName, options, data, scene) {
+			
+			squidSpace.logDebug(`floorSection Loader called! ${objName}, ${options}, ${data}`);
+			
+			
+	    });
+	}
+	
 	
 	//
 	// Data for placer hooks.
@@ -158,12 +186,12 @@ var SquidHall = function() {
 	// Placer hooks.
 	//
 	
-	var attachPlacerHooks = function(squidSpace){
+	var attachObjectPlacerHooks = function(squidSpace){
 		// TODO: Implement Texture/Material support in SquidSpace and 
 		//       refactor as many of these as possible into the pack file.
 
 
-		squidSpace.attachPlacerHook("beamplacer",
+		squidSpace.attachObjectPlacerHook("beamplacer",
 			function(areaName, areaOrigin, config, placeName, data, objName, meshes, scene) {
 			
 			squidSpace.logDebug(`beamplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placeName}, ${data}`);
@@ -176,7 +204,7 @@ var SquidHall = function() {
 	        }
 	    });
 
-		squidSpace.attachPlacerHook("bannerplacer",
+		squidSpace.attachObjectPlacerHook("bannerplacer",
 			function(areaName, areaOrigin, config, placeName, data, objName, meshes, scene) {
 			
 			squidSpace.logDebug(`bannerplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placeName}, ${data}`);
@@ -206,7 +234,7 @@ var SquidHall = function() {
 			}
 		});
 
-		squidSpace.attachPlacerHook("curtainplacer",
+		squidSpace.attachObjectPlacerHook("curtainplacer",
 			function(areaName, areaOrigin, config, placeName, data, objName, meshes, scene) {
 			
 			squidSpace.logDebug(`curtainplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placeName}, ${data}`);
@@ -250,7 +278,7 @@ var SquidHall = function() {
 			}
 		});
 
-		squidSpace.attachPlacerHook("squidplacer",
+		squidSpace.attachObjectPlacerHook("squidplacer",
 			function(areaName, areaOrigin, config, placeName, data, objName, meshes, scene) {
 			
 			squidSpace.logDebug(`squidplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placeName}, ${data}`);
@@ -263,7 +291,7 @@ var SquidHall = function() {
 		    }
 		});
 	
-		squidSpace.attachPlacerHook("signfullplacer",
+		squidSpace.attachObjectPlacerHook("signfullplacer",
 	      	function(areaName, areaOrigin, config, placeName, data, objName, meshes, scene) {
 			
 			squidSpace.logDebug(`signfullplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placeName}, ${data}`);
@@ -296,7 +324,7 @@ var SquidHall = function() {
 			}
 		});
 
-		squidSpace.attachPlacerHook("signhalfplacer",
+		squidSpace.attachObjectPlacerHook("signhalfplacer",
 	    	function(areaName, areaOrigin, config, placeName, data, objName, meshes, scene) {
 			
 	        squidSpace.logDebug(`signhalfplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placeName}, ${data}`);
@@ -327,7 +355,7 @@ var SquidHall = function() {
 	            }
 	        }
 	    });
-		squidSpace.attachPlacerHook("lightplacer",
+		squidSpace.attachObjectPlacerHook("lightplacer",
 			function(areaName, areaOrigin, config, placeName, data, objName, meshes, scene){
 			
 			squidSpace.logDebug(`lightplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placeName}, ${data}`);
@@ -440,11 +468,9 @@ var SquidHall = function() {
 			//
 			// Extra object placement.
 			//
-			// TODO: Add 'on object' placer capabilities to SquidSpace and move these
-		    //       to a pack file.
 			//
 		
-	   		//*
+	   		/* TODO: Remove this.
 	   		// Place object on object.
 	   		// See https://www.babylonjs-playground.com/#0UJYJQ#6
 	   		let height = 0;
@@ -468,7 +494,6 @@ var SquidHall = function() {
 	   			tmesh.checkCollisions = false;
 	   			tmesh.isVisible = true;
 	   		}
-	   		//*/
 		
 	   		// Add an event to the teapot.
 	   		SquidSpace.attachClickEventToObject("displayteapot", "onClickShowPopup",
@@ -480,7 +505,6 @@ var SquidHall = function() {
 	   			}, scene
 	   		);   	
 
-	   		//*
 	   		let hugo = SquidSpace.cloneObject("hugo", "displayhugo");
 	   		plinth = SquidSpace.getLoadedObjectMeshes("plinth10");
 		
@@ -512,7 +536,7 @@ var SquidHall = function() {
 		wireSquidSpace: function(options, data, squidSpace) {
 			attachPrepareHook(squidSpace);
 			attachBuildHook(squidSpace);
-			attachPlacerHooks(squidSpace);
+			attachObjectPlacerHooks(squidSpace);
 		}
 	}
 }();

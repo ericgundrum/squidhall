@@ -9,49 +9,41 @@
 			"doc": "Squid Hall furniture module.",
 			"config": {
 				"doc": "No config, use defaults."
-			},			
-			"objects": [
-				{
-					"name": "panel",
-					"action": "insert",
-					"file": "objects/panel.babylon"
-				},
-				{
-					"name": "table",
-					"action": "insert",
-					"file": "objects/table.babylon"
-				},
-				{
-					"name": "plinth",
-					"action": "insert",
-					"file": "objects/plinth.babylon"
-				},
-				{
-					"name": "signhalf",
-					"action": "insert",
-					"file": "objects/sign-half.babylon"
-				},
-				{
-					"name": "signfull",
-					"action": "insert",
-					"file": "objects/sign-full.babylon"
-				},
-				{
-					"name": "signtwin",
-					"action": "insert",
-					"file": "objects/sign-twin.babylon"
-				},
-				{
-					"name": "teapot",
-					"action": "insert",
-					"file": "objects/utahteapot.babylon"
-				},
-				{
-					"name": "hugo",
-					"action": "insert",
-					"file": "objects/hugo.babylon"
-				}
-			],
+			},
+			"resources": {
+				"objects": [
+					{
+						"name": "panel",
+						"action": "insert",
+						"file": "objects/panel.babylon"
+					},
+					{
+						"name": "table",
+						"action": "insert",
+						"file": "objects/table.babylon"
+					},
+					{
+						"name": "plinth",
+						"action": "insert",
+						"file": "objects/plinth.babylon"
+					},
+					{
+						"name": "signhalf",
+						"action": "insert",
+						"file": "objects/sign-half.babylon"
+					},
+					{
+						"name": "signfull",
+						"action": "insert",
+						"file": "objects/sign-full.babylon"
+					},
+					{
+						"name": "signtwin",
+						"action": "insert",
+						"file": "objects/sign-twin.babylon"
+					}
+				],
+			},
 			"area-layouts": [
 				{
 					"area": "artshow",
