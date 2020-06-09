@@ -1,2 +1,2 @@
 #!/bin/bash
-python3 tools/httpd.py
+python3 tools/sqs/sqs.py serve
