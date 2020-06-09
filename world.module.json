@@ -168,10 +168,10 @@
 				"size": [50, 30, 72],
 				"origin": [0, 0, 0]
 			},
-			"object-placements": [
+			"data": [
 				{
 					"object": "beam",
-					"placements": [
+					"data": [
 						{
 							"place-name": "beams",
 							"options": {
@@ -183,7 +183,7 @@
 				},
 				{
 					"object": "banner",
-					"placements": [
+					"data": [
 						{
 							"place-name": "banners",
 							"options": {
@@ -195,7 +195,7 @@
 				},
 				{
 					"object": "curtain",
-					"placements": [
+					"data": [
 						{
 							"place-name": "curtains",
 							"options": {
@@ -207,12 +207,14 @@
 				},
 				{
 					"object": "squid",
-					"placements": [
+					"data": [
 						{
 							"place-name": "squid",
 							"options": {
 								"doc": "Uses a hook placer function that requires some option values.",
-								"placer": "squidplacer",
+								"placer": "squidplacer"
+							},
+							"data": {
 								"position": [3, 11, 62.5]
 							}
 						}
@@ -221,7 +223,7 @@
 				{
 					"doc": "TODO: this needs to refer to a light object, will require rework of the hook function.",
 					"object": "_none_",
-					"placements": [
+					"data": [
 						{
 							"place-name": "lights",
 							"options": {

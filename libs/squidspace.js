@@ -181,12 +181,59 @@ var SquidSpace = function() {
 				}
 			}
 			else {
-				SquidSpace.logError(`No ${loaderTypeName} loader hook named ''${loaderName}''.`);
+				SquidSpace.logError(`No ${loaderTypeName} loader hook named '${loaderName}'.`);
 			}
 		}
 	}
 	
-	var processLayouts = function(layoutsList, scene) {
+	var processLayouts = function(layoutsSpecs, scene) {
+		// Process all the layouts. This does not define processing order, so if we 
+		// run into use cases where there are inter-layout depedencies we'll need to
+		// control order as well.
+		for (key in layoutsSpecs) {
+			// Get working values.
+			let options = getValIfKeyInDict("options", layoutsSpecs[key], {});
+			let objPlacements = getValIfKeyInDict("objectPlacements", layoutsSpecs[key], {});
+			
+			// TODO: Handle layout spec options. (Currently ignoring them.)
+			
+			for (placerKey in objPlacements) {
+				let placers = getValIfKeyInDict(placerKey, objPlacements, []);
+				for (placer in placers) {
+					// Get working values.
+					let placerOptions = getValIfKeyInDict("options", placer, {});
+					let placerName = getValIfKeyInDict("placer", placerOptions, "");
+					let placerFunc = getValIfKeyInDict(placerName, objectPlacerHooks, undefined);
+					let placerData = undefined;
+				
+					// Do we have a placer?
+					if (typeof placerFunc === "function") {
+						// Place it!
+						/* TODO: Need to think about how placers work to make this right.
+						let result = placer(placerKey, options, placerData, scene);
+				
+						// Do we have a result?
+						if (result != undefined) {
+							// Append the options.
+							result.options = options;
+					
+							// Save the object for later.
+							SquidSpace.addObjectInstance(key, result);
+						}
+						*/
+					}
+					else {
+						SquidSpace.logError(`No object placer hook named '${placerName}'.`);
+					}
+				}				
+			}
+		}
+		
+		
+		
+		// TODO: Remove this when what is above is working.
+		return;
+		
 		for (layout of layoutsList) {
 			let areaName = getValIfKeyInDict("area", layout, "");
 			let areaOrigin = getValIfKeyInDict("origin", layout, [0,0,0]);
@@ -1118,9 +1165,9 @@ var SquidSpace = function() {
 			}
 			
 			// Process layouts from specs.
-			processLayouts(getValIfKeyInDict("layouts", worldSpec, []), scene);
+			processLayouts(getValIfKeyInDict("layouts", worldSpec, {}), scene);
 			for (spec of contentSpecs) {
-				processLayouts(getValIfKeyInDict("layouts", spec, []), scene);
+				processLayouts(getValIfKeyInDict("layouts", spec, {}), scene);
 			}
 
 			
