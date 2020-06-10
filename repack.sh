@@ -1,2 +1,3 @@
 #!/bin/bash
-python3 tools/sqs/sqs.py generate *.module.json
+# python3 tools/sqs/sqs.py generate *.module.json
+python3 tools/sqs/sqs.py generate world.module.json

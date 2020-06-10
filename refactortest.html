@@ -247,6 +247,9 @@
 	
 	// Wire in the SquidHall code.
 	SquidHall.wireSquidSpace(null, null, SquidSpace);
+	
+	// Set log level.
+	SquidSpace.setLogLevel(SS_LOG_ALL);
 
 	// Here's where we do the magic.
 	document.addEventListener("DOMContentLoaded", (event) =>{
