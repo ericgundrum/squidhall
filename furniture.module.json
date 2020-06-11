@@ -98,28 +98,6 @@
 							}
 						}
 					]
-				},
-				{
-					"object": "plinth",
-					"placers": [
-						{
-							"place-name": "plinth1",
-							"options": {
-								"doc": "Uses a hook placer function that knows where it wants things.",
-								"placer": "linear-series"
-							},
-							"data": {
-								"count": 2,
-								"position": [
-									23.5,
-									0.01,
-									12.5
-								],
-								"offset": 4,
-								"rotation": true
-							}
-						}
-					]
 				}
 			]
 		},
@@ -137,7 +115,6 @@
 						{
 							"place-name": "ArtShowDesk-1",
 							"options": {
-								"doc": "Uses a hook placer function that knows where it wants things.",
 								"placer": "linear-series"
 							},
 							"data": {
@@ -148,7 +125,76 @@
 									1.6
 								],
 								"offset": 2,
-								"rotation": false,
+								"across": true
+							}
+						},
+						{
+							"place-name": "ArtShowDesk-2",
+							"options": {
+								"placer": "single"
+							},
+							"data": {
+								"position": [
+									16.3,
+									0.01,
+									1.4
+								],
+								"rotation": [0, 1.57, 0]
+							}
+						}
+					]
+				},
+				{
+					"object": "panel",
+					"placers": [
+						{
+							"place-name": "artpnl-1-ns-1",
+							"options": {
+								"placer": "linear-series"
+							},
+							"data": {
+								"count": 2,
+								"position": [
+									5,
+									0.01,
+									9
+								],
+								"offset": 1.3,
+								"across": false,
+								"rotation": [0, 1.57, 0]
+							}
+						},
+						{
+							"place-name": "artpnl-1-ns-2",
+							"options": {
+								"placer": "linear-series"
+							},
+							"data": {
+								"count": 2,
+								"position": [
+									7.5,
+									0.01,
+									9
+								],
+								"offset": 1.3,
+								"across": false,
+								"rotation": [0, 1.57, 0]
+							}
+						},
+						{
+							"place-name": "artpnl-1-ew-1",
+							"doc": "In the old file this was four separate placements of 2 each.",
+							"options": {
+								"placer": "linear-series"
+							},
+							"data": {
+								"count": 8,
+								"position": [
+									6.25,
+									0.01,
+									9
+								],
+								"offset": 1.2,
 								"across": true
 							}
 						}
@@ -175,7 +221,26 @@
 				"origin": [0, 0, 0]
 			},
 			"data": [
-
+				{
+					"object": "plinth",
+					"placers": [
+						{
+							"place-name": "plinth1",
+							"options": {
+								"placer": "linear-series"
+							},
+							"data": {
+								"count": 2,
+								"position": [
+									23.5,
+									0.01,
+									12.5
+								],
+								"offset": 4
+							}
+						}
+					]
+				}
 			]
 		},
 		{

@@ -263,7 +263,7 @@
 
 			// Add page-specific event handlers. (The events themselves are added when 
 			// SquidSpace.buildWorld() is called.)
-			SquidSpace.addEventHandler("onClickShowPopup", function(sourceObjectName, data){
+			SquidSpace.addEventListener("onClickShowPopup", function(sourceObjectName, data){
 				showMessagePopup(data);
 			});
 			
