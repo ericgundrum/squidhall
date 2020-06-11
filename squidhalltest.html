@@ -242,11 +242,14 @@
 	// Wire in the SquidSpace common code.
 	SquidCommon.wireSquidSpace(null, null, SquidSpace);
 	
-	// Wire in the SquidSpace common code.
-	SquidCommon.wireSquidSpace(null, null, SquidSpace);
-	
-	// Wire in the SquidHall debug code.
+	// Wire in the SquidSpace debug code.
 	SquidDebug.wireSquidSpace(null, null, SquidSpace);
+	
+	// Wire in the SquidHall code.
+	SquidHall.wireSquidSpace(null, null, SquidSpace);
+	
+	// Set log level.
+	SquidSpace.setLogLevel(SS_LOG_ALL);
 
 	// Here's where we do the magic.
 	document.addEventListener("DOMContentLoaded", (event) =>{

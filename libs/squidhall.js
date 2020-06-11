@@ -190,11 +190,34 @@ var SquidHall = function() {
 		// TODO: Implement Texture/Material support in SquidSpace and 
 		//       refactor as many of these as possible into the pack file.
 
+		squidSpace.attachObjectPlacerHook("lightplacer",
+			function(areaName, areaOptions, objectName, placeName, options, data, scene){
+		
+			squidSpace.logDebug(`lightplacer called! ${areaName}, ${placeName}.`);
+
+			let gl = new BABYLON.GlowLayer("glow", scene, {});
+			gl.intensity = 1.0;
+
+			let lightFrontFill = new BABYLON.PointLight("pointLight",
+													squidSpace.makePointVector(25, 20, 0), scene);
+			lightFrontFill.diffuse = new BABYLON.Color3(1, 1, 1);
+			lightFrontFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
+			lightFrontFill.range = 90;
+
+			let lightTopFill = new BABYLON.PointLight("pointLight",
+													squidSpace.makePointVector(25, 20, 60), scene);
+			lightTopFill.diffuse = new BABYLON.Color3(1, 1, 1);
+			lightTopFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
+			lightTopFill.range = 90;
+			
+			return true;
+		});
 
 		squidSpace.attachObjectPlacerHook("beamplacer",
-			function(areaName, areaOrigin, config, placeName, data, objName, meshes, scene) {
+			function(areaName, areaOptions, objectName, placeName, options, data, scene) {
 			
-			squidSpace.logDebug(`beamplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placeName}, ${data}`);
+			squidSpace.logDebug(`beamplacer called! ${areaName}, ${placeName}.`);
+			let meshes = SquidSpace.getLoadedObjectMeshes(objectName);
 			for (beammesh of meshes){
 	            for (var i = 0; i < 8; i++ ) {
 	                var bm = beammesh.createInstance("beam1-" + i);
@@ -202,12 +225,14 @@ var SquidHall = function() {
 	                bm.checkCollisions = false;
 	            }
 	        }
-	    });
-
-		squidSpace.attachObjectPlacerHook("bannerplacer",
-			function(areaName, areaOrigin, config, placeName, data, objName, meshes, scene) {
 			
-			squidSpace.logDebug(`bannerplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placeName}, ${data}`);
+			return true;
+	    });
+		
+		squidSpace.attachObjectPlacerHook("bannerplacer",
+			function(areaName, areaOptions, objectName, placeName, options, data, scene) {
+			
+			squidSpace.logDebug(`bannerplacer called! ${areaName}, ${placeName}.`);
 
 			for (key in bannerlayout) {
 				let bannerinfo = bannerlayout[key];
@@ -219,6 +244,7 @@ var SquidHall = function() {
 				mat.emissiveTexture = bannerTexture;
 				mat.alpha = 0.9;
 				mat.backFaceCulling = false;
+				let meshes = SquidSpace.getLoadedObjectMeshes(objectName);
 				// NOTE: Not using squidSpace.cloneObject() here because we aren't adding
 				//       events or actions to these objects.
 				for (index = 0; index < meshes.length; index++) {
@@ -232,12 +258,14 @@ var SquidHall = function() {
 					bn.isVisible = true;
 				}
 			}
+			
+			return true;
 		});
 
 		squidSpace.attachObjectPlacerHook("curtainplacer",
-			function(areaName, areaOrigin, config, placeName, data, objName, meshes, scene) {
+			function(areaName, areaOptions, objectName, placeName, options, data, scene) {
 			
-			squidSpace.logDebug(`curtainplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placeName}, ${data}`);
+			squidSpace.logDebug(`curtainplacer called! ${areaName}, ${placeName}.`);
 
 			// NOTE: if you need to verify meshes exist before using them, the
 			//  	 the following example is one way.
@@ -246,7 +274,7 @@ var SquidHall = function() {
 			//     . . . code here
 			//  }
 
-
+			let meshes = SquidSpace.getLoadedObjectMeshes(objectName);
 			for (curtainmesh of meshes) {
 				curtainmesh.isVisible = false;
 
@@ -276,12 +304,16 @@ var SquidHall = function() {
 					bm.checkCollisions = false;
 				}
 			}
+			
+			return true;
 		});
 
 		squidSpace.attachObjectPlacerHook("squidplacer",
-			function(areaName, areaOrigin, config, placeName, data, objName, meshes, scene) {
+			function(areaName, areaOptions, objectName, placeName, options, data, scene) {
+
+			squidSpace.logDebug(`squidplacer called! ${areaName}, ${placeName}.`);
 			
-			squidSpace.logDebug(`squidplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placeName}, ${data}`);
+			let meshes = SquidSpace.getLoadedObjectMeshes(objectName);
 			for (squidmesh of meshes){
 		        for (var i = 0; i < 1; i++ ) {
 		            var bm = squidmesh.createInstance("squid1-" + i);
@@ -289,12 +321,14 @@ var SquidHall = function() {
 		            bm.checkCollisions = false;
 		        }
 		    }
+			
+			return true;
 		});
 	
 		squidSpace.attachObjectPlacerHook("signfullplacer",
-	      	function(areaName, areaOrigin, config, placeName, data, objName, meshes, scene) {
+	      	function(areaName, areaOptions, objectName, placeName, options, data, scene) {
 			
-			squidSpace.logDebug(`signfullplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placeName}, ${data}`);
+			squidSpace.logDebug(`signfullplacer called! ${areaName}, ${placeName}.`);
 
 			for (key in signfulllayout) {
 				let signfullinfo = signfulllayout[key];
@@ -308,7 +342,7 @@ var SquidHall = function() {
 				mat.backFaceCulling = false;
 
 				// Using squidSpace.cloneObject() here because we *are* adding events to these objects.
-				let cloneMeshes = squidSpace.cloneObject(objName, key);
+				let cloneMeshes = squidSpace.cloneObject(objectName, key);
 
 				for (index = 0; index < cloneMeshes.length; index++) {
 					let bn = cloneMeshes[index];
@@ -322,12 +356,14 @@ var SquidHall = function() {
 					bn.isVisible = true;
 				}
 			}
+			
+			return true;
 		});
 
 		squidSpace.attachObjectPlacerHook("signhalfplacer",
-	    	function(areaName, areaOrigin, config, placeName, data, objName, meshes, scene) {
+	    	function(areaName, areaOptions, objectName, placeName, options, data, scene) {
 			
-	        squidSpace.logDebug(`signhalfplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placeName}, ${data}`);
+			squidSpace.logDebug(`signhalfplacer called! ${areaName}, ${placeName}.`);
 
 	        for (key in signhalflayout) {
 	            let signhalfinfo = signhalflayout[key];
@@ -342,6 +378,7 @@ var SquidHall = function() {
 
 				// NOTE: Not using squidSpace.cloneObject() here because we aren't adding
 				//       events or actions to these objects.
+				let meshes = SquidSpace.getLoadedObjectMeshes(objectName);
 	            for (index = 0; index < meshes.length; index++) {
 	                let bn = meshes[index].clone("sign-" + index);
 	                if(index == 1) bn.material = mat;
@@ -354,27 +391,9 @@ var SquidHall = function() {
 	                bn.isVisible = true;
 	            }
 	        }
-	    });
-		squidSpace.attachObjectPlacerHook("lightplacer",
-			function(areaName, areaOrigin, config, placeName, data, objName, meshes, scene){
 			
-			squidSpace.logDebug(`lightplacer called! ${areaName}, ${areaOrigin}, ${config}, ${placeName}, ${data}`);
-
-			let gl = new BABYLON.GlowLayer("glow", scene, {});
-			gl.intensity = 1.0;
-
-			let lightFrontFill = new BABYLON.PointLight("pointLight",
-													squidSpace.makePointVector(25, 20, 0), scene);
-			lightFrontFill.diffuse = new BABYLON.Color3(1, 1, 1);
-			lightFrontFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
-			lightFrontFill.range = 90;
-
-			let lightTopFill = new BABYLON.PointLight("pointLight",
-													squidSpace.makePointVector(25, 20, 60), scene);
-			lightTopFill.diffuse = new BABYLON.Color3(1, 1, 1);
-			lightTopFill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
-			lightTopFill.range = 90;
-		});
+			return true;
+	    });
 	}
 	
 	//

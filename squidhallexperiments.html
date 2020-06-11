@@ -365,7 +365,6 @@
 		*/
 	}
 	
-
 	//
 	// START BASIC SQUID HALL TEST CODE
 	//
@@ -373,48 +372,43 @@
 	//       with extra test and debug functionality.
 	//
 
-	// Debug settings. If 'debugVerbose' is true then more information is logged
-	// to the console. if 'debugLayer' is true then a set of scene debug panels are
-	// added to the screen.
-	// TODO: Come up with a way to turn these on and off at runtime.
-	//var debugVerbose = false;
-	var debugVerbose = true;
-	var debugLayer = false;
-	//var debugLayer = true;
-
 	// Set up Babylon.js.
 	var canvas = document.getElementById("renderCanvas"); // Get the canvas element
 	var engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
 	var scene = new BABYLON.Scene(engine);
 	
-	// Wire in the SquidHall custom code.
-	SquidHall.wireSquidSpace(null, null, SquidSpace);
-
-	// Here we do basic preparation.
-	SquidSpace.prepareWorld(scene, debugVerbose, debugLayer);
+	// Wire in the SquidSpace common code.
+	SquidCommon.wireSquidSpace(null, null, SquidSpace);
 	
-	// All experiments for things after the world prep go here.
-	experimentAfterWorldPrep(scene);
-
-	// Add page-specific event handlers. (The events themselves are added after 
-	// SquidSpace.buildWorld() is called.)
-	SquidSpace.addEventHandler("onClickShowPopup", function(sourceObjectName, data){
-		showMessagePopup(data);
-	});
+	// Wire in the SquidSpace debug code.
+	SquidDebug.wireSquidSpace(null, null, SquidSpace);
+	
+	// Wire in the SquidHall code.
+	SquidHall.wireSquidSpace(null, null, SquidSpace);
+	
+	// Set log level.
+	SquidSpace.setLogLevel(SS_LOG_ALL);
 
 	// Here's where we do the magic.
 	document.addEventListener("DOMContentLoaded", (event) =>{
+		experimentAfterWorldPrep(scene);
+		
 		// Create and activate the world space.
-		if (SquidSpace.buildWorld(world, [furniture], scene, debugVerbose)) {
+		if (SquidSpace.buildWorld(world, [furniture], scene)) {
 			// Register a render loop to repeatedly render the world space.
 			// NOTE: Use commented out render loop below if you don't want FPS label.
 			let currFPS = 0;
 			let newFPS = 0;
 		    var fpsLabel = document.getElementById("fpsLabel");
 			
-			// All experiments for things after the world build go here.
 			experimentAfterWorldBuild(scene);
-
+			
+			// Add page-specific event handlers. (The events themselves are added when 
+			// SquidSpace.buildWorld() is called.)
+			SquidSpace.addEventHandler("onClickShowPopup", function(sourceObjectName, data){
+				showMessagePopup(data);
+			});
+			
 			engine.runRenderLoop(function() {
 				scene.render();
 

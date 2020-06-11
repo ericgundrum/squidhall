@@ -1,35 +1,13 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<!-- 
-		
-		This is a Squid Hall!
-		
-		Squid Hall was created for ConZealand as a virtual replacement for the 
-		Wellington TSB Arena after the 2020 coronavirus pandemic led to the 
-		cancellation of large events worldwide. Conzealand didn't cancel outright, 
-		instead it moved online in every way it could possibly do so, from video
-		meetings to text chat to web pages to even Virtual Reality.
-		
-		This is just one of those projects. We hope you enjoy it. 
-		
-		=== CREDITS ===
-		
-		Chief Propeller Head: Tom Becker
-		
-		Cyberspace Architect: Jack William Bell
-		
-		3D Team:
-		
-			* Virtual Arena Designer: Taiyo Fujii
-		
-			* Vertex Herder: Ryan Casal
-		
-			* Vertex Herder: Dan Campbell 
+		This is the Squid Hall test page. It should be the same as the
+		production page, but with extra debug capabilities.
 	-->
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>
-			Squid Hall
+			Squid Hall Test
 		</title>
 		<style>
 		    html, body {
@@ -47,6 +25,15 @@
 		    }
 
 			#fpsLabel {
+			    position: absolute;
+			    right: 20px;
+			    top: 10px;
+			    color: #8AA;
+				background:#606;
+			    cursor: default;
+			}
+
+			#controlPanel {
 			    position: absolute;
 			    right: 20px;
 			    top: 20px;
@@ -140,7 +127,6 @@
 		<script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
 		-->
 
-
 		<!-- Babylon.js support libraries END -->
 
 		<!-- Other libraries START -->
@@ -148,6 +134,8 @@
 
 		<!-- Squidspace START -->
 		<script src="libs/squidspace.js"></script>
+		<script src="libs/squidmods/squidcommon.js"></script>
+		<script src="libs/squidmods/squiddebug.js"></script>
 		<!-- Squidspace END -->
 
 		<!-- World START -->
@@ -176,6 +164,8 @@
 		</div>
 
 		<div id="fpsLabel"></div>
+
+		<div id="controlPanel">TODO</div>
 
 		<!-- touch-action="none" for best results from PEP -->
 		<canvas id="renderCanvas" touch-action="none"></canvas>
@@ -244,42 +234,39 @@
 	//       with extra test and debug functionality.
 	//
 
-	// Debug settings. If 'debugVerbose' is true then more information is logged
-	// to the console. if 'debugLayer' is true then a set of scene debug panels are
-	// added to the screen.
-	// TODO: Come up with a way to turn these on and off at runtime.
-	var debugVerbose = false;
-	//var debugVerbose = true;
-	var debugLayer = false;
-	//var debugLayer = true;
-
 	// Set up Babylon.js.
 	var canvas = document.getElementById("renderCanvas"); // Get the canvas element
 	var engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
 	var scene = new BABYLON.Scene(engine);
 	
-	// Wire in the SquidHall custom code.
+	// Wire in the SquidSpace common code.
+	SquidCommon.wireSquidSpace(null, null, SquidSpace);
+	
+	// Wire in the SquidSpace debug code.
+	SquidDebug.wireSquidSpace(null, null, SquidSpace);
+	
+	// Wire in the SquidHall code.
 	SquidHall.wireSquidSpace(null, null, SquidSpace);
-
-	// Here we do basic preparation.
-	SquidSpace.prepareWorld(scene, debugVerbose, debugLayer);
-
-	// Add page-specific event handlers. (The events themselves are added after 
-	// SquidSpace.buildWorld() is called.)
-	SquidSpace.addEventHandler("onClickShowPopup", function(sourceObjectName, data){
-		showMessagePopup(data);
-	});
+	
+	// Set log level.
+	SquidSpace.setLogLevel(SS_LOG_WARN);
 
 	// Here's where we do the magic.
 	document.addEventListener("DOMContentLoaded", (event) =>{
 		// Create and activate the world space.
-		if (SquidSpace.buildWorld(world, [furniture], scene, debugVerbose)) {
+		if (SquidSpace.buildWorld(world, [furniture], scene)) {
 			// Register a render loop to repeatedly render the world space.
 			// NOTE: Use commented out render loop below if you don't want FPS label.
 			let currFPS = 0;
 			let newFPS = 0;
 		    var fpsLabel = document.getElementById("fpsLabel");
 
+			// Add page-specific event handlers. (The events themselves are added when 
+			// SquidSpace.buildWorld() is called.)
+			SquidSpace.addEventListener("onClickShowPopup", function(sourceObjectName, data){
+				showMessagePopup(data);
+			});
+			
 			engine.runRenderLoop(function() {
 				scene.render();
 
