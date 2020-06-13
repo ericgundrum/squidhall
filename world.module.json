@@ -22,7 +22,7 @@
 				"resource-name": "floor",
 				"options": {
 					"doc": "'floor' hook function creates object from scratch.",
-					"loader": "floor",
+					"loader": "Floor",
 					"visible": true
 				},
 				"data": {
@@ -48,8 +48,8 @@
 			{
 				"resource-name": "artsection",
 				"options": {
-					"doc": "'floorSection' hook function creates object from scratch.",
-					"loader": "floorSection",
+					"doc": "'FloorSection' hook function creates object from scratch.",
+					"loader": "FloorSection",
 					"visible": true
 				},
 				"data": {
@@ -61,8 +61,8 @@
 			{
 				"resource-name": "historysection",
 				"options": {
-					"doc": "'floorSection' hook function creates object from scratch.",
-					"loader": "floorSection",
+					"doc": "'FloorSection' hook function creates object from scratch.",
+					"loader": "FloorSection",
 					"visible": true
 				},
 				"data": {
@@ -74,8 +74,8 @@
 			{
 				"resource-name": "dealearwestsection",
 				"options": {
-					"doc": "'floorSection' hook function creates object from scratch.",
-					"loader": "floorSection",
+					"doc": "'FloorSection' hook function creates object from scratch.",
+					"loader": "FloorSection",
 					"visible": true
 				},
 				"data": {
@@ -87,8 +87,8 @@
 			{
 				"resource-name": "dealeareasttsection",
 				"options": {
-					"doc": "'floorSection' hook function creates object from scratch.",
-					"loader": "floorSection",
+					"doc": "'FloorSection' hook function creates object from scratch.",
+					"loader": "FloorSection",
 					"visible": true
 				},
 				"data": {
@@ -148,8 +148,8 @@
 			{
 				"resource-name": "user",
 				"options": {
-					"doc": "'userCamera' hook function creates object from scratch.",
-					"loader": "userCamera",
+					"doc": "'UserCamera' hook function creates object from scratch.",
+					"loader": "UserCamera",
 					"visible": true
 				},
 				"data": {

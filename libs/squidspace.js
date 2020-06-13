@@ -16,7 +16,7 @@
 
 	NOTE: SquidSpace is intentionally implemented as an old-style Javascript 
 	module, despite the fact it uses some newer Javascript functionality. 
-	This allows SquidSpace.js to be used from a file system without creating
+	This allows SquidSpace.js to be used from a file system without 
 	requiring a server and side-steps CORS exceptions in general.
 
 	## Some ideas for improvement
@@ -85,10 +85,10 @@ var SquidSpace = function() {
 		}
 	};
 	var objectLoaderHooks = {
-		"objectData": function(objName, options, data, scene) {
+		"ObjectData": function(objName, options, data, scene) {
 			return SquidSpace.loadObject(objName, options, data, scene, null, null, false);
 		},
-		"floor": function(objName, options, data, scene) {
+		"Floor": function(objName, options, data, scene) {
 			// TODO: Size should be 3 elements.
 			let sz = getValIfKeyInDict("size", data, [1, 1]);
 			let pos = getValIfKeyInDict("position", data, [0, 0, 0]);
@@ -99,7 +99,7 @@ var SquidSpace = function() {
 								materials.macadam, scene);
 		},
 		// TODO: Move this loader hook to squidhall.js
-		"floorSection": function(objName, options, data, scene) {
+		"FloorSection": function(objName, options, data, scene) {
 			// TODO: Size should be 3 elements.
 			let sz = getValIfKeyInDict("size", data, [1, 1]);
 			let pos = getValIfKeyInDict("position", data, [0, 0, 0]);
@@ -109,7 +109,7 @@ var SquidSpace = function() {
 			return addFloorSection(key, pos[0], pos[2], sz[0], sz[1], 
 									materials.marble, scene);
 		},
-		"userCamera": function(objName, options, data, scene) {
+		"UserCamera": function(objName, options, data, scene) {
 			// TODO: Size should be 3 elements.
 			let sz = getValIfKeyInDict("size", data, [1, 1]);
 			let pos = getValIfKeyInDict("position", data, [0, 0, 0]);
@@ -121,14 +121,14 @@ var SquidSpace = function() {
 							targetPos[0], targetPos[1], targetPos[2], scene);
 		}
 	};
-	objectLoaderHooks["default"] = objectLoaderHooks["objectData"]
+	objectLoaderHooks["default"] = objectLoaderHooks["ObjectData"]
 	var modLoaderHooks = {
 		"default": function(matName, options, data, scene) {
 			//return: object instance or undefined if object could not be loaded
 		}
 	};
 	var objectPlacerHooks = {
-		"single": function(layoutName, layoutOptions, objectName, placeName, options, data, scene) {
+		"Single": function(layoutName, layoutOptions, objectName, placeName, options, data, scene) {
 			// TODO: Handle layoutOptions as needed. 
 			
 			// Get values.
@@ -146,7 +146,7 @@ var SquidSpace = function() {
 			
 			return false;
 		},
-		"linear-series": function(layoutName, layoutOptions, objectName, placeName, options, data, scene) {
+		"LinearSeries": function(layoutName, layoutOptions, objectName, placeName, options, data, scene) {
 			// TODO: Handle layoutOptions as needed. 
 			
 			// Get values.
@@ -168,7 +168,7 @@ var SquidSpace = function() {
 			
 			return false;
 		},
-		"rectangle-series": function(layoutName, layoutOptions, objectName, placeName, options, data, scene) {
+		"RectangleSeries": function(layoutName, layoutOptions, objectName, placeName, options, data, scene) {
 			// TODO: Handle layoutOptions as needed. 
 			
 			// Get values.
@@ -191,7 +191,7 @@ var SquidSpace = function() {
 			return false;
 		}
 	};
-	objectPlacerHooks["default"] = objectPlacerHooks["single"]
+	objectPlacerHooks["default"] = objectPlacerHooks["Single"]
 	var userModeHooks = {};
 	
 	//
