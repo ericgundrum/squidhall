@@ -1,1 +1,0 @@
-Files under 'libs/objects' are runtime javascript files containing packed object data.
