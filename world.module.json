@@ -164,7 +164,7 @@
 			"doc": "Object layouts for the entire arena.",
 			"layout-name": "arena",
 			"options": {
-				"doc": "Area origin and size are required, even when the origin defaults to the world origin.",
+				"doc": "Area origin and size are required are not currently implemented.",
 				"size": [50, 30, 72],
 				"origin": [0, 0, 0]
 			},

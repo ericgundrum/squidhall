@@ -37,17 +37,6 @@ var furniture = (function(){
          
          "general": {
             "options": {
-               "doc": "Area origin and size are required, even when the origin defaults to the world origin.",
-               "size": [
-                  0,
-                  0,
-                  0
-               ],
-               "origin": [
-                  0,
-                  0,
-                  0
-               ]
             },
             "objectPlacements": [
                {
@@ -79,12 +68,12 @@ var furniture = (function(){
          
          "artshow": {
             "options": {
-               "size": [
+               "origin": [
                   0,
                   0,
                   0
                ],
-               "origin": [
+               "size": [
                   0,
                   0,
                   0
@@ -105,9 +94,9 @@ var furniture = (function(){
                               0.01,
                               1.6
                            ],
-                           "offset": 2,
+                           "across": true,
                            "count": 3,
-                           "across": true
+                           "offset": 2
                         }
                      },
                      {
@@ -139,9 +128,9 @@ var furniture = (function(){
                               0.01,
                               22.6
                            ],
-                           "offset": 2,
+                           "across": true,
                            "count": 7,
-                           "across": true
+                           "offset": 2
                         }
                      },
                      {
@@ -155,9 +144,9 @@ var furniture = (function(){
                               0.01,
                               27.2
                            ],
-                           "offset": 2,
+                           "across": true,
                            "count": 6,
-                           "across": true
+                           "offset": 2
                         }
                      }
                   ]
@@ -176,14 +165,14 @@ var furniture = (function(){
                               0.01,
                               9
                            ],
-                           "offset": 1.3,
-                           "count": 2,
                            "across": false,
+                           "count": 2,
                            "rotation": [
                               0,
                               1.57,
                               0
-                           ]
+                           ],
+                           "offset": 1.3
                         }
                      },
                      {
@@ -197,14 +186,14 @@ var furniture = (function(){
                               0.01,
                               9
                            ],
-                           "offset": 1.3,
-                           "count": 2,
                            "across": false,
+                           "count": 2,
                            "rotation": [
                               0,
                               1.57,
                               0
-                           ]
+                           ],
+                           "offset": 1.3
                         }
                      },
                      {
@@ -218,14 +207,14 @@ var furniture = (function(){
                               0.01,
                               9
                            ],
-                           "offset": 1.3,
-                           "count": 2,
                            "across": false,
+                           "count": 2,
                            "rotation": [
                               0,
                               1.57,
                               0
-                           ]
+                           ],
+                           "offset": 1.3
                         }
                      },
                      {
@@ -239,14 +228,14 @@ var furniture = (function(){
                               0.01,
                               9
                            ],
-                           "offset": 1.3,
-                           "count": 2,
                            "across": false,
+                           "count": 2,
                            "rotation": [
                               0,
                               1.57,
                               0
-                           ]
+                           ],
+                           "offset": 1.3
                         }
                      },
                      {
@@ -260,21 +249,21 @@ var furniture = (function(){
                               0.01,
                               9
                            ],
-                           "offset": 1.3,
-                           "count": 2,
                            "across": false,
+                           "count": 2,
                            "rotation": [
                               0,
                               1.57,
                               0
-                           ]
+                           ],
+                           "offset": 1.3
                         }
                      },
                      {
-                        "doc": "In the old file this was four separate placements of 2 each.",
                         "options": {
                            "placer": "LinearSeries"
                         },
+                        "doc": "In the old file this was four separate placements of 2 each.",
                         "place-name": "artpnl-1-ew-1",
                         "data": {
                            "position": [
@@ -282,9 +271,9 @@ var furniture = (function(){
                               0.01,
                               9
                            ],
-                           "offset": 1.2,
+                           "across": true,
                            "count": 8,
-                           "across": true
+                           "offset": 1.2
                         }
                      },
                      {
@@ -298,14 +287,14 @@ var furniture = (function(){
                               0.01,
                               14
                            ],
-                           "offset": 1.3,
-                           "count": 2,
                            "across": false,
+                           "count": 2,
                            "rotation": [
                               0,
                               1.57,
                               0
-                           ]
+                           ],
+                           "offset": 1.3
                         }
                      },
                      {
@@ -319,14 +308,14 @@ var furniture = (function(){
                               0.01,
                               14
                            ],
-                           "offset": 1.3,
-                           "count": 2,
                            "across": false,
+                           "count": 2,
                            "rotation": [
                               0,
                               1.57,
                               0
-                           ]
+                           ],
+                           "offset": 1.3
                         }
                      },
                      {
@@ -340,14 +329,14 @@ var furniture = (function(){
                               0.01,
                               14
                            ],
-                           "offset": 1.3,
-                           "count": 2,
                            "across": false,
+                           "count": 2,
                            "rotation": [
                               0,
                               1.57,
                               0
-                           ]
+                           ],
+                           "offset": 1.3
                         }
                      },
                      {
@@ -361,14 +350,14 @@ var furniture = (function(){
                               0.01,
                               14
                            ],
-                           "offset": 1.3,
-                           "count": 2,
                            "across": false,
+                           "count": 2,
                            "rotation": [
                               0,
                               1.57,
                               0
-                           ]
+                           ],
+                           "offset": 1.3
                         }
                      },
                      {
@@ -382,21 +371,21 @@ var furniture = (function(){
                               0.01,
                               14
                            ],
-                           "offset": 1.3,
-                           "count": 2,
                            "across": false,
+                           "count": 2,
                            "rotation": [
                               0,
                               1.57,
                               0
-                           ]
+                           ],
+                           "offset": 1.3
                         }
                      },
                      {
-                        "doc": "In the old file this was four separate placements of 2 each.",
                         "options": {
                            "placer": "LinearSeries"
                         },
+                        "doc": "In the old file this was four separate placements of 2 each.",
                         "place-name": "artpnl-2-ew-1",
                         "data": {
                            "position": [
@@ -404,9 +393,9 @@ var furniture = (function(){
                               0.01,
                               14
                            ],
-                           "offset": 1.2,
+                           "across": true,
                            "count": 8,
-                           "across": true
+                           "offset": 1.2
                         }
                      }
                   ]
@@ -416,12 +405,12 @@ var furniture = (function(){
          
          "fantable": {
             "options": {
-               "size": [
+               "origin": [
                   0,
                   0,
                   0
                ],
-               "origin": [
+               "size": [
                   0,
                   0,
                   0
@@ -442,9 +431,9 @@ var furniture = (function(){
                               0.01,
                               1.6
                            ],
-                           "offset": 2,
+                           "across": true,
                            "count": 8,
-                           "across": true
+                           "offset": 2
                         }
                      }
                   ]
@@ -454,12 +443,12 @@ var furniture = (function(){
          
          "fanhistory": {
             "options": {
-               "size": [
+               "origin": [
                   0,
                   0,
                   0
                ],
-               "origin": [
+               "size": [
                   0,
                   0,
                   0
@@ -480,13 +469,13 @@ var furniture = (function(){
                               0.01,
                               12.5
                            ],
-                           "offset": 4,
                            "count": 2,
                            "rotation": [
                               0,
                               1.57,
                               0
-                           ]
+                           ],
+                           "offset": 4
                         }
                      }
                   ]
@@ -496,12 +485,12 @@ var furniture = (function(){
          
          "dealers": {
             "options": {
-               "size": [
+               "origin": [
                   0,
                   0,
                   0
                ],
-               "origin": [
+               "size": [
                   0,
                   0,
                   0
@@ -522,14 +511,14 @@ var furniture = (function(){
                               0.01,
                               40
                            ],
-                           "offset": 2,
-                           "count": 3,
                            "across": false,
+                           "count": 3,
                            "rotation": [
                               0,
                               1.57,
                               0
-                           ]
+                           ],
+                           "offset": 2
                         }
                      },
                      {
@@ -543,14 +532,14 @@ var furniture = (function(){
                               0.01,
                               40
                            ],
-                           "offset": 2,
-                           "count": 3,
                            "across": false,
+                           "count": 3,
                            "rotation": [
                               0,
                               1.57,
                               0
-                           ]
+                           ],
+                           "offset": 2
                         }
                      },
                      {
@@ -564,9 +553,9 @@ var furniture = (function(){
                               0.01,
                               39.15
                            ],
-                           "offset": 2,
+                           "across": true,
                            "count": 5,
-                           "across": true
+                           "offset": 2
                         }
                      },
                      {
@@ -580,9 +569,9 @@ var furniture = (function(){
                               0.01,
                               44.2
                            ],
-                           "offset": 2,
+                           "across": true,
                            "count": 5,
-                           "across": true
+                           "offset": 2
                         }
                      },
                      {
@@ -596,14 +585,14 @@ var furniture = (function(){
                               0.01,
                               50
                            ],
-                           "offset": 2,
-                           "count": 3,
                            "across": false,
+                           "count": 3,
                            "rotation": [
                               0,
                               1.57,
                               0
-                           ]
+                           ],
+                           "offset": 2
                         }
                      },
                      {
@@ -617,14 +606,14 @@ var furniture = (function(){
                               0.01,
                               50
                            ],
-                           "offset": 2,
-                           "count": 3,
                            "across": false,
+                           "count": 3,
                            "rotation": [
                               0,
                               1.57,
                               0
-                           ]
+                           ],
+                           "offset": 2
                         }
                      },
                      {
@@ -638,9 +627,9 @@ var furniture = (function(){
                               0.01,
                               49.15
                            ],
-                           "offset": 2,
+                           "across": true,
                            "count": 5,
-                           "across": true
+                           "offset": 2
                         }
                      },
                      {
@@ -654,9 +643,9 @@ var furniture = (function(){
                               0.01,
                               54.2
                            ],
-                           "offset": 2,
+                           "across": true,
                            "count": 5,
-                           "across": true
+                           "offset": 2
                         }
                      },
                      {
@@ -670,14 +659,14 @@ var furniture = (function(){
                               0.01,
                               40
                            ],
-                           "offset": 2,
-                           "count": 3,
                            "across": false,
+                           "count": 3,
                            "rotation": [
                               0,
                               1.57,
                               0
-                           ]
+                           ],
+                           "offset": 2
                         }
                      },
                      {
@@ -691,14 +680,14 @@ var furniture = (function(){
                               0.01,
                               40
                            ],
-                           "offset": 2,
-                           "count": 3,
                            "across": false,
+                           "count": 3,
                            "rotation": [
                               0,
                               1.57,
                               0
-                           ]
+                           ],
+                           "offset": 2
                         }
                      },
                      {
@@ -712,9 +701,9 @@ var furniture = (function(){
                               0.01,
                               39.15
                            ],
-                           "offset": 2,
+                           "across": true,
                            "count": 5,
-                           "across": true
+                           "offset": 2
                         }
                      },
                      {
@@ -728,9 +717,9 @@ var furniture = (function(){
                               0.01,
                               44.2
                            ],
-                           "offset": 2,
+                           "across": true,
                            "count": 5,
-                           "across": true
+                           "offset": 2
                         }
                      },
                      {
@@ -744,14 +733,14 @@ var furniture = (function(){
                               0.01,
                               50
                            ],
-                           "offset": 2,
-                           "count": 3,
                            "across": false,
+                           "count": 3,
                            "rotation": [
                               0,
                               1.57,
                               0
-                           ]
+                           ],
+                           "offset": 2
                         }
                      },
                      {
@@ -765,14 +754,14 @@ var furniture = (function(){
                               0.01,
                               50
                            ],
-                           "offset": 2,
-                           "count": 3,
                            "across": false,
+                           "count": 3,
                            "rotation": [
                               0,
                               1.57,
                               0
-                           ]
+                           ],
+                           "offset": 2
                         }
                      },
                      {
@@ -786,9 +775,9 @@ var furniture = (function(){
                               0.01,
                               49.15
                            ],
-                           "offset": 2,
+                           "across": true,
                            "count": 5,
-                           "across": true
+                           "offset": 2
                         }
                      },
                      {
@@ -802,9 +791,9 @@ var furniture = (function(){
                               0.01,
                               54.2
                            ],
-                           "offset": 2,
+                           "across": true,
                            "count": 5,
-                           "across": true
+                           "offset": 2
                         }
                      }
                   ]
@@ -814,12 +803,12 @@ var furniture = (function(){
          
          "greatbarrier": {
             "options": {
-               "size": [
+               "origin": [
                   0,
                   0,
                   0
                ],
-               "origin": [
+               "size": [
                   0,
                   0,
                   0
@@ -840,9 +829,9 @@ var furniture = (function(){
                               0.01,
                               61.7
                            ],
-                           "offset": 2,
+                           "across": true,
                            "count": 11,
-                           "across": true
+                           "offset": 2
                         }
                      }
                   ]
@@ -852,12 +841,12 @@ var furniture = (function(){
          
          "autograph": {
             "options": {
-               "size": [
+               "origin": [
                   0,
                   0,
                   0
                ],
-               "origin": [
+               "size": [
                   0,
                   0,
                   0
@@ -878,9 +867,9 @@ var furniture = (function(){
                               0.01,
                               61.7
                            ],
-                           "offset": 2,
+                           "across": true,
                            "count": 2,
-                           "across": true
+                           "offset": 2
                         }
                      }
                   ]
@@ -890,12 +879,12 @@ var furniture = (function(){
          
          "bid": {
             "options": {
-               "size": [
+               "origin": [
                   0,
                   0,
                   0
                ],
-               "origin": [
+               "size": [
                   0,
                   0,
                   0
@@ -916,9 +905,9 @@ var furniture = (function(){
                               0.01,
                               31
                            ],
-                           "offset": 2,
+                           "across": true,
                            "count": 4,
-                           "across": true
+                           "offset": 2
                         }
                      },
                      {
@@ -932,9 +921,9 @@ var furniture = (function(){
                               0.01,
                               34
                            ],
-                           "offset": 2,
+                           "across": true,
                            "count": 4,
-                           "across": true
+                           "offset": 2
                         }
                      }
                   ]
@@ -944,12 +933,12 @@ var furniture = (function(){
          
          "siteselection": {
             "options": {
-               "size": [
+               "origin": [
                   0,
                   0,
                   0
                ],
-               "origin": [
+               "size": [
                   0,
                   0,
                   0
@@ -970,14 +959,14 @@ var furniture = (function(){
                               0.01,
                               26
                            ],
-                           "offset": 2,
-                           "count": 3,
                            "across": false,
+                           "count": 3,
                            "rotation": [
                               0,
                               1.57,
                               0
-                           ]
+                           ],
+                           "offset": 2
                         }
                      },
                      {
@@ -991,9 +980,9 @@ var furniture = (function(){
                               0.01,
                               24.2
                            ],
-                           "offset": 6.95,
+                           "across": false,
                            "count": 2,
-                           "across": false
+                           "offset": 6.95
                         }
                      }
                   ]
@@ -1003,12 +992,12 @@ var furniture = (function(){
          
          "kapiti": {
             "options": {
-               "size": [
+               "origin": [
                   0,
                   0,
                   0
                ],
-               "origin": [
+               "size": [
                   0,
                   0,
                   0
@@ -1029,14 +1018,14 @@ var furniture = (function(){
                               0.01,
                               45.2
                            ],
-                           "offset": 2,
-                           "count": 6,
                            "across": false,
+                           "count": 6,
                            "rotation": [
                               0,
                               1.57,
                               0
-                           ]
+                           ],
+                           "offset": 2
                         }
                      }
                   ]
@@ -1046,12 +1035,12 @@ var furniture = (function(){
          
          "nzfanac": {
             "options": {
-               "size": [
+               "origin": [
                   0,
                   0,
                   0
                ],
-               "origin": [
+               "size": [
                   0,
                   0,
                   0
@@ -1072,9 +1061,9 @@ var furniture = (function(){
                               0.01,
                               5.7
                            ],
-                           "offset": 2,
+                           "across": true,
                            "count": 6,
-                           "across": true
+                           "offset": 2
                         }
                      }
                   ]
@@ -1084,12 +1073,12 @@ var furniture = (function(){
          
          "nzlibraries": {
             "options": {
-               "size": [
+               "origin": [
                   0,
                   0,
                   0
                ],
-               "origin": [
+               "size": [
                   0,
                   0,
                   0
@@ -1110,14 +1099,14 @@ var furniture = (function(){
                               0.01,
                               6.5
                            ],
-                           "offset": 2,
-                           "count": 3,
                            "across": false,
+                           "count": 3,
                            "rotation": [
                               0,
                               1.57,
                               0
-                           ]
+                           ],
+                           "offset": 2
                         }
                      }
                   ]
@@ -1127,12 +1116,12 @@ var furniture = (function(){
          
          "GoHArtExhibitTables": {
             "options": {
-               "size": [
+               "origin": [
                   0,
                   0,
                   0
                ],
-               "origin": [
+               "size": [
                   0,
                   0,
                   0
@@ -1153,9 +1142,9 @@ var furniture = (function(){
                               0.01,
                               5.5
                            ],
-                           "offset": 2,
+                           "across": true,
                            "count": 5,
-                           "across": true
+                           "offset": 2
                         }
                      }
                   ]
@@ -1165,12 +1154,12 @@ var furniture = (function(){
          
          "History": {
             "options": {
-               "size": [
+               "origin": [
                   0,
                   0,
                   0
                ],
-               "origin": [
+               "size": [
                   0,
                   0,
                   0
@@ -1191,9 +1180,9 @@ var furniture = (function(){
                               0.01,
                               8.5
                            ],
-                           "offset": 1.2,
+                           "across": true,
                            "count": 2,
-                           "across": true
+                           "offset": 1.2
                         }
                      },
                      {
@@ -1207,14 +1196,14 @@ var furniture = (function(){
                               0.01,
                               10
                            ],
-                           "offset": 1.2,
-                           "count": 2,
                            "across": false,
+                           "count": 2,
                            "rotation": [
                               0,
                               1.57,
                               0
-                           ]
+                           ],
+                           "offset": 1.2
                         }
                      },
                      {
@@ -1228,9 +1217,9 @@ var furniture = (function(){
                               0.01,
                               16
                            ],
-                           "offset": 1.2,
+                           "across": true,
                            "count": 3,
-                           "across": true
+                           "offset": 1.2
                         }
                      },
                      {
@@ -1244,9 +1233,9 @@ var furniture = (function(){
                               0.01,
                               18.5
                            ],
-                           "offset": 1.2,
+                           "across": true,
                            "count": 3,
-                           "across": true
+                           "offset": 1.2
                         }
                      },
                      {
@@ -1260,9 +1249,9 @@ var furniture = (function(){
                               0.01,
                               18.5
                            ],
-                           "offset": 1.2,
+                           "across": true,
                            "count": 3,
-                           "across": true
+                           "offset": 1.2
                         }
                      },
                      {
@@ -1276,14 +1265,14 @@ var furniture = (function(){
                               0.01,
                               18.45
                            ],
-                           "offset": 1.2,
-                           "count": 1,
                            "across": false,
+                           "count": 1,
                            "rotation": [
                               0,
                               1.57,
                               0
-                           ]
+                           ],
+                           "offset": 1.2
                         }
                      },
                      {
@@ -1297,14 +1286,14 @@ var furniture = (function(){
                               0.01,
                               22.2
                            ],
-                           "offset": 1.2,
-                           "count": 4,
                            "across": false,
+                           "count": 4,
                            "rotation": [
                               0,
                               1.57,
                               0
-                           ]
+                           ],
+                           "offset": 1.2
                         }
                      },
                      {
@@ -1318,9 +1307,9 @@ var furniture = (function(){
                               0.01,
                               21
                            ],
-                           "offset": 1.3,
+                           "across": true,
                            "count": 2,
-                           "across": true
+                           "offset": 1.3
                         }
                      },
                      {
@@ -1334,9 +1323,9 @@ var furniture = (function(){
                               0.01,
                               25.8
                            ],
-                           "offset": 1.3,
+                           "across": true,
                            "count": 2,
-                           "across": true
+                           "offset": 1.3
                         }
                      },
                      {
@@ -1350,9 +1339,9 @@ var furniture = (function(){
                               0.01,
                               27.8
                            ],
-                           "offset": 1.3,
+                           "across": true,
                            "count": 1,
-                           "across": true
+                           "offset": 1.3
                         }
                      },
                      {
@@ -1366,9 +1355,9 @@ var furniture = (function(){
                               0.01,
                               32.3
                            ],
-                           "offset": 1.3,
+                           "across": true,
                            "count": 4,
-                           "across": true
+                           "offset": 1.3
                         }
                      }
                   ]
