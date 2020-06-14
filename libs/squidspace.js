@@ -276,7 +276,7 @@ var SquidSpace = function() {
 			for (placement of objPlacements) {
 				// Get working values.
 				let objectName = getValIfKeyInDict("object", placement, undefined);
-				let placers = getValIfKeyInDict("placers", placement, []);
+				let placers = getValIfKeyInDict("data", placement, []);
 
 				// Do we have an object name?
 				if (typeof objectName === "string") {

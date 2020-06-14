@@ -171,7 +171,7 @@
 			"data": [
 				{
 					"object": "beam",
-					"placers": [
+					"data": [
 						{
 							"place-name": "beams",
 							"options": {
@@ -183,7 +183,7 @@
 				},
 				{
 					"object": "banner",
-					"placers": [
+					"data": [
 						{
 							"place-name": "banners",
 							"options": {
@@ -195,7 +195,7 @@
 				},
 				{
 					"object": "curtain",
-					"placers": [
+					"data": [
 						{
 							"place-name": "curtains",
 							"options": {
@@ -207,7 +207,7 @@
 				},
 				{
 					"object": "squid",
-					"placers": [
+					"data": [
 						{
 							"place-name": "squid",
 							"options": {
@@ -223,7 +223,7 @@
 				{
 					"doc": "TODO: this needs to refer to a light object, will require rework of the hook function.",
 					"object": "_none_",
-					"placers": [
+					"data": [
 						{
 							"place-name": "lights",
 							"options": {

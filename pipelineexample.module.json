@@ -93,7 +93,7 @@
 				{
 					"doc": "The panel 'artpnl-1-ns-1-1' is from the layouts in the furniture.model.json file.",
 					"object": "artpnl-1-ns-1-1",
-					"placers": [
+					"data": [
 						{
 							"doc": "The place-name is used as the base name for placed objects.",
 							"place-name": "ai-weiwei",

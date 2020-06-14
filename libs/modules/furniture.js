@@ -51,25 +51,25 @@ var furniture = (function(){
             },
             "objectPlacements": [
                {
-                  "placers": [
+                  "data": [
                      {
-                        "place-name": "signhalfs",
                         "options": {
                            "placer": "signhalfplacer",
                            "doc": "Uses a hook placer function that knows where it wants things."
-                        }
+                        },
+                        "place-name": "signhalfs"
                      }
                   ],
                   "object": "signhalf"
                },
                {
-                  "placers": [
+                  "data": [
                      {
-                        "place-name": "signfulls",
                         "options": {
                            "placer": "signfullplacer",
                            "doc": "Uses a hook placer function that knows where it wants things."
-                        }
+                        },
+                        "place-name": "signfulls"
                      }
                   ],
                   "object": "signfull"
@@ -92,7 +92,7 @@ var furniture = (function(){
             },
             "objectPlacements": [
                {
-                  "placers": [
+                  "data": [
                      {
                         "data": {
                            "across": true,
@@ -104,10 +104,10 @@ var furniture = (function(){
                               1.6
                            ]
                         },
-                        "place-name": "ArtShowDesk-1",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "ArtShowDesk-1"
                      },
                      {
                         "data": {
@@ -122,10 +122,10 @@ var furniture = (function(){
                               1.4
                            ]
                         },
-                        "place-name": "ArtShowDesk-2",
                         "options": {
                            "placer": "Single"
-                        }
+                        },
+                        "place-name": "ArtShowDesk-2"
                      },
                      {
                         "data": {
@@ -138,10 +138,10 @@ var furniture = (function(){
                               22.6
                            ]
                         },
-                        "place-name": "ArtistStreet-1",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "ArtistStreet-1"
                      },
                      {
                         "data": {
@@ -154,25 +154,25 @@ var furniture = (function(){
                               27.2
                            ]
                         },
-                        "place-name": "ArtistStreet-2",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "ArtistStreet-2"
                      }
                   ],
                   "object": "table"
                },
                {
-                  "placers": [
+                  "data": [
                      {
                         "data": {
                            "across": false,
+                           "count": 2,
                            "rotation": [
                               0,
                               1.57,
                               0
                            ],
-                           "count": 2,
                            "offset": 1.3,
                            "position": [
                               5,
@@ -180,20 +180,20 @@ var furniture = (function(){
                               9
                            ]
                         },
-                        "place-name": "artpnl-1-ns-1",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "artpnl-1-ns-1"
                      },
                      {
                         "data": {
                            "across": false,
+                           "count": 2,
                            "rotation": [
                               0,
                               1.57,
                               0
                            ],
-                           "count": 2,
                            "offset": 1.3,
                            "position": [
                               7.5,
@@ -201,10 +201,10 @@ var furniture = (function(){
                               9
                            ]
                         },
-                        "place-name": "artpnl-1-ns-2",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "artpnl-1-ns-2"
                      },
                      {
                         "data": {
@@ -217,11 +217,11 @@ var furniture = (function(){
                               9
                            ]
                         },
-                        "place-name": "artpnl-1-ew-1",
                         "doc": "In the old file this was four separate placements of 2 each.",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "artpnl-1-ew-1"
                      }
                   ],
                   "object": "panel"
@@ -244,7 +244,7 @@ var furniture = (function(){
             },
             "objectPlacements": [
                {
-                  "placers": [
+                  "data": [
                      {
                         "data": {
                            "across": true,
@@ -256,10 +256,10 @@ var furniture = (function(){
                               1.6
                            ]
                         },
-                        "place-name": "FanTable",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "FanTable"
                      }
                   ],
                   "object": "table"
@@ -282,7 +282,7 @@ var furniture = (function(){
             },
             "objectPlacements": [
                {
-                  "placers": [
+                  "data": [
                      {
                         "data": {
                            "count": 2,
@@ -293,10 +293,10 @@ var furniture = (function(){
                               12.5
                            ]
                         },
-                        "place-name": "plinth1",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "plinth1"
                      }
                   ],
                   "object": "plinth"
@@ -319,16 +319,16 @@ var furniture = (function(){
             },
             "objectPlacements": [
                {
-                  "placers": [
+                  "data": [
                      {
                         "data": {
                            "across": true,
+                           "count": 3,
                            "rotation": [
                               0,
                               1.57,
                               0
                            ],
-                           "count": 3,
                            "offset": 2,
                            "position": [
                               5,
@@ -336,20 +336,20 @@ var furniture = (function(){
                               40
                            ]
                         },
-                        "place-name": "Dealers-Chatham-west",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "Dealers-Chatham-west"
                      },
                      {
                         "data": {
                            "across": true,
+                           "count": 3,
                            "rotation": [
                               0,
                               1.57,
                               0
                            ],
-                           "count": 3,
                            "offset": 2,
                            "position": [
                               16.35,
@@ -357,10 +357,10 @@ var furniture = (function(){
                               40
                            ]
                         },
-                        "place-name": "Dealers-Chatham-east",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "Dealers-Chatham-east"
                      },
                      {
                         "data": {
@@ -373,10 +373,10 @@ var furniture = (function(){
                               39.15
                            ]
                         },
-                        "place-name": "Dealers-Chatham-north",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "Dealers-Chatham-north"
                      },
                      {
                         "data": {
@@ -389,20 +389,20 @@ var furniture = (function(){
                               44.2
                            ]
                         },
-                        "place-name": "Dealers-Chatham-south",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "Dealers-Chatham-south"
                      },
                      {
                         "data": {
                            "across": true,
+                           "count": 3,
                            "rotation": [
                               0,
                               1.57,
                               0
                            ],
-                           "count": 3,
                            "offset": 2,
                            "position": [
                               5,
@@ -410,20 +410,20 @@ var furniture = (function(){
                               50
                            ]
                         },
-                        "place-name": "Dealers-Stewart-west",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "Dealers-Stewart-west"
                      },
                      {
                         "data": {
                            "across": true,
+                           "count": 3,
                            "rotation": [
                               0,
                               1.57,
                               0
                            ],
-                           "count": 3,
                            "offset": 2,
                            "position": [
                               16.35,
@@ -431,10 +431,10 @@ var furniture = (function(){
                               50
                            ]
                         },
-                        "place-name": "Dealers-Stewart-east",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "Dealers-Stewart-east"
                      },
                      {
                         "data": {
@@ -447,10 +447,10 @@ var furniture = (function(){
                               49.15
                            ]
                         },
-                        "place-name": "Dealers-Stewart-north",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "Dealers-Stewart-north"
                      },
                      {
                         "data": {
@@ -463,20 +463,20 @@ var furniture = (function(){
                               54.2
                            ]
                         },
-                        "place-name": "Dealers-Stewart-south",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "Dealers-Stewart-south"
                      },
                      {
                         "data": {
                            "across": true,
+                           "count": 3,
                            "rotation": [
                               0,
                               1.57,
                               0
                            ],
-                           "count": 3,
                            "offset": 2,
                            "position": [
                               23.2,
@@ -484,20 +484,20 @@ var furniture = (function(){
                               40
                            ]
                         },
-                        "place-name": "Dealers-North-west",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "Dealers-North-west"
                      },
                      {
                         "data": {
                            "across": true,
+                           "count": 3,
                            "rotation": [
                               0,
                               1.57,
                               0
                            ],
-                           "count": 3,
                            "offset": 2,
                            "position": [
                               34.55,
@@ -505,10 +505,10 @@ var furniture = (function(){
                               40
                            ]
                         },
-                        "place-name": "Dealers-North-east",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "Dealers-North-east"
                      },
                      {
                         "data": {
@@ -521,10 +521,10 @@ var furniture = (function(){
                               49.15
                            ]
                         },
-                        "place-name": "Dealers-North-north",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "Dealers-North-north"
                      },
                      {
                         "data": {
@@ -537,20 +537,20 @@ var furniture = (function(){
                               44.2
                            ]
                         },
-                        "place-name": "Dealers-North-south",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "Dealers-North-south"
                      },
                      {
                         "data": {
                            "across": true,
+                           "count": 3,
                            "rotation": [
                               0,
                               1.57,
                               0
                            ],
-                           "count": 3,
                            "offset": 2,
                            "position": [
                               23.2,
@@ -558,20 +558,20 @@ var furniture = (function(){
                               50
                            ]
                         },
-                        "place-name": "Dealers-South-west",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "Dealers-South-west"
                      },
                      {
                         "data": {
                            "across": true,
+                           "count": 3,
                            "rotation": [
                               0,
                               1.57,
                               0
                            ],
-                           "count": 3,
                            "offset": 2,
                            "position": [
                               34.55,
@@ -579,10 +579,10 @@ var furniture = (function(){
                               50
                            ]
                         },
-                        "place-name": "Dealers-South-east",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "Dealers-South-east"
                      },
                      {
                         "data": {
@@ -595,10 +595,10 @@ var furniture = (function(){
                               49.15
                            ]
                         },
-                        "place-name": "Dealers-South-north",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "Dealers-South-north"
                      },
                      {
                         "data": {
@@ -611,10 +611,10 @@ var furniture = (function(){
                               54.2
                            ]
                         },
-                        "place-name": "Dealers-South-south",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "Dealers-South-south"
                      }
                   ],
                   "object": "table"
@@ -637,7 +637,7 @@ var furniture = (function(){
             },
             "objectPlacements": [
                {
-                  "placers": [
+                  "data": [
                      {
                         "data": {
                            "across": true,
@@ -649,10 +649,10 @@ var furniture = (function(){
                               61.7
                            ]
                         },
-                        "place-name": "Great-Barrier",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "Great-Barrier"
                      }
                   ],
                   "object": "table"
@@ -675,7 +675,7 @@ var furniture = (function(){
             },
             "objectPlacements": [
                {
-                  "placers": [
+                  "data": [
                      {
                         "data": {
                            "across": true,
@@ -687,10 +687,10 @@ var furniture = (function(){
                               61.7
                            ]
                         },
-                        "place-name": "autograph",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "autograph"
                      }
                   ],
                   "object": "table"
@@ -713,7 +713,7 @@ var furniture = (function(){
             },
             "objectPlacements": [
                {
-                  "placers": [
+                  "data": [
                      {
                         "data": {
                            "across": true,
@@ -725,10 +725,10 @@ var furniture = (function(){
                               31
                            ]
                         },
-                        "place-name": "BidTables-1",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "BidTables-1"
                      },
                      {
                         "data": {
@@ -741,10 +741,10 @@ var furniture = (function(){
                               34
                            ]
                         },
-                        "place-name": "BidTables-2",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "BidTables-2"
                      }
                   ],
                   "object": "table"
@@ -767,16 +767,16 @@ var furniture = (function(){
             },
             "objectPlacements": [
                {
-                  "placers": [
+                  "data": [
                      {
                         "data": {
                            "across": true,
+                           "count": 3,
                            "rotation": [
                               0,
                               1.57,
                               0
                            ],
-                           "count": 3,
                            "offset": 2,
                            "position": [
                               1.8,
@@ -784,10 +784,10 @@ var furniture = (function(){
                               26
                            ]
                         },
-                        "place-name": "Site-selection-line",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "Site-selection-line"
                      },
                      {
                         "data": {
@@ -800,10 +800,10 @@ var furniture = (function(){
                               24.2
                            ]
                         },
-                        "place-name": "Site-selection-end",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "Site-selection-end"
                      }
                   ],
                   "object": "table"
@@ -826,16 +826,16 @@ var furniture = (function(){
             },
             "objectPlacements": [
                {
-                  "placers": [
+                  "data": [
                      {
                         "data": {
                            "across": true,
+                           "count": 6,
                            "rotation": [
                               0,
                               1.57,
                               0
                            ],
-                           "count": 6,
                            "offset": 2,
                            "position": [
                               1.9,
@@ -843,10 +843,10 @@ var furniture = (function(){
                               45.2
                            ]
                         },
-                        "place-name": "kapiti",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "kapiti"
                      }
                   ],
                   "object": "table"
@@ -869,7 +869,7 @@ var furniture = (function(){
             },
             "objectPlacements": [
                {
-                  "placers": [
+                  "data": [
                      {
                         "data": {
                            "across": true,
@@ -881,10 +881,10 @@ var furniture = (function(){
                               5.7
                            ]
                         },
-                        "place-name": "NZFANAC",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "NZFANAC"
                      }
                   ],
                   "object": "table"
@@ -907,16 +907,16 @@ var furniture = (function(){
             },
             "objectPlacements": [
                {
-                  "placers": [
+                  "data": [
                      {
                         "data": {
                            "across": true,
+                           "count": 6,
                            "rotation": [
                               0,
                               1.57,
                               0
                            ],
-                           "count": 6,
                            "offset": 2,
                            "position": [
                               34,
@@ -924,10 +924,10 @@ var furniture = (function(){
                               6.5
                            ]
                         },
-                        "place-name": "nzlibraries",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "nzlibraries"
                      }
                   ],
                   "object": "table"
@@ -950,7 +950,7 @@ var furniture = (function(){
             },
             "objectPlacements": [
                {
-                  "placers": [
+                  "data": [
                      {
                         "data": {
                            "across": true,
@@ -962,10 +962,10 @@ var furniture = (function(){
                               5.5
                            ]
                         },
-                        "place-name": "GoHArtExhibitTable",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "GoHArtExhibitTable"
                      }
                   ],
                   "object": "table"
@@ -988,7 +988,7 @@ var furniture = (function(){
             },
             "objectPlacements": [
                {
-                  "placers": [
+                  "data": [
                      {
                         "data": {
                            "across": true,
@@ -1000,10 +1000,10 @@ var furniture = (function(){
                               8.5
                            ]
                         },
-                        "place-name": "History-Hugo",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "History-Hugo"
                      },
                      {
                         "data": {
@@ -1016,10 +1016,10 @@ var furniture = (function(){
                               10
                            ]
                         },
-                        "place-name": "History-Fanzine",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "History-Fanzine"
                      },
                      {
                         "data": {
@@ -1032,10 +1032,10 @@ var furniture = (function(){
                               16
                            ]
                         },
-                        "place-name": "History-WorldconHistory",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "History-WorldconHistory"
                      },
                      {
                         "data": {
@@ -1048,20 +1048,20 @@ var furniture = (function(){
                               18.5
                            ]
                         },
-                        "place-name": "History-1945History",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "History-1945History"
                      },
                      {
                         "data": {
                            "across": true,
+                           "count": 3,
                            "rotation": [
                               0,
                               1.57,
                               0
                            ],
-                           "count": 3,
                            "offset": 1.2,
                            "position": [
                               31.3,
@@ -1069,20 +1069,20 @@ var furniture = (function(){
                               18.5
                            ]
                         },
-                        "place-name": "History-GoHGallery-1",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "History-GoHGallery-1"
                      },
                      {
                         "data": {
                            "across": true,
+                           "count": 3,
                            "rotation": [
                               0,
                               1.57,
                               0
                            ],
-                           "count": 3,
                            "offset": 1.2,
                            "position": [
                               30.5,
@@ -1090,20 +1090,20 @@ var furniture = (function(){
                               18.45
                            ]
                         },
-                        "place-name": "History-GoHGallery-2",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "History-GoHGallery-2"
                      },
                      {
                         "data": {
                            "across": true,
+                           "count": 4,
                            "rotation": [
                               0,
                               1.57,
                               0
                            ],
-                           "count": 4,
                            "offset": 1.2,
                            "position": [
                               32.5,
@@ -1111,10 +1111,10 @@ var furniture = (function(){
                               22.2
                            ]
                         },
-                        "place-name": "History-NZFan-History-1",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "History-NZFan-History-1"
                      },
                      {
                         "data": {
@@ -1127,10 +1127,10 @@ var furniture = (function(){
                               21
                            ]
                         },
-                        "place-name": "History-NZFan-History-2",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "History-NZFan-History-2"
                      },
                      {
                         "data": {
@@ -1143,10 +1143,10 @@ var furniture = (function(){
                               25.8
                            ]
                         },
-                        "place-name": "History-NZFan-History-3",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "History-NZFan-History-3"
                      },
                      {
                         "data": {
@@ -1159,10 +1159,10 @@ var furniture = (function(){
                               27.8
                            ]
                         },
-                        "place-name": "History-NZ-simpos",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "History-NZ-simpos"
                      },
                      {
                         "data": {
@@ -1175,10 +1175,10 @@ var furniture = (function(){
                               32.3
                            ]
                         },
-                        "place-name": "History-NZ-GenreHeritage",
                         "options": {
                            "placer": "LinearSeries"
-                        }
+                        },
+                        "place-name": "History-NZ-GenreHeritage"
                      }
                   ],
                   "object": "panel"
