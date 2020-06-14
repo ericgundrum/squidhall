@@ -21,7 +21,7 @@
 			{
 				"resource-name": "floor",
 				"options": {
-					"doc": "'floor' hook function creates object from scratch.",
+					"doc": "'floor' hook function creates an object from scratch.",
 					"loader": "Floor",
 					"visible": true
 				},
