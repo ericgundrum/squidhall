@@ -29,21 +29,20 @@ var SquidHall = function() {
 	var tblSpacing = tblwidth + 0.02;
 	var bmWidth = 1;
 	var bmSpacing = bmWidth + 10;
-	var norot = 0; // Do not rotate.
-	var rot = Math.PI / 2; // Rotate 90 degrees.
 	
 	//
 	// Helper Functions.
 	//
 
+	// TODO: Refactor this into squidhall.js
 	var addFloorSection = function(secName, x, z, w, d, material, scene) {
 		var floorSection = BABYLON.MeshBuilder.CreatePlane(secName, 
 												{width: w, height:d}, scene);
-		floorSection.position = new SquidSpace.makeLayoutVector(x, 0.001, z, w, d);
+		floorSection.position = new SQUIDSPACE.makeLayoutVector(x, 0.001, z, w, d);
 		floorSection.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
 	    floorSection.material = material;
 		floorSection.material.backFaceCulling = false;
-		return floorSection;
+		return [floorSection];
 	}
 	
 	//
@@ -51,20 +50,27 @@ var SquidHall = function() {
 	//
 	
 	var attachObjectLoaderHooks = function(squidSpace){
-		squidSpace.attachObjectLoaderHook("floorSection",
+		squidSpace.attachObjectLoaderHook("FloorSection",
 			function(objName, options, data, scene) {
 			
 			squidSpace.logDebug(`floorSection Loader called! ${objName}, ${options}, ${data}`);
 			
-			
+			// TODO: Size should be 3 elements.
+			let sz = SQUIDSPACE.getValIfKeyInDict("size", data, [1, 1]);
+			let pos = SQUIDSPACE.getValIfKeyInDict("position", data, [0, 0, 0]);
+			let mn = SQUIDSPACE.getValIfKeyInDict("material", data, "");
+			let mat = SQUIDSPACE.getMaterial("marble");
+			// TODO: Get material from material list by material name
+			//       with a default if not loaded.
+			return addFloorSection(key, pos[0], pos[2], sz[0], sz[1], mat, scene);
 	    });
 	}
-	
 	
 	//
 	// Data for placer hooks.
 	//
 
+	// TODO: Add support for expression strings and move this to the world.json.file as 'data'.
 	var bannerlayout = {
 		"artshow":{
 			"x":5,
@@ -131,6 +137,7 @@ var SquidHall = function() {
 		},
 	};
 
+	// TODO: Add support for expression strings and move this to the world.json.file as 'data'.
 	var signfulllayout = {
         "Chicago2022":{
            "pos": [22, 0, 36.3],
@@ -154,6 +161,7 @@ var SquidHall = function() {
 	    },
 	};
 
+	// TODO: Add support for expression strings and move this to the world.json.file as 'data'.
     var signhalflayout = {
        "PropSimonTam":{
            "pos": [19.1, 0, 10],
@@ -190,10 +198,10 @@ var SquidHall = function() {
 		// TODO: Implement Texture/Material support in SquidSpace and 
 		//       refactor as many of these as possible into the pack file.
 
-		squidSpace.attachObjectPlacerHook("lightplacer",
+		squidSpace.attachObjectPlacerHook("LightPlacer",
 			function(areaName, areaOptions, objectName, placeName, options, data, scene){
 		
-			squidSpace.logDebug(`lightplacer called! ${areaName}, ${placeName}.`);
+			squidSpace.logDebug(`LightPlacer called! ${areaName}, ${placeName}.`);
 
 			let gl = new BABYLON.GlowLayer("glow", scene, {});
 			gl.intensity = 1.0;
@@ -213,11 +221,11 @@ var SquidHall = function() {
 			return true;
 		});
 
-		squidSpace.attachObjectPlacerHook("beamplacer",
+		squidSpace.attachObjectPlacerHook("BeamPlacer",
 			function(areaName, areaOptions, objectName, placeName, options, data, scene) {
 			
-			squidSpace.logDebug(`beamplacer called! ${areaName}, ${placeName}.`);
-			let meshes = SquidSpace.getLoadedObjectMeshes(objectName);
+			squidSpace.logDebug(`BeamPlacer called! ${areaName}, ${placeName}.`);
+			let meshes = SQUIDSPACE.getLoadedObjectMeshes(objectName);
 			for (beammesh of meshes){
 	            for (var i = 0; i < 8; i++ ) {
 	                var bm = beammesh.createInstance("beam1-" + i);
@@ -229,10 +237,10 @@ var SquidHall = function() {
 			return true;
 	    });
 		
-		squidSpace.attachObjectPlacerHook("bannerplacer",
+		squidSpace.attachObjectPlacerHook("BannerPlacer",
 			function(areaName, areaOptions, objectName, placeName, options, data, scene) {
 			
-			squidSpace.logDebug(`bannerplacer called! ${areaName}, ${placeName}.`);
+			squidSpace.logDebug(`BannerPlacer called! ${areaName}, ${placeName}.`);
 
 			for (key in bannerlayout) {
 				let bannerinfo = bannerlayout[key];
@@ -244,7 +252,7 @@ var SquidHall = function() {
 				mat.emissiveTexture = bannerTexture;
 				mat.alpha = 0.9;
 				mat.backFaceCulling = false;
-				let meshes = SquidSpace.getLoadedObjectMeshes(objectName);
+				let meshes = SQUIDSPACE.getLoadedObjectMeshes(objectName);
 				// NOTE: Not using squidSpace.cloneObject() here because we aren't adding
 				//       events or actions to these objects.
 				for (index = 0; index < meshes.length; index++) {
@@ -262,10 +270,10 @@ var SquidHall = function() {
 			return true;
 		});
 
-		squidSpace.attachObjectPlacerHook("curtainplacer",
+		squidSpace.attachObjectPlacerHook("CurtainPlacer",
 			function(areaName, areaOptions, objectName, placeName, options, data, scene) {
 			
-			squidSpace.logDebug(`curtainplacer called! ${areaName}, ${placeName}.`);
+			squidSpace.logDebug(`CurtainPlacer called! ${areaName}, ${placeName}.`);
 
 			// NOTE: if you need to verify meshes exist before using them, the
 			//  	 the following example is one way.
@@ -274,7 +282,7 @@ var SquidHall = function() {
 			//     . . . code here
 			//  }
 
-			let meshes = SquidSpace.getLoadedObjectMeshes(objectName);
+			let meshes = SQUIDSPACE.getLoadedObjectMeshes(objectName);
 			for (curtainmesh of meshes) {
 				curtainmesh.isVisible = false;
 
@@ -308,12 +316,12 @@ var SquidHall = function() {
 			return true;
 		});
 
-		squidSpace.attachObjectPlacerHook("squidplacer",
+		squidSpace.attachObjectPlacerHook("SquidPlacer",
 			function(areaName, areaOptions, objectName, placeName, options, data, scene) {
 
-			squidSpace.logDebug(`squidplacer called! ${areaName}, ${placeName}.`);
+			squidSpace.logDebug(`SquidPlacer called! ${areaName}, ${placeName}.`);
 			
-			let meshes = SquidSpace.getLoadedObjectMeshes(objectName);
+			let meshes = SQUIDSPACE.getLoadedObjectMeshes(objectName);
 			for (squidmesh of meshes){
 		        for (var i = 0; i < 1; i++ ) {
 		            var bm = squidmesh.createInstance("squid1-" + i);
@@ -325,10 +333,10 @@ var SquidHall = function() {
 			return true;
 		});
 	
-		squidSpace.attachObjectPlacerHook("signfullplacer",
+		squidSpace.attachObjectPlacerHook("SignFullPlacer",
 	      	function(areaName, areaOptions, objectName, placeName, options, data, scene) {
 			
-			squidSpace.logDebug(`signfullplacer called! ${areaName}, ${placeName}.`);
+			squidSpace.logDebug(`SignFullPlacer called! ${areaName}, ${placeName}.`);
 
 			for (key in signfulllayout) {
 				let signfullinfo = signfulllayout[key];
@@ -360,10 +368,10 @@ var SquidHall = function() {
 			return true;
 		});
 
-		squidSpace.attachObjectPlacerHook("signhalfplacer",
+		squidSpace.attachObjectPlacerHook("SignHalfPlacer",
 	    	function(areaName, areaOptions, objectName, placeName, options, data, scene) {
 			
-			squidSpace.logDebug(`signhalfplacer called! ${areaName}, ${placeName}.`);
+			squidSpace.logDebug(`SignHalfPlacer called! ${areaName}, ${placeName}.`);
 
 	        for (key in signhalflayout) {
 	            let signhalfinfo = signhalflayout[key];
@@ -378,7 +386,7 @@ var SquidHall = function() {
 
 				// NOTE: Not using squidSpace.cloneObject() here because we aren't adding
 				//       events or actions to these objects.
-				let meshes = SquidSpace.getLoadedObjectMeshes(objectName);
+				let meshes = SQUIDSPACE.getLoadedObjectMeshes(objectName);
 	            for (index = 0; index < meshes.length; index++) {
 	                let bn = meshes[index].clone("sign-" + index);
 	                if(index == 1) bn.material = mat;
@@ -446,115 +454,44 @@ var SquidHall = function() {
 	// Build Hook.
 	//
 	
-	var attachBuildHook = function(squidSpace){
-		squidSpace.attachBuildHook(function(scene){
-			
+	var attachBuildHooks = function(squidSpace) {
+		squidSpace.attachBuildHook(function(scene) {
+
 			squidSpace.logDebug("Building World.");
-	
+
 			//
 			// Events.
 			//
-			// TODO: Add event support to SquidSpace layout processing and specify these
-			//       in the pack file.
+			// TODO: Add event support to SquidSpace and specify these in the module file.
 			//
-		
-		   // Show Popup events.
-		   squidSpace.attachClickEventToObject("Chicago2022", "onClickShowPopup",
-		   	{
-		   		"title": "Chicago 2022!",
-		   	 	"text": "Chicago is bidding for the 2022 Worldcon. The theme for the bid is “Take to the Stars”.",
-		   		"link-text": "Chicago 2022 Bid",
-		   		"link": "https://squid.fanac.com/fan-tables/chicago2022/"
-		   	}, scene
-		   );
-		   squidSpace.attachClickEventToObject("DisCon_III", "onClickShowPopup",
-		   	{
-		   		"title": "DisCon III!",
-		   	 	"text": "DisCon III, the 79th World Science Fiction Convention in 2021! Nancy Kress – Author Guest of Honor.",
-		   		"link-text": "DisCon III",
-		   		"link": "https://squid.fanac.com/fan-tables/discon3/"
-		   	}, scene
-		   );
-		   squidSpace.attachClickEventToObject("Glasgow", "onClickShowPopup",
-		   	{
-		   		"title": "Glasgow 2024!",
-		   	 	"text": "Glasgow in 2024 – A Worldcon for Our Futures. Join us! 8th-12th August 2024.",
-		   		"link-text": "Glasgow 2024",
-		   		"link": "https://squid.fanac.com/fan-tables/glasgow2024/"
-		   	}, scene
-		   );   			
-		   
-			//
-			// Extra object placement.
-			//
-			//
-		
-	   		/* TODO: Remove this.
-	   		// Place object on object.
-	   		// See https://www.babylonjs-playground.com/#0UJYJQ#6
-	   		let height = 0;
-	   		let teapot = SquidSpace.cloneObject("teapot", "displayteapot");
-	   		let plinth = SquidSpace.getLoadedObjectMeshes("plinth11");
-	   		// Find max height for plinth.
-	   		for (pmesh of plinth) {
-	   			let bi = pmesh.getBoundingInfo().boundingBox.vectorsWorld;
-	   			let meshHeight = Number(bi[1].y-(bi[0].y));
-	   			if (height < meshHeight) height = meshHeight;
-	   		}
-	   		squidSpace.logDebug(`Plinth height is ${height}.`)
-		
-	   		for (tmesh of teapot) {
-	   			// First scale it (won't be needed after we properly scale the model).
-	   			tmesh.scaling = new BABYLON.Vector3(0.2,0.2,0.2);
-			
-	   			// Now position it.
-	   	   	 	tmesh.position.copyFrom(plinth[0].position);
-	   	        tmesh.position.y = height;
-	   			tmesh.checkCollisions = false;
-	   			tmesh.isVisible = true;
-	   		}
-		
-	   		// Add an event to the teapot.
-	   		SquidSpace.attachClickEventToObject("displayteapot", "onClickShowPopup",
-	   			{
-	   				"title": "Utah Teapot",
-	   			 	"text": "The Utah teapot, or the Newell teapot, is a 3D test model that has become a standard reference object and an in-joke within the computer graphics community.",
-	   				"link-text": "Utah Teapot on Wikipedia",
-	   				"link": "https://en.wikipedia.org/wiki/Utah_teapot"
-	   			}, scene
-	   		);   	
 
-	   		let hugo = SquidSpace.cloneObject("hugo", "displayhugo");
-	   		plinth = SquidSpace.getLoadedObjectMeshes("plinth10");
-		
-	   		for (hmesh of hugo) {
-	   			// First scale it (won't be needed after we properly scale the model).
-	   			//hmesh.scaling = new BABYLON.Vector3(0.2,0.2,0.2);
-			
-	   			// Now position it.
-	   	   	 	hmesh.position.copyFrom(plinth[0].position);
-	   	        hmesh.position.y = height;
-	   			hmesh.checkCollisions = false;
-	   			hmesh.isVisible = true;
-	   		}
-		
-	   		// Add an event to the hugo.
-	   		SquidSpace.attachClickEventToObject("displayhugo", "onClickShowPopup",
-	   			{
-	   				"title": "Hugo Award Base",
-	   			 	"text": "The 2020 Hugo Award base was designed by John Flower.",
-	   				"link-text": "Hugo Award Base by John Flower",
-	   				"link": "https://conzealand.nz/blog/2020/04/04/kiwi-artists-design-hugo-award-bases"
-	   			}, scene
-	   		);   	
-	   		//*/	
+			// Show Popup events.
+			squidSpace.attachClickEventToObject("Chicago2022", "onClickShowPopup", {
+				"title": "Chicago 2022!",
+				"text": "Chicago is bidding for the 2022 Worldcon. The theme for the bid is “Take to the Stars”.",
+				"link-text": "Chicago 2022 Bid",
+				"link": "https://squid.fanac.com/fan-tables/chicago2022/"
+			}, scene);
+			squidSpace.attachClickEventToObject("DisCon_III", "onClickShowPopup", {
+				"title": "DisCon III!",
+				"text": "DisCon III, the 79th World Science Fiction Convention in 2021! Nancy Kress – Author Guest of Honor.",
+				"link-text": "DisCon III",
+				"link": "https://squid.fanac.com/fan-tables/discon3/"
+			}, scene);
+			squidSpace.attachClickEventToObject("Glasgow", "onClickShowPopup", {
+				"title": "Glasgow 2024!",
+				"text": "Glasgow in 2024 – A Worldcon for Our Futures. Join us! 8th-12th August 2024.",
+				"link-text": "Glasgow 2024",
+				"link": "https://squid.fanac.com/fan-tables/glasgow2024/"
+			}, scene);
 		});
 	}
 	
 	return {
 		wireSquidSpace: function(options, data, squidSpace) {
+			attachObjectLoaderHooks(squidSpace);
 			attachPrepareHook(squidSpace);
-			attachBuildHook(squidSpace);
+			attachBuildHooks(squidSpace);
 			attachObjectPlacerHooks(squidSpace);
 		}
 	}

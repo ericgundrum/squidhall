@@ -77,7 +77,7 @@
 							"place-name": "signhalfs",
 							"options": {
 								"doc": "Uses a hook placer function that knows where it wants things.",
-								"placer": "signhalfplacer"
+								"placer": "SignHalfPlacer"
 							}
 						}
 					]
@@ -89,7 +89,7 @@
 							"place-name": "signfulls",
 							"options": {
 								"doc": "Uses a hook placer function that knows where it wants things.",
-								"placer": "signfullplacer"
+								"placer": "SignFullPlacer"
 							}
 						}
 					]
