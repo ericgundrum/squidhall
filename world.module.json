@@ -176,7 +176,7 @@
 							"place-name": "beams",
 							"options": {
 								"doc": "Uses a hook placer function that knows where it wants things.",
-								"placer": "beamplacer"
+								"placer": "BeamPlacer"
 							}
 						}
 					]
@@ -188,7 +188,7 @@
 							"place-name": "banners",
 							"options": {
 								"doc": "Uses a hook placer function that knows where it wants things.",
-								"placer": "bannerplacer"
+								"placer": "BannerPlacer"
 							}
 						}
 					]
@@ -200,7 +200,7 @@
 							"place-name": "curtains",
 							"options": {
 								"doc": "Uses a hook placer function that knows where it wants things.",
-								"placer": "curtainplacer"
+								"placer": "CurtainPlacer"
 							}
 						}
 					]
@@ -212,7 +212,7 @@
 							"place-name": "squid",
 							"options": {
 								"doc": "Uses a hook placer function that requires some option values.",
-								"placer": "squidplacer"
+								"placer": "SquidPlacer"
 							},
 							"data": {
 								"position": [3, 11, 62.5]
@@ -228,7 +228,7 @@
 							"place-name": "lights",
 							"options": {
 								"doc": "Uses a hook placer function that knows where it wants things.",
-								"placer": "lightplacer"
+								"placer": "LightPlacer"
 							}
 						}
 					]
