@@ -1,4 +1,5 @@
-"""                ====== SquidSpace.js Serve ======
+"""## SquidSpace.js Serve Command
+
 The SquidSpace.js 'serve' command creates a web server for static files in the 
 current working directory using the address 'http://localhost:8080/'. The server
 will run until you force it to quit by pressing 'ctrl-C'.

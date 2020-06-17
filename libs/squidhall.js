@@ -225,7 +225,7 @@ var SquidHall = function() {
 			function(areaName, areaOptions, objectName, placeName, options, data, scene) {
 			
 			squidSpace.logDebug(`BeamPlacer called! ${areaName}, ${placeName}.`);
-			let meshes = SQUIDSPACE.getLoadedObjectMeshes(objectName);
+			let meshes = SQUIDSPACE.getLoadedObject(objectName);
 			for (beammesh of meshes){
 	            for (var i = 0; i < 8; i++ ) {
 	                var bm = beammesh.createInstance("beam1-" + i);
@@ -252,7 +252,7 @@ var SquidHall = function() {
 				mat.emissiveTexture = bannerTexture;
 				mat.alpha = 0.9;
 				mat.backFaceCulling = false;
-				let meshes = SQUIDSPACE.getLoadedObjectMeshes(objectName);
+				let meshes = SQUIDSPACE.getLoadedObject(objectName);
 				// NOTE: Not using squidSpace.cloneObject() here because we aren't adding
 				//       events or actions to these objects.
 				for (index = 0; index < meshes.length; index++) {
@@ -282,7 +282,7 @@ var SquidHall = function() {
 			//     . . . code here
 			//  }
 
-			let meshes = SQUIDSPACE.getLoadedObjectMeshes(objectName);
+			let meshes = SQUIDSPACE.getLoadedObject(objectName);
 			for (curtainmesh of meshes) {
 				curtainmesh.isVisible = false;
 
@@ -321,7 +321,7 @@ var SquidHall = function() {
 
 			squidSpace.logDebug(`SquidPlacer called! ${areaName}, ${placeName}.`);
 			
-			let meshes = SQUIDSPACE.getLoadedObjectMeshes(objectName);
+			let meshes = SQUIDSPACE.getLoadedObject(objectName);
 			for (squidmesh of meshes){
 		        for (var i = 0; i < 1; i++ ) {
 		            var bm = squidmesh.createInstance("squid1-" + i);
@@ -386,7 +386,7 @@ var SquidHall = function() {
 
 				// NOTE: Not using squidSpace.cloneObject() here because we aren't adding
 				//       events or actions to these objects.
-				let meshes = SQUIDSPACE.getLoadedObjectMeshes(objectName);
+				let meshes = SQUIDSPACE.getLoadedObject(objectName);
 	            for (index = 0; index < meshes.length; index++) {
 	                let bn = meshes[index].clone("sign-" + index);
 	                if(index == 1) bn.material = mat;
