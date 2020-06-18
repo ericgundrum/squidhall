@@ -37,7 +37,8 @@ from sqs.sqslogger import logger
 
 
 def filter(pathIn, pathOut, options):
-    logger.debug("shellexec.filter() - Processing pathIn: {pathIn} pathOut: {pathOut} options: options".format(pathIn=pathIn, pathOut=pathOut, **options))
+    logger.debug("shellexec.filter() - Processing pathIn: {pathIn} pathOut: {pathOut} options: options".format(
+            pathIn=pathIn, pathOut=pathOut, **options))
     
     # Create the command to execute.
     command = None
@@ -58,9 +59,11 @@ def filter(pathIn, pathOut, options):
     try:
         retcode = subprocess.call(command, shell=True)
         if retcode < 0:
-            logger.error("shellexec.filter() - Command '{0}' was terminated by a signal. Return code: {1}.".format(command, -retcode))
+            logger.error("shellexec.filter() - Command '{0}' was terminated by a signal. Return code: {1}.".format(
+                    command, -retcode))
         elif retcode != 0:
-            logger.error("shellexec.filter() - Command '{0}' was terminated by a signal. Return code: {1}.".format(command, retcode))
+            logger.error("shellexec.filter() - Command '{0}' was terminated by a signal. Return code: {1}.".format(
+                    command, retcode))
     except OSError:
             logger.exception("shellexec.filter() - Command '{0}' failed with an exception.".format(command))
     

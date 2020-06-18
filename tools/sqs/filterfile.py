@@ -20,6 +20,11 @@ import json
 from sqs.common import ResourceFlavor, ResourceAction, ModuleConfiguration
 from sqs.sqslogger import logger
 
+def getFilterFunction(defaultConfig, filterName):
+    """Imports the filter function from the passed filter name name and returns it.
+    Returns None if the filter function cannot be imported."""
+    pass
+
 def processModuleFile(defaultConfig, moduleFile, filterProfile):
     pass
 

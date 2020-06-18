@@ -4,6 +4,8 @@ Shared code used by all SQS tools and APIs.
 """
 
 from enum import Enum
+import os 
+import shutil
 
 
 class ResourceFlavor(Enum):
@@ -84,3 +86,49 @@ class ModuleConfiguration(object):
             if "global-pack-filters" in moduleConfigData:
                 self.packFilters.update(moduleConfigData["global-pack-filters"])   
 
+
+class ScratchDirManager(object):
+    """Manages a scratch directory used by pipeline and other processing."""
+    def __init__(self, scratchDirPath):
+        """Sets up the scratch directory based on a path. If the directory does not 
+        exist it is created. If the directory exists, it is cleared; deleting all
+        files in the directory.
+        
+        WARNING: Two processes using the same temp directory name at the same time will
+                 result in undefined, but almost certainly bad, behavior.
+        
+        NOTE: The Python tempfile library doesn't create file names that can be passed
+              to functions opening those files, only file-like objects. Also it doesn't 
+              let us control the extension. This is easier to implement for our use case
+              even if it isn't as robust as I would like."""
+        self.ctr = 0;
+        self.path = scratchDirPath
+        self.create()
+        
+    def create(self):
+        """Creates the scratch directory if it doesn't exist, otherwise it clears it."""
+        # TODO: This is kind of a brute-force method. Might want to revisit it.
+        self.remove()
+        os.makedirs(self.path)
+        self.ctr = 0;
+        
+    def remove(self):
+        """Clears the scratch directory and removes it."""
+        try:
+            shutil.rmtree(self.path)
+        except:
+            pass
+        
+    def clear(self):
+        """Clears the scratch directory."""
+        # TODO: This is kind of a brute-force method. Might want to revisit it.
+        self.create()
+    
+    def getTempFilePath(self, fileExtension):
+        """Returns a file path using the file extension for use by as a temp file 
+        in the scratch directory. Does not create the file. Does not guarantee no
+        collisions if two processes are using the same scratch directory."""
+        # TODO: Better way to get the file name with less chance of collision. 
+        self.ctr = self.ctr + 1
+        return os.path.join(self.path, "temp_" + str(self.ctr) + fileExtension)
+    
