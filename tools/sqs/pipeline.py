@@ -15,15 +15,170 @@ assets, are copyright their respective authors."""
 
 import sys
 import os
+from urllib.parse import urlparse
 import json
 
-from sqs.common import ResourceFlavor, ResourceAction, ModuleConfiguration
-from sqs.sqslogger import logger
+from sqslogger import logger
+from common import ResourceFlavor, ModuleConfiguration, ScratchDirManager, getSourceURL, getSourceFile
+from filterfile import filterFile
+
+    
+def processPipelineForResource(resourceFlavor, elem, scratchDirMgr, modConfig):
+    """Processes the pipeline for one resource file element. TODO: More docs."""
+    
+    # Get the element config.
+    if not "config" in elem:
+        # No need to process!
+        return True
+    config elem["config"]
+    
+    # Get the cache options from the config.
+    if not "cache-options" in config:
+        # No need to process!
+        return True
+    cacheOptions = config["cache-options"]
+    
+    # Are there any cache options to process?
+    if bool(cacheOptions): # PYTHON TIP: Empty dictionaries evaluate to 'False'. 
+        # No need to process!
+        return True
+    
+    #logger.debug("pipeline.processPipelineForResource() - Processing resource data %{0}s.".format(elem))
+    logger.debug("pipeline.processPipelineForResource() - Processing pipeline for: " + elem["resource-name"])
+        
+    # Try to get the destination file path.
+    destPath = modConfig.makeResourceFilePath(resourceFlavor, cacheOptions.get("file-name"))
+    if not destPath:
+        logger.error("pipeline.processPipelineForResource() - Could not determine output file path. Invalid or unspecified file name or configuration.")
+        return False
+    
+    # Try to get the source file path, source file name, and open it as a file.
+    sourcePath = cacheOptions.get("file-source")
+    sourceFileName = None
+    sourceFile = None
+    if sourcePath:
+        sourceFileName = os.path.basename(sourcePath)
+        sourceFile = getSourceFile(sourcePath)
+    else:
+        # Try to get the source from a URL.
+        sourcePath = cacheOptions.get("url-source")
+        if sourcePath:
+            url = urlparse(sourcePath)
+            sourceFileName = os.path.basename(url.path)
+            sourceFile = getSourceURL(sourcePath)
+        else:
+            logger.error("pipeline.processPipelineForResource() - Invalid or unspecified file or URL source in 'cache-options'.")
+            return False
+    
+    # Did we get a source file?
+    if not sourceFile:
+        logger.error("pipeline.processPipelineForResource() - Could not open source file.")
+        return False
+    
+    # Clear the scratch dir.
+    # TODO: Determine if we really want to do this here.
+    ScratchDirManager.clear()
+    
+    # Copy the source to the scratch dir using the original file name and extension.
+    sourcePath = scratchDirMgr.makeTempFilePath(sourceFileName);
+    scratchDest = getDestFile(sourcePath)
+    if scratchDest:
+        if not copySourceToDestAndClose(sourceFile):
+            logger.error("pipeline.processPipelineForResource() - Unable to copy source file to scratch directory.")
+            return False
+    else:
+        logger.error("pipeline.processPipelineForResource() - Unable to create source file in scratch directory.")
+        return False
+    
+    # Filter the resource file.
+    return filterFile(sourcePath, destPath, scratchDirMgr,
+            modConfig.getFilters(cacheOptions.get("filters"), cacheOptions.get("filter-profile"))
+
+
+def processModuleData(defaultConfig, moduleData):
+    """Processes the Module Data to manage an asset pipeline."""
+    
+    #logger.debug("pipeline.processModuleData() - Processing module data %{0}s.".format(moduleData))
+    logger.debug("pipeline.processModuleData() - Processing pipeline for module: " + module["module-name"])
+    
+    # Get module configuration.
+    moduleConfig = {} # Default config is empty dict.
+    if "config" in module:
+        moduleConfig = module["config"]
+        
+    # Create the module processing configuration.
+    modConfig = ModuleConfiguration(defaultConfig, moduleConfig)
+    
+    # Create scratchDirMgr.
+    scratchDirMgr = modConfig.getScratchDirManager()
+    
+    # Process resouces.
+    if "resources" in module:
+        resources = module["resources"]
+        
+        # Process texture resouces.
+        # TODO: Determine if we should check processPipelineForResource() return value and stop all 
+        #       processing on failure. Currently will continue processing with next resource.
+        if "textures" in resources:
+            for texture in resources["textures"]:
+                processPipelineForResource(ResourceFlavor.TEXTURE, texture, scratchDirMgr, modConfig)
+            
+        # Process material resouces.
+        if "materials" in resources:
+            for material in resources["materials"]:
+                processPipelineForResource(ResourceFlavor.MATERIAL, material, scratchDirMgr, modConfig)
+    
+        # Process object resouces.
+        if "objects" in resources:
+            for obj in resources["objects"]:
+                processPipelineForResource(ResourceFlavor.OBJECT, obj, scratchDirMgr, modConfig)
+        
+        # Process mod resouces.
+        if "mods" in resources:
+            for mod in resources["mods"]:
+                processPipelineForResource(ResourceFlavor.MOD, mod, scratchDirMgr, modConfig)
+    
+    # Cleanup.
+    scratchDirMgr.remove()
+    
+    # Done.
+    logger.debug("pipeline.processModuleData() - Processing complete.")
+
+
+def processModuleString(defaultConfig, moduleDataString):
+    """Loads JSON Module Data from a string and processes it."""
+
+    # Assume failure.
+    moduleData = None
+    
+    try:
+        moduleData = json.loads(moduleDataString)
+    except json.JSONDecodeError:
+        logger.exception("pipeline.processModuleString() - Could not load pack string.")
+        return
+        
+    if not moduleData is None:    
+        processModuleData(defaultConfig, moduleData)
+        
 
 def processModuleFile(defaultConfig, moduleFile):
-    pass
+    """Loads JSON module data from a file-like object and processes it."""
+        
+    # Assume failure.
+    moduleData = None
+    
+    try:
+        moduleData = json.load(moduleFile)
+    except json.JSONDecodeError:
+        logger.exception("pipeline.processModuleFile() - Error loading Module File.")
+        return
+        
+    if not moduleData is None:    
+        processModuleData(defaultConfig, moduleData)
+
 
 def runPipeline(defaultConfig, moduleFileNames):
+    """SQS pipeline command."""
     # Assume Failure.
     moduleFile = None
 
@@ -34,14 +189,18 @@ def runPipeline(defaultConfig, moduleFileNames):
     for moduleFileName in moduleFileNames:
         if not moduleFileName is None and not moduleFileName == "":
             # Use passed Module File name.
-            logger.info("Module File: " + moduleFileName)
+            logger.debug("pipeline.runPipeline() - Module File: " + moduleFileName)
             try:
                 moduleFile = open(moduleFileName)
             except:
-                print("Error reading Module File:", sys.exc_info()[1])
+                logger.exception("pipeline.runPipeline() - Error reading Module File.")
         else:
+            # TODO: Fix here and elsewhere - this won't be reached because we are 
+            #       iterating a possibly empty list.
+            # TODO: Copy STDIN to scratch directory before starting?
             # Use stdin if no file name.
-            logger.info("Reading module data from STDIN.")
+            #logger.info("pipeline.runPipeline() - Reading module data from STDIN.")
+            logger.error("pipeline.runPipeline() - Currently STDIN not supported.")
             moduleFile = sys.stdin
 
         if not moduleFile is None:    

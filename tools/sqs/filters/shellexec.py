@@ -1,6 +1,6 @@
-"""## shellexec.py – SQS Filter that executes a shell command
+"""## shellexec.py – SQS Filter Module that executes a shell command
 
-Passes a file to a shell command for filtering. The options argument must contain a value
+Passes a file to a shell command for filtering. The filter options must contain a value
 named 'command-template' consisting of a template string with the command to execute. 
 The options may also contain a value named 'command-arguments' consisting of a JSON object
 with named argument values to apply to the template.
@@ -10,21 +10,37 @@ template values: '{pathIn}' and '{pathOut}', which are replaced by the pathIn an
 pathOut parameters. If 'command-arguments' is also supplied, any names from that value
 may also be used as template values.
 
-The expectation of any command used as a filter is as follows: the command will
-read in pathIn, make changes to it, and write the result out to pathOut. Commands which 
+The expectation of any command used as a filter is as follows: the shell command will
+read in pathIn, make changes to it, and write the result out to pathOut. Shell commands which 
 do not support this paradigm are not usable as filters.
 
 There is no direct support for mapping the pathIn and pathOut parameters to STDIN 
 and STDOUT for commands supporting that usage. However, it is possible to map them in the
-template string using redirection. It is also possible to support multiple commands using
-pipes.
+template string using redirection. It is also possible to support multiple commands in a 
+single command template using pipes.
 
 No attempt is made to suppress STDOUT and STDERR output from the command, so command output
 will be written to the terminal during execution unless redirected in the template string.
 
 If the command completes with a '0' exit status the filter returns True. Otherwise the filter 
 prints the exit status and returns False.
-"""
+
+Options: 
+
+* "in-ext" – [optional, string] Specifies the expected input file extension; do not use if
+  the input file type is determined by its extension 
+
+* "out-ext" – [optional, string] Specifies the expected output file extension; do not use if
+  the output file type will be the same as the input file type 
+
+* "command-template" [required, string] Specifies the command template string as described above
+
+* "command-arguments" [optional, string] Specifies command arguments which may be replaced 
+  by name in the command template string as described above
+
+Data: None.
+
+File Extensions: Determined by option values."""
 
 
 copyright = """SquidSpace.js, the associated tooling, and the documentation are copyright 
@@ -33,12 +49,26 @@ assets, are copyright their respective authors."""
 
 
 import subprocess
-from sqs.sqslogger import logger
+from sqslogger import logger
 
 
-def filter(pathIn, pathOut, options):
-    logger.debug("shellexec.filter() - Processing pathIn: {pathIn} pathOut: {pathOut} options: options".format(
-            pathIn=pathIn, pathOut=pathOut, **options))
+def filterFileExtensions(options, data):
+    inExt = None
+    outExt = None
+    if "in-ext" in options:
+        inExt = options["in-ext"]
+    if "out-ext" in options:
+        outExt = options["out-ext"]
+    
+    return (inExt, outExt)
+    
+
+def filter(pathIn, pathOut, options, data):
+    logger.debug("shellexec.filter() - Processing pathIn: {pathIn} pathOut: {pathOut} options: %{options}s".format(
+            pathIn=pathIn, pathOut=pathOut, options=options))
+    
+    # TODO: Determine if we want to verify the path in/out file extensions based on the result 
+    #       from filterFileExtensions().
     
     # Create the command to execute.
     command = None

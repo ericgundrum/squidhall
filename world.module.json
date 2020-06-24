@@ -2,7 +2,7 @@
     "module-name": "world",
 	"doc": "Main module file for Squid Hall.",
 	"config": {
-		"out-dir": "libs/modules/",
+		"generate-dir": "libs/modules/",
 		"texture-dir": "textures/",
 		"material-dir": "materials/",
 		"object-dir": "objects/",
