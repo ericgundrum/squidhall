@@ -2,13 +2,26 @@
     "module-name": "world",
 	"doc": "Main module file for Squid Hall.",
 	"config": {
-		"out-dir": "libs/modules/",
+		"generate-dir": "libs/modules/",
 		"texture-dir": "textures/",
 		"material-dir": "materials/",
 		"object-dir": "objects/",
 		"mod-dir": "supportlibs/mods/",
 		"pretty-print": true,
-		"pretty-offset": 3
+		"pretty-offset": 3,
+		"filter-profiles": {
+			"ArtJpg": [
+				{
+					"doc": "Resize and convert to PNG. NOTE: Dependency on .",
+	                "filter": "shellexec",
+	                "options": {
+						"in-ext": ".jpg",
+						"out-ext": ".png",
+	                    "command-template": "cp {pathIn} {pathOut}"
+	                }
+				}
+			]
+		}
 	},
 	"options": {
 		"doc": "Because this is a world module file we can specify a world origin.",

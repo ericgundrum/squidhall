@@ -2,7 +2,9 @@
 	"doc": "Example Asset Pipeline module. The 'module-name' needs to be unique among all module files.",
 	"module-name": "pipelineEx",
 	"config": {
-		"doc": "No 'config', use defaults from world.module.json. (You can leave this 'config' section out.)"
+		"doc": "Overriding selected directories for testing purposes. Rest of config defaults to world.module.json.",
+		"build-dir": "tools/testmodules/build/",
+		"texture-dir": "tools/testmodules/textures/"
 	},
 	"resources": {
 		"textures": [
