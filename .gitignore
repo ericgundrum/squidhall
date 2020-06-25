@@ -8,9 +8,12 @@ notes/*.html_backup
 
 # Generated files
 
-libs/objects/*.js
 __pycache__/
 *.pyc
+build/
+scratch/
+tools/testmodules/build/
+tools/testmodules/textures/
 
 # Logs
 logs

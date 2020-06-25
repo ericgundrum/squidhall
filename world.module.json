@@ -12,12 +12,12 @@
 		"filter-profiles": {
 			"ArtJpg": [
 				{
-					"doc": "Resize and convert to PNG. NOTE: Dependency on .",
+					"doc": "Resize and convert to PNG. NOTE: Dependency on ImageMagick command line tool.",
 	                "filter": "shellexec",
 	                "options": {
 						"in-ext": ".jpg",
 						"out-ext": ".png",
-	                    "command-template": "cp {pathIn} {pathOut}"
+	                    "command-template": "magick {pathIn} -colorspace RGB -resize 600 {pathOut}"
 	                }
 				}
 			]
