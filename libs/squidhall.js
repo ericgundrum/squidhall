@@ -104,15 +104,41 @@ var SquidHall = function() {
 	// Helper Functions.
 	//
 
-	// TODO: Refactor this into squidhall.js
-	var addFloorSection = function(secName, x, z, w, d, material, scene) {
-		var floorSection = BABYLON.MeshBuilder.CreatePlane(secName, 
+	var addFloorSection = function(sectionName, x, z, w, d, material, scene) {
+		let floorSection = BABYLON.MeshBuilder.CreatePlane(sectionName, 
 												{width: w, height:d}, scene);
 		floorSection.position = new SQUIDSPACE.makeLayoutVector(x, 0.001, z, w, d);
 		floorSection.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
 	    floorSection.material = material;
 		floorSection.material.backFaceCulling = false;
 		return [floorSection];
+	}
+	
+	var makeArtFrame = function(objName, textureName, size, position, rotation, eventData) {
+		txtr = SQUIDSPACE.getTexture(textureName);
+		
+		let mat = new BABYLON.StandardMaterial(objName, scene);
+		//mat.diffuseTexture = txtr;
+		mat.emissiveTexture = txtr;
+		//mat.alpha = 0.9;
+		mat.backFaceCulling = false;
+
+		let frame = BABYLON.MeshBuilder.CreatePlane(objName, {width: size[0], height: size[1]}, scene);
+		frame.material = mat;
+		frame.position = position;
+		frame.rotation = rotation;
+		frame.checkCollisions = false;
+		frame.isVisible = true;
+		
+		// Add frame object to SquidSpace.
+		SQUIDSPACE.addObjectInstance(objName, [frame]);
+		
+		// Set event data.
+    	if (eventData) {
+			SQUIDSPACE.attachClickEventToObject(objName, "onClickShowPopup", eventData, scene);
+    	}
+		
+		return frame;
 	}
 	
 	//
@@ -472,17 +498,136 @@ var SquidHall = function() {
 			
 			return true;
 	    });
-		
-
-	squidSpace.attachObjectPlacerHook("ArtPlacer",
-    	function(areaName, areaOptions, objectName, placeName, options, data, scene) {
-		
-		squidSpace.logDebug(`ArtPlacer called! ${areaName}, ${placeName}.`);
-		
-		return true;
-    });
 	
+		squidSpace.attachObjectPlacerHook("ArtPlacer",
+	    	function(areaName, areaOptions, objectName, placeName, options, data, scene) {
+	
+			squidSpace.logDebug(`ArtPlacer called! ${areaName}, ${placeName}, ${objectName}.`);
+		
+			// Get target object.
+			target = SQUIDSPACE.getLoadedObject(objectName);
+			// TODO: Check target and fail with error if not loaded. 
+		
+			//if (SQUIDDEBUG) {
+			//      SQUIDSPACE.logDebug(SQUIDDEBUG.makeDetailedObjectInfoString(target));
+			//      SQUIDSPACE.logDebug(SQUIDDEBUG.makeObjectInfoString(target));
+			//}
+		
+			// Get the event data.
+			ed = options["moreInfoData"];
+		
+			// Get the placer data.
+			dt = data["textures"];
+			po = data["place-on"] != "back";
+		
+			count = 0;
+			for (tx of dt) {
+				// Get texture data dsvalues.
+				txName = tx["texture"];
+				size = tx["size"];
+				position = tx["position"];
+			
+				// HACK: Right now we are assuming *ANY* y rotation is 90 degrees.
+				// TODO: Come up with a way to match rotations better. This will require
+				//       translating each frame based on it's position. 
+				tgtRot = target[0].rotation;
+				isRot = tgtRot.y != 0;
+			
+				// Calculate positions.
+				posV = target[0].position.clone();
+				posV.y = posV.y - position[1] + 2;
+				if (isRot) {
+					posV.z = posV.z - position[0] + 0.9;
+					if (po) {
+						posV.x = posV.x + 0.001;
+					}
+					else {
+						posV.x = posV.x - 0.04;
+					}
+				}
+				else {
+					posV.x = posV.x - position[0] + 0.9;
+					if (po) {
+						posV.z = posV.z + 0.001;
+					}
+					else {
+						posV.z = posV.z - 0.04;
+					}
+				}
+			
+				// Place on target.
+				let nm = areaName + "." + txName + "-" + count++;
+				makeArtFrame(nm, txName, size, posV, tgtRot, ed);
+			}
+		
+			return true;
+	    });
+	
+		squidSpace.attachObjectPlacerHook("TablePlacer",
+	    	function(areaName, areaOptions, objectName, placeName, options, data, scene) {
+		
+			squidSpace.logDebug(`TablePlacer called! ${areaName}, ${placeName}, ${objectName}.`);
+			
+			// Get target object.
+			target = SQUIDSPACE.getLoadedObject(objectName);
+			// TODO: Check target and fail with error if not loaded. 
+			
+			//if (SQUIDDEBUG) {
+			//      SQUIDSPACE.logDebug(SQUIDDEBUG.makeDetailedObjectInfoString(target));
+			//      SQUIDSPACE.logDebug(SQUIDDEBUG.makeObjectInfoString(target));
+			//}
+			
+			// Get the event data.
+			ed = options["moreInfoData"];
+			
+			// Get the placer data.
+			dt = data["textures"];
+			po = data["place-on"] != "back";
+			
+			count = 0;
+			for (tx of dt) {
+				// Get texture data dsvalues.
+				txName = tx["texture"];
+				size = tx["size"];
+				position = tx["position"];
+				
+				// HACK: Right now we are assuming *ANY* y rotation is 90 degrees.
+				// TODO: Come up with a way to match rotations better. This will require
+				//       translating each frame based on it's position. 
+				tgtRot = target[0].rotation;
+				isRot = tgtRot.y != 0;
+				
+				// Calculate positions.
+				posV = target[0].position.clone();
+				posV.y = posV.y - position[1] + 2;
+				if (isRot) {
+					posV.z = posV.z - position[0] + 0.9;
+					if (po) {
+						posV.x = posV.x + 0.001;
+					}
+					else {
+						posV.x = posV.x - 0.04;
+					}
+				}
+				else {
+					posV.x = posV.x - position[0] + 0.9;
+					if (po) {
+						posV.z = posV.z + 0.001;
+					}
+					else {
+						posV.z = posV.z - 0.04;
+					}
+				}
+				
+				// Place on target.
+				let nm = areaName + "." + txName + "-" + count++;
+				makeArtFrame(nm, txName, size, posV, tgtRot, ed);
+			}
+			
+			return true;
+	    });
 	}
+	
 	
 	//
 	// Prepare Hook.
@@ -575,7 +720,7 @@ var SquidHall = function() {
 			attachObjectPlacerHooks(squidSpace);
 		},
 		
-		makeWorld: function(beforeBuildFunc, afterBuildFunc) {
+		makeWorld: function(contentModuleList, beforeBuildFunc, afterBuildFunc) {
 
 			// Set up Babylon.js.
 			window.canvas = document.getElementById("renderCanvas"); // Get the canvas element
@@ -587,16 +732,16 @@ var SquidHall = function() {
 	
 			// Wire in the SquidHall code.
 			SquidHall.wireSquidSpace(null, null, SQUIDSPACE);
-	
-			// Set log level.
-			SQUIDSPACE.setLogLevel(SQS_LOG_ALL);
 
 			// Here's where we do the magic.
 			document.addEventListener("DOMContentLoaded", (event) =>{
+				if (setupDebugBefore) setupDebugBefore();
 				if (beforeBuildFunc) beforeBuildFunc(scene);
 				// Create and activate the world space.
-				if (SQUIDSPACE.buildWorld(world, [furniture], scene)) {
+				if (SQUIDSPACE.buildWorld(world, contentModuleList, scene)) {
+					if (setupDebugAfter) setupDebugAfter();
 					if (afterBuildFunc) afterBuildFunc(scene);
+					
 					// Register a render loop to repeatedly render the world space.
 					// NOTE: Use commented out render loop below if you don't want FPS label.
 					let currFPS = 0;
@@ -631,7 +776,7 @@ var SquidHall = function() {
 					});
 				}
 				else {
-					console.log("Failed to load squid space.")
+					console.log("Failed to load world space.")
 
 					showMessagePopup(
 						{
