@@ -1,0 +1,94 @@
+html, body {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#renderCanvas {
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+}
+
+#toolBar {
+    position: absolute;
+    right: 20px;
+    top: 10px;
+	width: 80px;
+    background-color: #337000;
+    color: white;
+    cursor: default;
+}
+#toolBar a:link {color: yellow;}
+#toolBar a:visited {color: yellow;}
+#toolBar a:hover {color: antiquewhite}
+#toolBar a:active {color: yellow}
+
+/* Modal Popup box style */
+.mpopup {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+}
+.mpopup-content {
+    position: relative;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 0;
+    width: 60%;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s
+}
+.mpopup-head {
+    padding: 2px 8px;
+    background-color: #337000;
+    color: white;
+}
+.mpopup-close {
+	cursor: pointer;
+	font-size: x-large;
+	//color: gold;
+	padding: 0;
+	//padding: 1px;
+	margin: 0;
+	//border: solid 2px black;
+}
+//.mpopup-close:hover {color: antiquewhite}
+#mpopup-title {
+	text-align: center;
+	margin: 0;
+}
+.mpopup-main {padding: 2px 16px;}
+.mpopup-foot {
+    padding: 2px 16px;
+    background-color: #337000;
+    color: white;
+}
+.mpopup-foot a:link {color: gold;}
+.mpopup-foot a:visited {color: lightblue;}
+.mpopup-foot a:hover {color: antiquewhite}
+.mpopup-foot a:active {color: antiquewhite}
+
+/* add animation effects */
+@-webkit-keyframes animatetop {
+    from {top:-300px; opacity:0}
+    to {top:0; opacity:1}
+}
+
+@keyframes animatetop {
+    from {top:-300px; opacity:0}
+    to {top:0; opacity:1}
+}

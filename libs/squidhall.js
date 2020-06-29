@@ -3,14 +3,84 @@
 //'use strict'; 
 
 /**
-The SquidHall module provides squidSpace hooks and events, plus other support 
-code for the Squid Hall project. 
-
-TODO: Refactor in Squid Hall-Specific code from squidspace.js
-
-TODO: Refactor in as much code from squidhalltest.html as possible
+Contains web page support for Squid Hall, plus the SquidHall module. The 
+SquidHall module is a SquidSpace.js mod providing Squid Hall-specific hooks, 
+events, and extensions.
  */
 
+
+//
+// Web Page Stuff.
+//
+
+document.addEventListener("DOMContentLoaded", (event) =>{
+	var mpopup = document.getElementById('mPopupBox');
+	var closepopup = document.getElementById("mPopupBox-close");
+	var mctrlpnl = document.getElementById('mCtrlPnl');
+	var closectrlpnl = document.getElementById("mCtrlPnl-close");
+
+	window.showMessagePopup = function(data) {
+		let mainText = data[`<p>${data["text"]}</p>`];
+		let linkText = undefined;
+
+		if ("title" in data) {
+			document.getElementById('mpopup-title').innerHTML = data["title"];
+		}
+		else {
+			document.getElementById('mpopup-title').innerHTML = "Attention!";
+		}
+
+		if ("text" in data) {
+			document.getElementById('mpopup-text').innerHTML = `<p>${data["text"]}</p>`;
+		}
+		else {
+			document.getElementById('mpopup-text').innerHTML = "<p>Normally a message would be here.</p>";
+		}
+
+		if ("link" in data && "link-text" in data) {
+			document.getElementById('mpopup-link').innerHTML = `<p>See more here: <a href='${data["link"]}' target='_blank'>${data["link-text"]}</a></p>`;
+		}
+
+		mpopup.style.display = "block";
+	}
+
+	closepopup.onclick = function() {
+	    mpopup.style.display = "none";
+	}
+
+	showCntrlPanelPopup = function() {
+		mctrlpnl.style.display = "block";
+	}
+
+	closectrlpnl.onclick = function() {
+	    mctrlpnl.style.display = "none";
+	}
+
+	window.onclick = function(event) {
+	    if (event.target == mpopup) {
+	        mpopup.style.display = "none";
+	    }
+	    else if (event.target == mctrlpnl) {
+	        mctrlpnl.style.display = "none";
+	    }
+	}
+
+	showMessagePopup(
+		{
+			"title": "Welcome to Squid Hall - A VR re-creation of the TSB Arena",
+		 	"text": "Your mouse controls the direction you are facing. The arrow keys or the W, A, S, and D keys control movement forward/back, and left/right. You can click on some of the objects to learn more about them.<br/><br/>Click the close button or outside this message box to start."
+		}
+	);
+});
+
+
+//
+// Squid Hall mod.
+//
+
+/**
+This is a SquidSpace.js mod providing Squid Hall-specific hooks, events, and extensions.
+ */
 var SquidHall = function() {
 	
 	//
@@ -34,15 +104,41 @@ var SquidHall = function() {
 	// Helper Functions.
 	//
 
-	// TODO: Refactor this into squidhall.js
-	var addFloorSection = function(secName, x, z, w, d, material, scene) {
-		var floorSection = BABYLON.MeshBuilder.CreatePlane(secName, 
+	var addFloorSection = function(sectionName, x, z, w, d, material, scene) {
+		let floorSection = BABYLON.MeshBuilder.CreatePlane(sectionName, 
 												{width: w, height:d}, scene);
 		floorSection.position = new SQUIDSPACE.makeLayoutVector(x, 0.001, z, w, d);
 		floorSection.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
 	    floorSection.material = material;
 		floorSection.material.backFaceCulling = false;
 		return [floorSection];
+	}
+	
+	var makeArtFrame = function(objName, textureName, size, position, rotation, eventData) {
+		txtr = SQUIDSPACE.getTexture(textureName);
+		
+		let mat = new BABYLON.StandardMaterial(objName, scene);
+		//mat.diffuseTexture = txtr;
+		mat.emissiveTexture = txtr;
+		//mat.alpha = 0.9;
+		mat.backFaceCulling = false;
+
+		let frame = BABYLON.MeshBuilder.CreatePlane(objName, {width: size[0], height: size[1]}, scene);
+		frame.material = mat;
+		frame.position = position;
+		frame.rotation = rotation;
+		frame.checkCollisions = false;
+		frame.isVisible = true;
+		
+		// Add frame object to SquidSpace.
+		SQUIDSPACE.addObjectInstance(objName, [frame]);
+		
+		// Set event data.
+    	if (eventData) {
+			SQUIDSPACE.attachClickEventToObject(objName, "onClickShowPopup", eventData, scene);
+    	}
+		
+		return frame;
 	}
 	
 	//
@@ -402,7 +498,136 @@ var SquidHall = function() {
 			
 			return true;
 	    });
+	
+		squidSpace.attachObjectPlacerHook("ArtPlacer",
+	    	function(areaName, areaOptions, objectName, placeName, options, data, scene) {
+	
+			squidSpace.logDebug(`ArtPlacer called! ${areaName}, ${placeName}, ${objectName}.`);
+		
+			// Get target object.
+			target = SQUIDSPACE.getLoadedObject(objectName);
+			// TODO: Check target and fail with error if not loaded. 
+		
+			//if (SQUIDDEBUG) {
+			//      SQUIDSPACE.logDebug(SQUIDDEBUG.makeDetailedObjectInfoString(target));
+			//      SQUIDSPACE.logDebug(SQUIDDEBUG.makeObjectInfoString(target));
+			//}
+		
+			// Get the event data.
+			ed = options["moreInfoData"];
+		
+			// Get the placer data.
+			dt = data["textures"];
+			po = data["place-on"] != "back";
+		
+			count = 0;
+			for (tx of dt) {
+				// Get texture data dsvalues.
+				txName = tx["texture"];
+				size = tx["size"];
+				position = tx["position"];
+			
+				// HACK: Right now we are assuming *ANY* y rotation is 90 degrees.
+				// TODO: Come up with a way to match rotations better. This will require
+				//       translating each frame based on it's position. 
+				tgtRot = target[0].rotation;
+				isRot = tgtRot.y != 0;
+			
+				// Calculate positions.
+				posV = target[0].position.clone();
+				posV.y = posV.y - position[1] + 2;
+				if (isRot) {
+					posV.z = posV.z - position[0] + 0.9;
+					if (po) {
+						posV.x = posV.x + 0.001;
+					}
+					else {
+						posV.x = posV.x - 0.04;
+					}
+				}
+				else {
+					posV.x = posV.x - position[0] + 0.9;
+					if (po) {
+						posV.z = posV.z + 0.001;
+					}
+					else {
+						posV.z = posV.z - 0.04;
+					}
+				}
+			
+				// Place on target.
+				let nm = areaName + "." + txName + "-" + count++;
+				makeArtFrame(nm, txName, size, posV, tgtRot, ed);
+			}
+		
+			return true;
+	    });
+	
+		squidSpace.attachObjectPlacerHook("TablePlacer",
+	    	function(areaName, areaOptions, objectName, placeName, options, data, scene) {
+		
+			squidSpace.logDebug(`TablePlacer called! ${areaName}, ${placeName}, ${objectName}.`);
+			
+			// Get target object.
+			target = SQUIDSPACE.getLoadedObject(objectName);
+			// TODO: Check target and fail with error if not loaded. 
+			
+			//if (SQUIDDEBUG) {
+			//      SQUIDSPACE.logDebug(SQUIDDEBUG.makeDetailedObjectInfoString(target));
+			//      SQUIDSPACE.logDebug(SQUIDDEBUG.makeObjectInfoString(target));
+			//}
+			
+			// Get the event data.
+			ed = options["moreInfoData"];
+			
+			// Get the placer data.
+			dt = data["textures"];
+			po = data["place-on"] != "back";
+			
+			count = 0;
+			for (tx of dt) {
+				// Get texture data dsvalues.
+				txName = tx["texture"];
+				size = tx["size"];
+				position = tx["position"];
+				
+				// HACK: Right now we are assuming *ANY* y rotation is 90 degrees.
+				// TODO: Come up with a way to match rotations better. This will require
+				//       translating each frame based on it's position. 
+				tgtRot = target[0].rotation;
+				isRot = tgtRot.y != 0;
+				
+				// Calculate positions.
+				posV = target[0].position.clone();
+				posV.y = posV.y - position[1] + 2;
+				if (isRot) {
+					posV.z = posV.z - position[0] + 0.9;
+					if (po) {
+						posV.x = posV.x + 0.001;
+					}
+					else {
+						posV.x = posV.x - 0.04;
+					}
+				}
+				else {
+					posV.x = posV.x - position[0] + 0.9;
+					if (po) {
+						posV.z = posV.z + 0.001;
+					}
+					else {
+						posV.z = posV.z - 0.04;
+					}
+				}
+				
+				// Place on target.
+				let nm = areaName + "." + txName + "-" + count++;
+				makeArtFrame(nm, txName, size, posV, tgtRot, ed);
+			}
+			
+			return true;
+	    });
 	}
+	
 	
 	//
 	// Prepare Hook.
@@ -493,6 +718,74 @@ var SquidHall = function() {
 			attachPrepareHook(squidSpace);
 			attachBuildHooks(squidSpace);
 			attachObjectPlacerHooks(squidSpace);
+		},
+		
+		makeWorld: function(contentModuleList, beforeBuildFunc, afterBuildFunc) {
+
+			// Set up Babylon.js.
+			window.canvas = document.getElementById("renderCanvas"); // Get the canvas element
+			window.engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
+			window.scene = new BABYLON.Scene(engine);
+	
+			// Wire in the SquidSpace.js common code.
+			SQUIDCOMMON.wireSquidSpace(null, null, SQUIDSPACE);
+	
+			// Wire in the SquidHall code.
+			SquidHall.wireSquidSpace(null, null, SQUIDSPACE);
+
+			// Here's where we do the magic.
+			document.addEventListener("DOMContentLoaded", (event) =>{
+				if (setupDebugBefore) setupDebugBefore();
+				if (beforeBuildFunc) beforeBuildFunc(scene);
+				// Create and activate the world space.
+				if (SQUIDSPACE.buildWorld(world, contentModuleList, scene)) {
+					if (setupDebugAfter) setupDebugAfter();
+					if (afterBuildFunc) afterBuildFunc(scene);
+					
+					// Register a render loop to repeatedly render the world space.
+					// NOTE: Use commented out render loop below if you don't want FPS label.
+					let currFPS = 0;
+					let newFPS = 0;
+				    var fpsLabel = document.getElementById("fpsLabel");
+
+					// Add page-specific event handlers. (The events themselves are added when 
+					// SQUIDSPACE.buildWorld() is called.)
+					SQUIDSPACE.addEventListener("onClickShowPopup", function(sourceObjectName, data){
+						showMessagePopup(data);
+					});
+			
+					engine.runRenderLoop(function() {
+						scene.render();
+
+						// Update FPS on screen if it has changed.
+						newFPS = engine.getFps().toFixed();
+						if (currFPS != newFPS) {
+							currFPS = newFPS;
+						    fpsLabel.innerHTML = `&nbsp;${currFPS} fps&nbsp;`;
+						}
+					});
+
+					// Alternate render loop without FPS label.
+					//engine.runRenderLoop(function() {
+					//	scene.render();
+					//});
+
+					// Watch for browser/canvas resize events
+					window.addEventListener("resize", function() {
+						engine.resize();
+					});
+				}
+				else {
+					console.log("Failed to load world space.")
+
+					showMessagePopup(
+						{
+							"title": "Squid Hall 3D Space Failed to Load",
+						 	"text": "We apologize! Something happened while loading the 3D simulation space. It's possible your computer or web browser do not support WebGL or other features required to make it work. Please try again with a different browser or computer."
+						}
+					);
+				}
+			});
 		}
 	}
 }();

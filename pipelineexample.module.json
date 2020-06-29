@@ -2,7 +2,8 @@
 	"doc": "Example Asset Pipeline module. The 'module-name' needs to be unique among all module files.",
 	"module-name": "pipelineEx",
 	"config": {
-		"doc": "No 'config', use defaults from world.module.json. (You can leave this 'config' section out.)"
+		"doc": "Using defaults from world.module.json, except we override the 'texture-dir'.",
+		"texture-dir": "textures/content/"
 	},
 	"resources": {
 		"textures": [
@@ -14,6 +15,9 @@
 						"doc": "All we need to specify is the URL source and the filter profile; no advanced config.",
 						"url-source": "https://squid.fanac.com/wp-content/uploads/2020/05/IP_0815_-053-scaled.jpg",
 						"filter-profile": "ArtJpg"
+					},
+					"pack-options": {
+						"action": "link"
 					},
 					"doc": "Note the file name is a .png. The file will be converted from .jpg by the filters.",
 					"file-name": "ai-weiwei-1.png"
@@ -32,6 +36,9 @@
 						"doc": "NOTE: The filter profile 'ArtJpg' is defined in the world.module.json file.",
 						"filter-profile": "ArtJpg"
 					},
+					"pack-options": {
+						"action": "link"
+					},
 					"doc": "The file name is the name used in the cache and may be different than the source name.",
 					"file-name": "ai-weiwei-2.png"
 				}
@@ -42,6 +49,9 @@
 					"cache-options": {
 						"url-source": "https://squid.fanac.com/wp-content/uploads/2020/05/IP_0815_-062-scaled.jpg",
 						"filter-profile": "ArtJpg"
+					},
+					"pack-options": {
+						"action": "link"
 					},
 					"file-name": "ai-weiwei-3.png"
 				}
@@ -54,6 +64,9 @@
 						"url-source": "https://squid.fanac.com/wp-content/uploads/2020/05/IMG_0215-scaled.jpg",
 						"filter-profile": "ArtJpg"
 					},
+					"pack-options": {
+						"action": "link"
+					},
 					"file-name": "kathryn-duval-1.png"
 				}
 			},
@@ -64,6 +77,9 @@
 						"url-source": "https://squid.fanac.com/wp-content/uploads/2020/05/IMG_0216-2-scaled.jpg",
 						"filter-profile": "ArtJpg"
 					},
+					"pack-options": {
+						"action": "link"
+					},
 					"file-name": "kathryn-duval-2.png"
 				}
 			},
@@ -73,6 +89,9 @@
 					"cache-options": {
 						"url-source": "https://squid.fanac.com/wp-content/uploads/2020/05/IP_0815_-005-scaled.jpg",
 						"filter-profile": "ArtJpg"
+					},
+					"pack-options": {
+						"action": "link"
 					},
 					"file-name": "kathryn-duval-3.png"
 				}
@@ -91,11 +110,11 @@
 			},
 			"data": [
 				{
-					"doc": "The panel 'artpnl-1-ns-1-1' is from the layouts in the furniture.model.json file.",
-					"object": "artpnl-1-ns-1-1",
+					"doc": "The panel 'artshow.artpnl-1-ew-1-1' is from the layouts in the furniture.model.json file.",
+					"object": "artshow.artpnl-1-ew-1-1",
 					"data": [
 						{
-							"doc": "The place-name is used as the base name for placed objects.",
+							"doc": "The place-name is used as the base name for placed objects located on artshow.artpnl-1-ew-1-1.",
 							"place-name": "ai-weiwei",
 							"options": {
 								"doc": "The 'ArtPlacer' figures out the best way to arrange the pictures.",
@@ -110,15 +129,37 @@
 							"data": {
 								"doc": "The textures are specified in the 'resources' section.",
 								"textures": [
-									"Ai-Weiwei-1",
-									"Ai-Weiwei-2",
-									"Ai-Weiwei-3"
+									{
+										"texture": "Ai-Weiwei-1",
+										"doc": "Size is WxH.",
+										"size": [0.6, 0.45],
+										"position": [0, 0]
+									},
+									{
+										"texture": "Ai-Weiwei-2",
+										"doc": "Size and position must fit with panel size of X=1.2 and Y=1.",
+										"size": [0.6, 0.8],
+										"position": [0.5, 0.7]
+									},
+									{
+										"texture": "Ai-Weiwei-3",
+										"doc": "Size should reflect proportions of original image.",
+										"size": [0.6, 0.45],
+										"position": [0.0, 1.5]
+									}
 								],
+								"doc": "The place-on value lets you specify 'front' or 'back' of the panel.",
 								"place-on": "front"
 							}
-						},
+						}
+					]
+				},
+				{
+					"doc": "The panel 'artshow.artpnl-1-ns-1-0' is from the layouts in the furniture.model.json file.",
+					"object": "artshow.artpnl-1-ns-1-0",
+					"data": [
 						{
-							"doc": "The place-name will be used for 3 placed objects: kathryn-duval-1 to kathryn-duval-3.",
+							"doc": "The place-name is used as the base name for placed objects located on artshow.artpnl-1-ew-1-2.",
 							"place-name": "kathryn-duval",
 							"options": {
 								"placer": "ArtPlacer",
@@ -131,11 +172,24 @@
 							},
 							"data": {
 								"textures": [
-									"kathryn-duval-1",
-									"kathryn-duval-2",
-									"kathryn-duval-3"
+									{
+										"texture": "kathryn-duval-1",
+										"size": [0.6, 0.45],
+										"doc": "Position is XxY where 'X' is horizontal and 'Y' is vertical.",
+										"position": [0.45, 0]
+									},
+									{
+										"texture": "kathryn-duval-2",
+										"size": [0.6, 0.45],
+										"doc": "Position starts from upper left, so [0, 0] is the upper left corner.",
+										"position": [0.0, 0.5]
+									},
+									{
+										"texture": "kathryn-duval-3",
+										"size": [0.6, 0.45],
+										"position": [0.45, 1]
+									}
 								],
-								"doc": "The place-on value lets you specify 'front' or 'back' of the panel.",
 								"place-on": "back"
 							}
 						}
