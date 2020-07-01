@@ -329,7 +329,7 @@ var SQUIDSPACE = function() {
 		z = z - (d / 2);
 
 		// Make the floor.
-		let floor = BABYLON.Mesh.CreateGround('floor', w, d, 2, scene);
+		let floor = BABYLON.Mesh.CreateGround('_floor_', w, d, 2, scene);
 		floor.position = new BABYLON.Vector3(x, y, z);
 	    floor.material = material;
 	    //floor.receiveShadows = true; // This seems to increase the CPU requirements by quite a bit.

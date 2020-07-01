@@ -8,7 +8,6 @@ SquidHall module is a SquidSpace.js mod providing Squid Hall-specific hooks,
 events, and extensions.
  */
 
-
 //
 // Web Page Stuff.
 //
@@ -149,7 +148,7 @@ var SquidHall = function() {
 		squidSpace.attachObjectLoaderHook("FloorSection",
 			function(objName, options, data, scene) {
 			
-			squidSpace.logDebug(`floorSection Loader called! ${objName}, ${options}, ${data}`);
+			squidSpace.logDebug(`FloorSection Loader called! ${objName}, ${options}, ${data}`);
 			
 			// TODO: Size should be 3 elements.
 			let sz = SQUIDSPACE.getValIfKeyInDict("size", data, [1, 1]);
@@ -159,6 +158,26 @@ var SquidHall = function() {
 			// TODO: Get material from material list by material name
 			//       with a default if not loaded.
 			return addFloorSection(key, pos[0], pos[2], sz[0], sz[1], mat, scene);
+	    });
+		
+		squidSpace.attachObjectLoaderHook("SkyBox",
+			function(objName, options, data, scene) {
+		
+			squidSpace.logDebug(`SkyBox Loader called! ${objName}, ${options}, ${data}`);
+			
+			cubeTx = data["cube-texture"];
+		
+			var skybox = BABYLON.Mesh.CreateBox(objName, 1000.0, scene);
+			var skyboxMaterial = new BABYLON.StandardMaterial(objName, scene);
+			skyboxMaterial.backFaceCulling = false;
+			skyboxMaterial.disableLighting = true;
+			skyboxMaterial.disableLighting = true;
+			skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture(cubeTx, scene);
+			skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+			skybox.material = skyboxMaterial;
+			skybox.infiniteDistance = true;
+			
+			return [skybox];
 	    });
 	}
 	
@@ -647,7 +666,6 @@ squidspace.js:74:42
 	    });
 	}
 	
-	
 	//
 	// Prepare Hook.
 	//
@@ -728,23 +746,15 @@ squidspace.js:74:42
 				"link-text": "Glasgow 2024",
 				"link": "https://squid.fanac.com/fan-tables/glasgow2024/"
 			}, scene);
+		
+			// Put an invisible box around the floor to keep you in.
+			origin = SQUIDSPACE.makePointXYX(32, 50, 35)
+			boundsBox = BABYLON.MeshBuilder.CreateBox('_bndsbx_', 
+				{width: 70, depth: 70, height: 120, sideOrientation: BABYLON.Mesh.BACKSIDE})
+			boundsBox.position = new BABYLON.Vector3(origin[0], origin[1], origin[2])
+			boundsBox.checkCollisions = true;
+			boundsBox.visibility = false;
 		});
-		
-		
-		// TODO: Skybox. Move to an object loader hook.
-		var skybox = BABYLON.Mesh.CreateBox("skyBox", 1000.0, scene);
-		var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
-		skyboxMaterial.backFaceCulling = false;
-		skyboxMaterial.disableLighting = true;
-		skyboxMaterial.disableLighting = true;
-		//skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("textures/skybox/Ely38/Ely38", scene);
-		//skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("textures/skybox/Ely2/Ely2", scene);
-		skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("textures/skybox/skybox1/skybox1", scene);
-		skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
-		skybox.material = skyboxMaterial;
-		skybox.infiniteDistance = true;
-		
-		// TODO: Windows over doors. Move to an object placer hook.
 	}
 	
 	return {
