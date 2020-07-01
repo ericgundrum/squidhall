@@ -8,7 +8,6 @@ SquidHall module is a SquidSpace.js mod providing Squid Hall-specific hooks,
 events, and extensions.
  */
 
-
 //
 // Web Page Stuff.
 //
@@ -149,7 +148,7 @@ var SquidHall = function() {
 		squidSpace.attachObjectLoaderHook("FloorSection",
 			function(objName, options, data, scene) {
 			
-			squidSpace.logDebug(`floorSection Loader called! ${objName}, ${options}, ${data}`);
+			squidSpace.logDebug(`FloorSection Loader called! ${objName}, ${options}, ${data}`);
 			
 			// TODO: Size should be 3 elements.
 			let sz = SQUIDSPACE.getValIfKeyInDict("size", data, [1, 1]);
@@ -159,6 +158,26 @@ var SquidHall = function() {
 			// TODO: Get material from material list by material name
 			//       with a default if not loaded.
 			return addFloorSection(key, pos[0], pos[2], sz[0], sz[1], mat, scene);
+	    });
+		
+		squidSpace.attachObjectLoaderHook("SkyBox",
+			function(objName, options, data, scene) {
+		
+			squidSpace.logDebug(`SkyBox Loader called! ${objName}, ${options}, ${data}`);
+			
+			cubeTx = data["cube-texture"];
+		
+			var skybox = BABYLON.Mesh.CreateBox(objName, 1000.0, scene);
+			var skyboxMaterial = new BABYLON.StandardMaterial(objName, scene);
+			skyboxMaterial.backFaceCulling = false;
+			skyboxMaterial.disableLighting = true;
+			skyboxMaterial.disableLighting = true;
+			skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture(cubeTx, scene);
+			skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+			skybox.material = skyboxMaterial;
+			skybox.infiniteDistance = true;
+			
+			return [skybox];
 	    });
 	}
 	
@@ -517,6 +536,10 @@ var SquidHall = function() {
 			ed = options["moreInfoData"];
 		
 			// Get the placer data.
+			if (!data["textures"]) {
+				SQUIDSPACE.logWarning("ArtPlacer - No texture data. Cannot do placement.");
+				return false;
+			}
 			dt = data["textures"];
 			po = data["place-on"] != "back";
 		
@@ -535,22 +558,24 @@ var SquidHall = function() {
 			
 				// Calculate positions.
 				posV = target[0].position.clone();
-				posV.y = posV.y - position[1] + 2;
+				posV.y = posV.y - position[1] + 2.28 - (size[1] / 2);
 				if (isRot) {
-					posV.z = posV.z - position[0] + 0.9;
 					if (po) {
+						posV.z = posV.z + position[0] + 0.02 + (size[0] / 2);
 						posV.x = posV.x + 0.001;
 					}
 					else {
+						posV.z = posV.z - position[0] + 0.6 + (size[0] / 2);
 						posV.x = posV.x - 0.04;
 					}
 				}
 				else {
-					posV.x = posV.x - position[0] + 0.9;
 					if (po) {
+						posV.x = posV.x - position[0] - 0.62 + (size[0] / 2);
 						posV.z = posV.z + 0.001;
 					}
 					else {
+						posV.x = posV.x + position[0] - 1.18 + (size[0] / 2);
 						posV.z = posV.z - 0.04;
 					}
 				}
@@ -581,9 +606,21 @@ var SquidHall = function() {
 			ed = options["moreInfoData"];
 			
 			// Get the placer data.
+			if (!data["textures"]) {
+				SQUIDSPACE.logWarning("TablePlacer - No texture data. Cannot do placement.");
+				return false;
+			}
 			dt = data["textures"];
-			po = data["place-on"] != "back";
-			
+			ocs = data["origin-corner"];
+			oc = -1;
+			if (typeof ocs === 'string' || ocs instanceof String) {
+				oc = ['nw', 'ne', 'sw', 'se'].indexOf(ocs.toLowerCase());				
+			}
+			if (oc < 0) {
+				SQUIDSPACE.logWarning(`TablePlacer - Invalid origin-corner: ${data["origin-corner"]}. Defaulting to 'ne'.`);
+				oc = 0;
+			}
+
 			count = 0;
 			for (tx of dt) {
 				// Get texture data dsvalues.
@@ -594,29 +631,34 @@ var SquidHall = function() {
 				// HACK: Right now we are assuming *ANY* y rotation is 90 degrees.
 				// TODO: Come up with a way to match rotations better. This will require
 				//       translating each frame based on it's position. 
-				tgtRot = target[0].rotation;
+				tgtRot = target[0].rotation.clone();
 				isRot = tgtRot.y != 0;
 				
 				// Calculate positions.
 				posV = target[0].position.clone();
-				posV.y = posV.y - position[1] + 2;
-				if (isRot) {
-					posV.z = posV.z - position[0] + 0.9;
-					if (po) {
-						posV.x = posV.x + 0.001;
-					}
-					else {
-						posV.x = posV.x - 0.04;
-					}
-				}
-				else {
-					posV.x = posV.x - position[0] + 0.9;
-					if (po) {
-						posV.z = posV.z + 0.001;
-					}
-					else {
-						posV.z = posV.z - 0.04;
-					}
+				posV.y = posV.y + 0.751;		
+				tgtRot.x = 1.57;
+				switch (oc) {
+				case 0: // 'nw'
+					tgtRot.y = 0;
+					posV.x = posV.x - 0.58 + position[0] - (size[0] / 2);
+					posV.z = posV.z + 0.03 - position[1] - (size[1] / 2);
+					break;
+				case 1: // 'ne'
+					tgtRot.y = 1.57;
+					posV.z = posV.z + 0.885 - position[0] - (size[0] / 2);
+					posV.x = posV.x + 0.03 - position[1] - (size[1] / 2);
+					break;
+				case 2: // 'sw'
+					tgtRot.y = 4.71;
+					posV.z = posV.z - 0.58 + position[0] - (size[0] / 2);
+					posV.x = posV.x - 0.68 + position[1] + (size[1] / 2);
+					break;
+				case 3: // 'se'
+					tgtRot.y = 3.14;
+					posV.x = posV.x + 0.885 - position[0] - (size[0] / 2);
+					posV.z = posV.z - 0.68 + position[1] + (size[1] / 2);
+					break;
 				}
 				
 				// Place on target.
@@ -627,7 +669,6 @@ var SquidHall = function() {
 			return true;
 	    });
 	}
-	
 	
 	//
 	// Prepare Hook.
@@ -682,7 +723,7 @@ var SquidHall = function() {
 	var attachBuildHooks = function(squidSpace) {
 		squidSpace.attachBuildHook(function(scene) {
 
-			squidSpace.logDebug("Building World.");
+			squidSpace.logDebug("Build World Hook.");
 
 			//
 			// Events.
@@ -709,6 +750,14 @@ var SquidHall = function() {
 				"link-text": "Glasgow 2024",
 				"link": "https://squid.fanac.com/fan-tables/glasgow2024/"
 			}, scene);
+		
+			// Put an invisible box around the floor to keep you in.
+			origin = SQUIDSPACE.makePointXYX(32, 50, 35)
+			boundsBox = BABYLON.MeshBuilder.CreateBox('_bndsbx_', 
+				{width: 70, depth: 70, height: 120, sideOrientation: BABYLON.Mesh.BACKSIDE})
+			boundsBox.position = new BABYLON.Vector3(origin[0], origin[1], origin[2])
+			boundsBox.checkCollisions = true;
+			boundsBox.visibility = false;
 		});
 	}
 	
@@ -735,12 +784,28 @@ var SquidHall = function() {
 
 			// Here's where we do the magic.
 			document.addEventListener("DOMContentLoaded", (event) =>{
-				if (setupDebugBefore) setupDebugBefore();
-				if (beforeBuildFunc) beforeBuildFunc(scene);
+				try {
+					setupDebugBefore();
+				} catch(e) {
+					// Ignore.
+				}
+				try {
+					beforeBuildFunc(scene);
+				} catch(e) {
+					// Ignore.
+				}
 				// Create and activate the world space.
 				if (SQUIDSPACE.buildWorld(world, contentModuleList, scene)) {
-					if (setupDebugAfter) setupDebugAfter();
-					if (afterBuildFunc) afterBuildFunc(scene);
+					try {
+						setupDebugAfter();
+					} catch(e) {
+						// Ignore.
+					}
+					try {
+						afterBuildFunc(scene);
+					} catch(e) {
+						// Ignore.
+					}
 					
 					// Register a render loop to repeatedly render the world space.
 					// NOTE: Use commented out render loop below if you don't want FPS label.

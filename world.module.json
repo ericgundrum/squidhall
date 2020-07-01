@@ -159,6 +159,18 @@
 				}
 			},
 			{
+				"resource-name": "skybox",
+				"options": {
+					"doc": "'SkyBox' hook function creates object from scratch.",
+					"loader": "SkyBox",
+					"visible": true
+				},
+				"data": {
+					"doc": "Possible values: textures/skybox/skybox1/skybox1, textures/skybox/Ely38/Ely38, etc.",
+					"cube-texture": "textures/skybox/Ely38/Ely38"
+				}
+			},
+			{
 				"resource-name": "user",
 				"options": {
 					"doc": "'UserCamera' hook function creates object from scratch.",

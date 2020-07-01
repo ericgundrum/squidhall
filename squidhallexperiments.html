@@ -35,17 +35,20 @@
 		<!-- Squidspace START -->
 		<script src="libs/squidspace.js"></script>
 		<script src="libs/squidmods/squidcommon.js"></script>
+		<!-- DO NOT INCLUDE 'squiddebug.js' FOR PRODUCTION! -->
 		<script src="libs/squidmods/squiddebug.js"></script>
 		<!-- Squidspace END -->
 
 		<!-- Squid Hall START -->
 		<script src="libs/squidhall.js"></script>
+		<!-- DO NOT INCLUDE 'squidhalldebug.js' FOR PRODUCTION! -->
 		<script src="libs/squidhalldebug.js"></script>
 		<!-- World END -->
 
 		<!-- World START -->
 		<script src="libs/modules/world.js"></script>
 		<script src="libs/modules/furniture.js"></script>
+		<script src="libs/modules/pipelineex.js"></script>
 		<!-- World END -->
 
 		<!-- SCRIPTS END -->
@@ -62,8 +65,6 @@
 		            <h2 id="mpopup-title">Simple Modal Popup</h2>
 		        </div>
 		        <div class="mpopup-main" id="mpopup-text">
-		            <p>This is a simple modal popup using JavaScript and CSS</p>
-		            <p>Foo and Bar!</p>
 		        </div>
 		        <div class="mpopup-foot" id="mpopup-link"></div>
 		    </div>
@@ -79,11 +80,16 @@
 					<!-- DEBUG-SPECIFIC MARKUP - Do not use for production. -->
 		            <p><input type="checkbox" onchange="flyCkbox(this)"/> Fly</p>
 		            <p><input type="checkbox" onchange="inspctCkbox(this)"/> Show Inspector</p>
+		            <p><input type="checkbox" onchange="identCkbox(this)"/> Find and Identify Objects</p>
+					<span id="ctrl-searchbox" style="display: none;">
+			            <p>Click on an object in the space to identify it. Double click on an object name in the list below to find it in the space. Click off the Find/Identify checkbox to hide labels and the list.</p>
+						<p><select id="searchbox" size=12 ondblclick="findObject(this.value)"></select></p>
+					</span>
 					<!-- DEBUG-SPECIFIC MARKUP END -->
 		        </div>
 		    </div>
 		</div>
-
+		
 		<canvas id="renderCanvas" touch-action="none"></canvas>
 
 <script>
@@ -102,8 +108,7 @@
 	}
 	
 	// Here's where we do the magic…
-	setupDebug(); // Do not use this for production!
-	SquidHall.makeWorld(beforeBuildExperiment, afterBuildExperiment);
+	SquidHall.makeWorld([furniture, pipelineEx]);
 //]]>
 </script>
 	</body>
