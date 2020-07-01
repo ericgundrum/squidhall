@@ -536,6 +536,10 @@ var SquidHall = function() {
 			ed = options["moreInfoData"];
 		
 			// Get the placer data.
+			if (!data["textures"]) {
+				SQUIDSPACE.logWarning("ArtPlacer - No texture data. Cannot do placement.");
+				return false;
+			}
 			dt = data["textures"];
 			po = data["place-on"] != "back";
 		
@@ -554,22 +558,24 @@ var SquidHall = function() {
 			
 				// Calculate positions.
 				posV = target[0].position.clone();
-				posV.y = posV.y - position[1] + 2;
+				posV.y = posV.y - position[1] + 2.28 - (size[1] / 2);
 				if (isRot) {
-					posV.z = posV.z - position[0] + 0.85;
 					if (po) {
+						posV.z = posV.z + position[0] + 0.02 + (size[0] / 2);
 						posV.x = posV.x + 0.001;
 					}
 					else {
+						posV.z = posV.z - position[0] + 0.6 + (size[0] / 2);
 						posV.x = posV.x - 0.04;
 					}
 				}
 				else {
-					posV.x = posV.x + position[0] - 0.85;
 					if (po) {
+						posV.x = posV.x - position[0] - 0.62 + (size[0] / 2);
 						posV.z = posV.z + 0.001;
 					}
 					else {
+						posV.x = posV.x + position[0] - 1.18 + (size[0] / 2);
 						posV.z = posV.z - 0.04;
 					}
 				}
@@ -600,23 +606,21 @@ var SquidHall = function() {
 			ed = options["moreInfoData"];
 			
 			// Get the placer data.
-			dt = data["textures"];
-			oc = ['nw', 'ne', 'sw', 'se'].indexOf(data["origin-corner"].toLowerCase());
-			if (oc < 0) {
-				SQUIDSPACE.logError(`TablePlacer - Invalid origin-corner: ${data["origin-corner"]}.`);
+			if (!data["textures"]) {
+				SQUIDSPACE.logWarning("TablePlacer - No texture data. Cannot do placement.");
 				return false;
 			}
-			
-			/*
-			Table
-[INFO] Mesh Array (2): 
-0 - Mesh (id: dealers.Dealers-Chatham-north-0, position: {X: 6.85 Y:0.01 Z:-40.15}, size: {X: 0.9 Y:0.375 Z:0.375}, rotation: {X: 0 Y:0 Z:0})
-1 - Mesh (id: dealers.Dealers-Chatham-north-0, position: {X: 6.85 Y:0.01 Z:-40.15}, size: {X: 0.9 Y:0.009855500000000017 Z:0.375}, rotation: {X: 0 Y:0 Z:0})
-squidspace.js:74:42
-			
-			*/
-			
-			//tgtSize = SQUIDSPACE.getObjectSize(target);
+			dt = data["textures"];
+			ocs = data["origin-corner"];
+			oc = -1;
+			if (typeof ocs === 'string' || ocs instanceof String) {
+				oc = ['nw', 'ne', 'sw', 'se'].indexOf(ocs.toLowerCase());				
+			}
+			if (oc < 0) {
+				SQUIDSPACE.logWarning(`TablePlacer - Invalid origin-corner: ${data["origin-corner"]}. Defaulting to 'ne'.`);
+				oc = 0;
+			}
+
 			count = 0;
 			for (tx of dt) {
 				// Get texture data dsvalues.
@@ -637,22 +641,22 @@ squidspace.js:74:42
 				switch (oc) {
 				case 0: // 'nw'
 					tgtRot.y = 0;
-					posV.x = posV.x - 0.73 + position[0];
+					posV.x = posV.x - 0.58 + position[0] - (size[0] / 2);
 					posV.z = posV.z + 0.03 - position[1] - (size[1] / 2);
 					break;
 				case 1: // 'ne'
 					tgtRot.y = 1.57;
-					posV.z = posV.z + 0.73 - position[0];
+					posV.z = posV.z + 0.885 - position[0] - (size[0] / 2);
 					posV.x = posV.x + 0.03 - position[1] - (size[1] / 2);
 					break;
 				case 2: // 'sw'
 					tgtRot.y = 4.71;
-					posV.z = posV.z - 0.73 + position[0];
+					posV.z = posV.z - 0.58 + position[0] - (size[0] / 2);
 					posV.x = posV.x - 0.68 + position[1] + (size[1] / 2);
 					break;
 				case 3: // 'se'
 					tgtRot.y = 3.14;
-					posV.x = posV.x + 0.73 - position[0];
+					posV.x = posV.x + 0.885 - position[0] - (size[0] / 2);
 					posV.z = posV.z - 0.68 + position[1] + (size[1] / 2);
 					break;
 				}
@@ -780,12 +784,28 @@ squidspace.js:74:42
 
 			// Here's where we do the magic.
 			document.addEventListener("DOMContentLoaded", (event) =>{
-				if (setupDebugBefore) setupDebugBefore();
-				if (beforeBuildFunc) beforeBuildFunc(scene);
+				try {
+					setupDebugBefore();
+				} catch(e) {
+					// Ignore.
+				}
+				try {
+					beforeBuildFunc(scene);
+				} catch(e) {
+					// Ignore.
+				}
 				// Create and activate the world space.
 				if (SQUIDSPACE.buildWorld(world, contentModuleList, scene)) {
-					if (setupDebugAfter) setupDebugAfter();
-					if (afterBuildFunc) afterBuildFunc(scene);
+					try {
+						setupDebugAfter();
+					} catch(e) {
+						// Ignore.
+					}
+					try {
+						afterBuildFunc(scene);
+					} catch(e) {
+						// Ignore.
+					}
 					
 					// Register a render loop to repeatedly render the world space.
 					// NOTE: Use commented out render loop below if you don't want FPS label.

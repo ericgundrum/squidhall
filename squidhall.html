@@ -33,17 +33,16 @@
 		<!-- Squidspace START -->
 		<script src="libs/squidspace.js"></script>
 		<script src="libs/squidmods/squidcommon.js"></script>
-		<script src="libs/squidmods/squiddebug.js"></script>
 		<!-- Squidspace END -->
 
 		<!-- Squid Hall START -->
 		<script src="libs/squidhall.js"></script>
-		<script src="libs/squidhalldebug.js"></script>
 		<!-- World END -->
 
 		<!-- World START -->
 		<script src="libs/modules/world.js"></script>
 		<script src="libs/modules/furniture.js"></script>
+		<script src="libs/modules/pipelineex.js"></script>
 		<!-- World END -->
 
 		<!-- SCRIPTS END -->
@@ -60,8 +59,6 @@
 		            <h2 id="mpopup-title">Simple Modal Popup</h2>
 		        </div>
 		        <div class="mpopup-main" id="mpopup-text">
-		            <p>This is a simple modal popup using JavaScript and CSS</p>
-		            <p>Foo and Bar!</p>
 		        </div>
 		        <div class="mpopup-foot" id="mpopup-link"></div>
 		    </div>
@@ -83,7 +80,7 @@
 <script>
 //<![CDATA[
 	// Here's where we do the magic…
-	SquidHall.makeWorld();
+	SquidHall.makeWorld([furniture, pipelineEx]);
 //]]>
 </script>
 	</body>

@@ -137,15 +137,15 @@
 									},
 									{
 										"texture": "Ai-Weiwei-2",
-										"doc": "Size and position must fit with panel size of X=1.2 and Y=1.",
+										"doc": "Size and position must fit with panel size of X=0.6 and Y=1.",
 										"size": [0.6, 0.8],
-										"position": [0.5, 0.7]
+										"position": [0.5, 0.6]
 									},
 									{
 										"texture": "Ai-Weiwei-3",
 										"doc": "Size should reflect proportions of original image.",
 										"size": [0.6, 0.45],
-										"position": [0.0, 1.5]
+										"position": [0.2, 1.5]
 									}
 								],
 								"doc": "The place-on value lets you specify 'front' or 'back' of the panel.",
@@ -174,21 +174,19 @@
 								"textures": [
 									{
 										"texture": "Ai-Weiwei-1",
-										"doc": "Size is WxH.",
+										"doc": "Position starts from upper left, so [0, 0] is the upper left corner.",
 										"size": [0.6, 0.45],
 										"position": [0, 0]
 									},
 									{
 										"texture": "Ai-Weiwei-2",
-										"doc": "Size and position must fit with panel size of X=1.2 and Y=1.",
 										"size": [0.6, 0.8],
-										"position": [0.5, 0.7]
+										"position": [0.5, 0.6]
 									},
 									{
 										"texture": "Ai-Weiwei-3",
-										"doc": "Size should reflect proportions of original image.",
 										"size": [0.6, 0.45],
-										"position": [0.0, 1.5]
+										"position": [0.2, 1.5]
 									}
 								],
 								"doc": "The place-on value lets you specify 'front' or 'back' of the panel.",
@@ -216,19 +214,17 @@
 									{
 										"texture": "kathryn-duval-1",
 										"size": [0.6, 0.45],
-										"doc": "Position is XxY where 'X' is horizontal and 'Y' is vertical.",
-										"position": [0.45, 0]
+										"position": [0, 0]
 									},
 									{
 										"texture": "kathryn-duval-2",
 										"size": [0.6, 0.45],
-										"doc": "Position starts from upper left, so [0, 0] is the upper left corner.",
-										"position": [0.0, 0.5]
+										"position": [0.45, 0.5]
 									},
 									{
 										"texture": "kathryn-duval-3",
 										"size": [0.6, 0.45],
-										"position": [0.45, 1]
+										"position": [0, 1]
 									}
 								],
 								"place-on": "front"
@@ -255,19 +251,17 @@
 									{
 										"texture": "kathryn-duval-1",
 										"size": [0.6, 0.45],
-										"doc": "Position is XxY where 'X' is horizontal and 'Y' is vertical.",
-										"position": [0.45, 0]
+										"position": [0, 0]
 									},
 									{
 										"texture": "kathryn-duval-2",
 										"size": [0.6, 0.45],
-										"doc": "Position starts from upper left, so [0, 0] is the upper left corner.",
-										"position": [0.0, 0.5]
+										"position": [0.45, 0.5]
 									},
 									{
 										"texture": "kathryn-duval-3",
 										"size": [0.6, 0.45],
-										"position": [0.45, 1]
+										"position": [0, 1]
 									}
 								],
 								"place-on": "back"
@@ -291,7 +285,6 @@
 								}
 							},
 							"data": {
-								"doc": "The textures are specified in the 'resources' section.",
 								"textures": [
 									{
 										"texture": "Ai-Weiwei-1",
@@ -338,7 +331,6 @@
 								}
 							},
 							"data": {
-								"doc": "The textures are specified in the 'resources' section.",
 								"textures": [
 									{
 										"texture": "Ai-Weiwei-1",
@@ -380,7 +372,6 @@
 								}
 							},
 							"data": {
-								"doc": "The textures are specified in the 'resources' section.",
 								"textures": [
 									{
 										"texture": "Ai-Weiwei-1",
@@ -423,7 +414,6 @@
 								}
 							},
 							"data": {
-								"doc": "The textures are specified in the 'resources' section.",
 								"textures": [
 									{
 										"texture": "Ai-Weiwei-1",
