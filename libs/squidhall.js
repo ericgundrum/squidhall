@@ -537,7 +537,7 @@ var SquidHall = function() {
 				posV = target[0].position.clone();
 				posV.y = posV.y - position[1] + 2;
 				if (isRot) {
-					posV.z = posV.z - position[0] + 0.9;
+					posV.z = posV.z - position[0] + 0.85;
 					if (po) {
 						posV.x = posV.x + 0.001;
 					}
@@ -546,7 +546,7 @@ var SquidHall = function() {
 					}
 				}
 				else {
-					posV.x = posV.x - position[0] + 0.9;
+					posV.x = posV.x + position[0] - 0.85;
 					if (po) {
 						posV.z = posV.z + 0.001;
 					}
@@ -582,8 +582,22 @@ var SquidHall = function() {
 			
 			// Get the placer data.
 			dt = data["textures"];
-			po = data["place-on"] != "back";
+			oc = ['nw', 'ne', 'sw', 'se'].indexOf(data["origin-corner"].toLowerCase());
+			if (oc < 0) {
+				SQUIDSPACE.logError(`TablePlacer - Invalid origin-corner: ${data["origin-corner"]}.`);
+				return false;
+			}
 			
+			/*
+			Table
+[INFO] Mesh Array (2): 
+0 - Mesh (id: dealers.Dealers-Chatham-north-0, position: {X: 6.85 Y:0.01 Z:-40.15}, size: {X: 0.9 Y:0.375 Z:0.375}, rotation: {X: 0 Y:0 Z:0})
+1 - Mesh (id: dealers.Dealers-Chatham-north-0, position: {X: 6.85 Y:0.01 Z:-40.15}, size: {X: 0.9 Y:0.009855500000000017 Z:0.375}, rotation: {X: 0 Y:0 Z:0})
+squidspace.js:74:42
+			
+			*/
+			
+			//tgtSize = SQUIDSPACE.getObjectSize(target);
 			count = 0;
 			for (tx of dt) {
 				// Get texture data dsvalues.
@@ -594,29 +608,34 @@ var SquidHall = function() {
 				// HACK: Right now we are assuming *ANY* y rotation is 90 degrees.
 				// TODO: Come up with a way to match rotations better. This will require
 				//       translating each frame based on it's position. 
-				tgtRot = target[0].rotation;
+				tgtRot = target[0].rotation.clone();
 				isRot = tgtRot.y != 0;
 				
 				// Calculate positions.
 				posV = target[0].position.clone();
-				posV.y = posV.y - position[1] + 2;
-				if (isRot) {
-					posV.z = posV.z - position[0] + 0.9;
-					if (po) {
-						posV.x = posV.x + 0.001;
-					}
-					else {
-						posV.x = posV.x - 0.04;
-					}
-				}
-				else {
-					posV.x = posV.x - position[0] + 0.9;
-					if (po) {
-						posV.z = posV.z + 0.001;
-					}
-					else {
-						posV.z = posV.z - 0.04;
-					}
+				posV.y = posV.y + 0.751;		
+				tgtRot.x = 1.57;
+				switch (oc) {
+				case 0: // 'nw'
+					tgtRot.y = 0;
+					posV.x = posV.x - 0.73 + position[0];
+					posV.z = posV.z + 0.03 - position[1] - (size[1] / 2);
+					break;
+				case 1: // 'ne'
+					tgtRot.y = 1.57;
+					posV.z = posV.z + 0.73 - position[0];
+					posV.x = posV.x + 0.03 - position[1] - (size[1] / 2);
+					break;
+				case 2: // 'sw'
+					tgtRot.y = 4.71;
+					posV.z = posV.z - 0.73 + position[0];
+					posV.x = posV.x - 0.68 + position[1] + (size[1] / 2);
+					break;
+				case 3: // 'se'
+					tgtRot.y = 3.14;
+					posV.x = posV.x + 0.73 - position[0];
+					posV.z = posV.z - 0.68 + position[1] + (size[1] / 2);
+					break;
 				}
 				
 				// Place on target.
@@ -682,7 +701,7 @@ var SquidHall = function() {
 	var attachBuildHooks = function(squidSpace) {
 		squidSpace.attachBuildHook(function(scene) {
 
-			squidSpace.logDebug("Building World.");
+			squidSpace.logDebug("Build World Hook.");
 
 			//
 			// Events.
@@ -710,6 +729,22 @@ var SquidHall = function() {
 				"link": "https://squid.fanac.com/fan-tables/glasgow2024/"
 			}, scene);
 		});
+		
+		
+		// TODO: Skybox. Move to an object loader hook.
+		var skybox = BABYLON.Mesh.CreateBox("skyBox", 1000.0, scene);
+		var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
+		skyboxMaterial.backFaceCulling = false;
+		skyboxMaterial.disableLighting = true;
+		skyboxMaterial.disableLighting = true;
+		//skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("textures/skybox/Ely38/Ely38", scene);
+		//skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("textures/skybox/Ely2/Ely2", scene);
+		skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("textures/skybox/skybox1/skybox1", scene);
+		skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+		skybox.material = skyboxMaterial;
+		skybox.infiniteDistance = true;
+		
+		// TODO: Windows over doors. Move to an object placer hook.
 	}
 	
 	return {

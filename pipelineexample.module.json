@@ -110,14 +110,14 @@
 			},
 			"data": [
 				{
-					"doc": "The panel 'artshow.artpnl-1-ew-1-1' is from the layouts in the furniture.model.json file.",
-					"object": "artshow.artpnl-1-ew-1-1",
+					"doc": "The panel 'artshow.artpnl-1-ew-1-0' is from the layouts in the furniture.model.json file.",
+					"object": "artshow.artpnl-1-ew-1-0",
 					"data": [
 						{
 							"doc": "The place-name is used as the base name for placed objects located on artshow.artpnl-1-ew-1-1.",
 							"place-name": "ai-weiwei",
 							"options": {
-								"doc": "The 'ArtPlacer' figures out the best way to arrange the pictures.",
+								"doc": "The 'ArtPlacer' uses the data below to size and position the art.",
 								"placer": "ArtPlacer",
 								"moreInfoData": {
 									"title": "Ai Weiwei",
@@ -155,11 +155,91 @@
 					]
 				},
 				{
-					"doc": "The panel 'artshow.artpnl-1-ns-1-0' is from the layouts in the furniture.model.json file.",
+					"object": "artshow.artpnl-1-ew-1-0",
+					"data": [
+						{
+							"doc": "The place-name is used as the base name for placed objects located on artshow.artpnl-1-ew-1-1.",
+							"place-name": "ai-weiwei",
+							"options": {
+								"placer": "ArtPlacer",
+								"moreInfoData": {
+									"title": "Ai Weiwei",
+									"link-text": "Ai Weiwei's Page",
+									"link": "https://squid.fanac.com/art-show/ai-weiwei/",
+									"text": "Ai Weiwei is a Chinese contemporary artist, active in sculpture, installation, architecture, curating, photography, film, and social, political and cultural. These photos are from an exhibit held of his work on Alcatraz island in the former prison buildings in 2015."
+								}
+							},
+							"data": {
+								"doc": "The textures are specified in the 'resources' section.",
+								"textures": [
+									{
+										"texture": "Ai-Weiwei-1",
+										"doc": "Size is WxH.",
+										"size": [0.6, 0.45],
+										"position": [0, 0]
+									},
+									{
+										"texture": "Ai-Weiwei-2",
+										"doc": "Size and position must fit with panel size of X=1.2 and Y=1.",
+										"size": [0.6, 0.8],
+										"position": [0.5, 0.7]
+									},
+									{
+										"texture": "Ai-Weiwei-3",
+										"doc": "Size should reflect proportions of original image.",
+										"size": [0.6, 0.45],
+										"position": [0.0, 1.5]
+									}
+								],
+								"doc": "The place-on value lets you specify 'front' or 'back' of the panel.",
+								"place-on": "back"
+							}
+						}
+					]
+				},
+				{
 					"object": "artshow.artpnl-1-ns-1-0",
 					"data": [
 						{
-							"doc": "The place-name is used as the base name for placed objects located on artshow.artpnl-1-ew-1-2.",
+							"place-name": "kathryn-duval",
+							"options": {
+								"placer": "ArtPlacer",
+								"moreInfoData": {
+									"title": "Kathryn Duval",
+									"link-text": "Kathryn Duval's Page",
+									"link": "https://squid.fanac.com/kathryn-duval/",
+									"text": "Kathryn is located in Hilo Hawaii. She’s interested in alternate realities of nature."
+								}
+							},
+							"data": {
+								"textures": [
+									{
+										"texture": "kathryn-duval-1",
+										"size": [0.6, 0.45],
+										"doc": "Position is XxY where 'X' is horizontal and 'Y' is vertical.",
+										"position": [0.45, 0]
+									},
+									{
+										"texture": "kathryn-duval-2",
+										"size": [0.6, 0.45],
+										"doc": "Position starts from upper left, so [0, 0] is the upper left corner.",
+										"position": [0.0, 0.5]
+									},
+									{
+										"texture": "kathryn-duval-3",
+										"size": [0.6, 0.45],
+										"position": [0.45, 1]
+									}
+								],
+								"place-on": "front"
+							}
+						}
+					]
+				},
+				{
+					"object": "artshow.artpnl-1-ns-1-0",
+					"data": [
+						{
 							"place-name": "kathryn-duval",
 							"options": {
 								"placer": "ArtPlacer",
@@ -191,6 +271,184 @@
 									}
 								],
 								"place-on": "back"
+							}
+						}
+					]
+				},
+				{
+					"doc": "The table 'GoHArtExhibitTables.GoHArtExhibitTable-0' is from the layouts in the furniture.model.json file.",
+					"object": "GoHArtExhibitTables.GoHArtExhibitTable-0",
+					"data": [
+						{
+							"doc": "The place-name is used as the base name for placed objects located on GoHArtExhibitTables.GoHArtExhibitTable-0.",
+							"place-name": "table-test-1",
+							"options": {
+								"doc": "The 'TablePlacer' uses the data below to size and position the art.",
+								"placer": "TablePlacer",
+								"moreInfoData": {
+									"title": "Table Test 1",
+									"text": "This is just a test popup."
+								}
+							},
+							"data": {
+								"doc": "The textures are specified in the 'resources' section.",
+								"textures": [
+									{
+										"texture": "Ai-Weiwei-1",
+										"doc": "Size is WxH.",
+										"size": [0.3, 0.225],
+										"position": [0, 0]
+									},
+									{
+										"texture": "Ai-Weiwei-2",
+										"doc": "Size and position must fit with table size of X=0.9 and Y=0.375.",
+										"size": [0.3, 0.4],
+										"position": [0.4, 0]
+									},
+									{
+										"texture": "Ai-Weiwei-3",
+										"doc": "Size should reflect proportions of original image.",
+										"size": [0.3, 0.225],
+										"position": [0.9, 0.3]
+									},
+									{
+										"texture": "kathryn-duval-1",
+										"doc": "Size is WxH.",
+										"size": [0.3, 0.225],
+										"position": [1.3, 0.15]
+									}
+									
+								],
+								"doc": "The origin-corner value lets you specify what corner of the table is the origin point for X/Y co-ordinates, values are 'nw', 'ne', 'sw', and 'se'. Note that the user spawns in the NW corner of Squid Hall facing SE.",
+								"origin-corner": "se"
+							}
+						}
+					]
+				},
+				{
+					"object": "artshow.ArtShowDesk-2",
+					"data": [
+						{
+							"place-name": "table-test-2",
+							"options": {
+								"placer": "TablePlacer",
+								"moreInfoData": {
+									"title": "Table Test 1",
+									"text": "This is just a test popup."
+								}
+							},
+							"data": {
+								"doc": "The textures are specified in the 'resources' section.",
+								"textures": [
+									{
+										"texture": "Ai-Weiwei-1",
+										"size": [0.3, 0.225],
+										"position": [0, 0]
+									},
+									{
+										"texture": "Ai-Weiwei-2",
+										"size": [0.3, 0.4],
+										"position": [0.4, 0]
+									},
+									{
+										"texture": "Ai-Weiwei-3",
+										"size": [0.3, 0.225],
+										"position": [0.9, 0.3]
+									},
+									{
+										"texture": "kathryn-duval-1",
+										"size": [0.3, 0.225],
+										"position": [1.3, 0.15]
+									}
+									
+								],
+								"origin-corner": "sw"
+							}
+						}
+					]
+				},
+				{
+					"object": "artshow.ArtShowDesk-1-0",
+					"data": [
+						{
+							"place-name": "table-test-3",
+							"options": {
+								"placer": "TablePlacer",
+								"moreInfoData": {
+									"title": "Table Test 3",
+									"text": "This is just a test popup."
+								}
+							},
+							"data": {
+								"doc": "The textures are specified in the 'resources' section.",
+								"textures": [
+									{
+										"texture": "Ai-Weiwei-1",
+										"size": [0.3, 0.225],
+										"position": [0, 0]
+									},
+									{
+										"texture": "Ai-Weiwei-2",
+										"size": [0.3, 0.4],
+										"position": [0.4, 0]
+									},
+									{
+										"texture": "Ai-Weiwei-3",
+										"size": [0.3, 0.225],
+										"position": [0.9, 0.3]
+									},
+									{
+										"texture": "kathryn-duval-1",
+										"size": [0.3, 0.225],
+										"position": [1.3, 0.15]
+									}
+									
+								],
+								"origin-corner": "nw"
+							}
+						}
+						
+					]
+				},
+				{
+					"object": "artshow.ArtShowDesk-2",
+					"data": [
+						{
+							"place-name": "table-test-4",
+							"options": {
+								"placer": "TablePlacer",
+								"moreInfoData": {
+									"title": "Table Test 4",
+									"text": "This is just a test popup."
+								}
+							},
+							"data": {
+								"doc": "The textures are specified in the 'resources' section.",
+								"textures": [
+									{
+										"texture": "Ai-Weiwei-1",
+										"doc": "Size is WxH.",
+										"size": [0.3, 0.225],
+										"position": [0, 0]
+									},
+									{
+										"texture": "Ai-Weiwei-2",
+										"size": [0.3, 0.4],
+										"position": [0.4, 0]
+									},
+									{
+										"texture": "Ai-Weiwei-3",
+										"size": [0.3, 0.225],
+										"position": [0.9, 0.3]
+									},
+									{
+										"texture": "kathryn-duval-1",
+										"size": [0.3, 0.225],
+										"position": [1.3, 0.15]
+									}
+							
+								],
+								"origin-corner": "ne"
 							}
 						}
 					]

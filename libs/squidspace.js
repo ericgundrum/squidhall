@@ -1163,6 +1163,12 @@ var SQUIDSPACE = function() {
 			} catch(e) {
 				SQUIDSPACE.logError(`buildWorld(): Build Hook Function failed with error ${e}.`)
 			}
+		
+			// NOTE: We want to turn on collisions using worker threads instead of main thread. However,
+			//       it isn't clear if we still need the code below because BJS may now do it automatically. 
+			//       Also, there may be issues with some browsers that don't properly support worker threads.
+			// MORE: https://blog.raananweber.com/2015/06/06/collisions-using-workers-for-babylonjs-part-2/
+			scene.workerCollisions = true; 	
 						
 			// Turn on optimizaton.
 			// TODO: Consider if we want to refactor this into SquidCommon as a hook. (New hook?)
