@@ -10,6 +10,8 @@ These files can either link to content or contain the content internally. In the
 
 1. [version-20200516.0](https://github.com/jackwilliambell/squidhall/releases/tag/version-20200516.0) [Alpha 0.0] Initial Proof of Concept (PoC)
 
+2. [version-20200701.0](https://github.com/jackwilliambell/squidhall/releases/tag/version-20200701.0) [Alpha 1.0] First candidate release
+
 ## 3D modelling notes
 
 * Features: https://doc.babylonjs.com/features
