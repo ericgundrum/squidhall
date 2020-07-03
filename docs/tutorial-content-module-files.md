@@ -412,13 +412,13 @@ With the ArtPlacer you specify placing the frames on the 'front' or the 'back', 
 
 With the TablePlacer you specify a corner of the table to use as the 'origin'. (The 0/0 position.) The 'origin corner' value must be one of 'nw', 'ne', 'sw', or 'se' to specify which corner of the table is the 'back-left' for purposes of placing image frames on the table.
 
-![Origin corner of a table, with layout](/img/tableex1.png)
+![Origin corner of a table, with layout](img/tableex1.png)
 
 Note that the user spawns in the NW corner of Squid Hall facing SE. So 'north' is the end of the hall with the art show and the history area and 'south' is the end of the hall with the squid. 
 
 This means for each table you must determine where the 'back' and 'front' of the table is in relation to how the table is placed/rotated in the space and how it would be approached by users; then determine the best origin corner from that. Generally if a table is not rotated and you approach it from the north, the origin corner should be 'se'; whereas if you approach it from the south the origin corner should be 'ne'. A rotated table works the same, but for east approaches you want 'sw' and for west approaches you want 'ne'.
 
-![Origin corners of dealer table square](/img/tableex2.png)
+![Origin corners of dealer table square](img/tableex2.png)
 
 ## Using the SquidSpace Tools
 
@@ -444,7 +444,7 @@ The 'squidhalltest.html' page is a special test version of the Virtual Squid Hal
    
 To open the debug control panel simply click the 'hamburger' icon next to the FPS (Frames Per Second) label on the toolbar.
 
-![The debug control panel](/img/debugpnl.png)
+![The debug control panel](img/debugpnl.png)
 
 When you enable 'Find and Identify Objects', two things happen:
 
@@ -456,7 +456,7 @@ When you enable 'Find and Identify Objects', two things happen:
 2. A list of every registered object is added to the debug control panel
    - If you double click on a 3D object name in the list a label will appear over that object in the space
 
-![The debug control panel with 'find' enabled](/img/debugpnlsrch.png)
+![The debug control panel with 'find' enabled](img/debugpnlsrch.png)
 
 There are some limitations for how the label works when 'finding' a 3D object via the list, most due to limitations in Babylon.js. If you have no idea where in the space an object is, the best way to find it is to turn on 'fly' mode and get above everything looking down, then double click on the object name.
 
