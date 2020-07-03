@@ -304,11 +304,25 @@ When you are done your layouts section should look like this:
 									"data": {
 										"textures": [
 											{
-												"texture": "RESOURCE-NAME",
-												"size": [WIDTH, HEIGHT],
-												"position": [POS-X, POS-Y]
+												"texture": "Ai-Weiwei-1",
+												"size": [0.3, 0.225],
+												"position": [0, 0]
 											},
-										
+											{
+												"texture": "Ai-Weiwei-2",
+												"size": [0.3, 0.4],
+												"position": [0.4, 0]
+											},
+											{
+												"texture": "Ai-Weiwei-3",
+												"size": [0.3, 0.225],
+												"position": [0.9, 0.3]
+											},
+											{
+												"texture": "kathryn-duval-1",
+												"size": [0.3, 0.225],
+												"position": [1.3, 0.15]
+											}
 										],
 										"origin-corner": "nw"
 									}
