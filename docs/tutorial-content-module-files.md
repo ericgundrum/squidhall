@@ -12,7 +12,7 @@ When you finish this tutorial you should understand the basics of content module
 
 ### What this tutorial does not cover
 
-You may be required to use Git for version control, which requires the following steps:
+You may be required to use Git for version control, which adds the following steps:
 
 1. Cloning the Git repo
 
@@ -22,7 +22,7 @@ You may be required to use Git for version control, which requires the following
 
 4. Making a 'Pull Request' for your branch
 
-These things are important to the process and even if you are not required to do them, someone will be. 
+These things are important to the process, and even if you are not required to do them, someone will be. 
 
 However, using Git – or other methods of putting the content files you create onto the production server – falls outside the purview of this tutorial.
 
@@ -70,7 +70,7 @@ While you are at it you will want to make note of the image dimensions, because 
 
 See 'Annotated Example Content Module' below for more detail on what each of these JSON elements does and what the expected values are.
 
-When you are done your texture section should look like this:
+When you are done your "textures" section should look like this:
 
 	"textures": [
 		{
@@ -354,7 +354,7 @@ For this tutorial we will run the asset pipeline locally and verify the pipeline
 
 To run the asset pipeline enter the following line in a terminal session from the working directory:
 
-	& python3 tools/sqs/sqs.py pipeline ai-weiwei.content.module.json
+	python3 tools/sqs/sqs.py pipeline ai-weiwei.content.module.json
 
 If the command fails because the content module file is incorrect in some way you will see one or more error messages. You may need to return to one of the previous steps of the tutorial and work forward again from there.
 
@@ -370,7 +370,7 @@ For this tutorial we will run the code generator locally and verify the generato
 
 To run the code generator enter the following line in a terminal session from the working directory:
 
-	& python3 tools/sqs/sqs.py generate ai-weiwei.content.module.json
+	python3 tools/sqs/sqs.py generate ai-weiwei.content.module.json
 
 If the command fails because the content module file is incorrect in some way you will see one or more error messages. You may need to return to one of the previous steps of the tutorial and work forward again from there.
 
@@ -386,7 +386,7 @@ For this tutorial we will run a local web server and visually verify the results
 
 To run the web server enter the following line in a terminal session from the working directory:
 
-	& python3 tools/sqs/sqs.py serve
+	python3 tools/sqs/sqs.py serve
 
 Once the web server is running, start a web browser and navigate to http://localhost:8000/squidhalltest.html
 
@@ -402,7 +402,7 @@ The [Module File Specification](modulefile-specification.md) and the [SquidSpace
 
 Put simply, an object placer is a function that is called with information from a module file, creates one or more 3D object instances (sometimes cloned from existing objects) and puts them in specific places in the 3D space. This object placer function is registered with SquidSpace with a name, but is not necessarily provided by SquidSpace and may be a custom implementation. For example, ArtPlacer and TablePlacer object placer algorithms are specific to the Squid Hall project and even contain hard-coded expectations about the objects they are placing art frames on. Other placer algorithms, such as 'LinearSeries' are SquidSpace 'builtins'.
 
-Basically, while processing layouts SquidSpace calls the function registered with the name in the object placer declaration, passing the options and data values from the declaration along with other context, such as the layout area and the object specified in the object placer declaration. The placer function can perform this placement any way it likes and, moreover, can place as many 3D objects as it likes. 
+Basically, while processing layouts SquidSpace calls the function registered with the placer name in the object placer declaration, passing the options and data values from the declaration along with other context, such as the layout area and the object specified in the object placer declaration. The placer function can perform this placement any way it likes and, moreover, can place as many 3D objects as it likes. 
 
 It is not required, but the placer function can also register the 3D objects it creates and places with SquidSpace using a unique name that only refers to that one 3d object within the space. These names must adhere to the following rules:
 
