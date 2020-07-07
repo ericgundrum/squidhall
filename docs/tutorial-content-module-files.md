@@ -483,7 +483,9 @@ For a detailed explanation of what each JSON element means, see 'Annotated Examp
 	{
 		"module-name": "MODULE-NAME",
 		"config": {
-			"texture-dir": "textures/content/"
+			"generate-dir": "libs/modules/content/",
+			"texture-dir": "textures/content/",
+			"autoload": true
 		},
 		"resources": {
 			"textures": [
@@ -586,8 +588,14 @@ The following is an annotated Squid Hall Content Module File. The annotation lin
 		// also a 'default' configuration specifed in the world.module.json file.
 		"config": {
 			// We use defaults from world.module.json, except we override 
-			// the 'texture-dir'.
-			"texture-dir": "textures/content/"
+			// the 'generate-dir' and 'texture-dir' because this is a content module
+			// and is handled differently for code generation and build steps.
+			"generate-dir": "libs/modules/content/",
+			"texture-dir": "textures/content/",
+			// We also specify 'autoload', which means the Javascript that loads 
+			// the content is exected automatically instead of being explicitely 
+			// called in the same way the world and furniture modules are.
+			"autoload": true
 		},
 		
 		// Resources are image and other assets we are fetching from a remote source.

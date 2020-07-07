@@ -380,6 +380,12 @@ def processModuleData(defaultConfig, moduleData):
     if modConfig.pp: mf.write("\n")
     mf.write("})();")
     
+    # Do we autoload this module?
+    if modConfig.autoLoad:
+        if modConfig.pp: mf.write("\n")
+        mf.write("SQUIDSPACE.addAutoloadModule(" + moduleData["module-name"] + ");")
+        
+    
     # Clean up.
     mf.close()
 

@@ -1,0 +1,36 @@
+{
+	"build-name": "content-file-prepare",
+	"doc": "Squid Hall content build file that prepares content modules for use by generating and combining them..",
+	"config": {
+		"doc": "Like module files, uses world.module.json defaults; however you can override module configurations during the generation step as well.",
+		"generate-dir": "libs/modules/content/",
+	},
+	"build-steps": [
+		{
+			"doc": "Generates all files who's names end with 'content.module.json'.",
+			"step-name": "generate-modules",
+			"step-type": "generate",
+			"options": {
+				"doc": "There are no options at this time, the 'options' section may be left out.",
+			},
+			"data": [
+				"*.content.module.json"
+			]
+		},
+		{
+			"doc": "Merges all *.js files in 'libs/modules/content' into the file 'libs/modules/content.js'.",
+			"step-name": "combine-modules",
+			"step-type": "merge",
+			"options": {
+				"doc": "There are no options at this time, the 'options' section may be left out.",
+			},
+			"data": {
+				"in-files": ["libs/modules/content/*.js"],
+				"out-file": "libs/modules/content.js"
+			}
+		}
+	],
+	"doc": "There are no package steps for this file, the 'package-steps' section may be left out.",
+	"package-steps": [
+	]
+}

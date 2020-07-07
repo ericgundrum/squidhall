@@ -42,6 +42,7 @@ class ModuleConfiguration(object):
         self.objDir = "assets/objects/"
         self.modDir = "assets/mods/"
         self.filterProfiles = {}
+        self.autoLoad = False;
         
         # TODO: make sure the 'dir' values are proper paths with a trailing slash and/or
         # use Python dir functions to generate full path. 
@@ -67,6 +68,8 @@ class ModuleConfiguration(object):
                 self.modDir = defaultConfigData["mod-dir"]   
             if "filter-profiles" in defaultConfigData:
                 self.filterProfiles.update(defaultConfigData["filter-profiles"])    
+            if "autoload" in defaultConfigData:
+                self.autoLoad = defaultConfigData["autoload"]   
         
         # Override with values from passed module configuration, if any.
         if isinstance(moduleConfigData, dict):
@@ -89,6 +92,8 @@ class ModuleConfiguration(object):
                 self.modDir = moduleConfigData["mod-dir"]            
             if "filter-profiles" in moduleConfigData:
                 self.filterProfiles.update(moduleConfigData["filter-profiles"])   
+            if "autoload" in moduleConfigData:
+                self.autoLoad = moduleConfigData["autoload"]   
     
     def getResourcePath(self, resourceFlavor):
         """Returns a resource path based on the resource flavor or None."""

@@ -2,8 +2,10 @@
 	"doc": "Example Asset Pipeline module. The 'module-name' needs to be unique among all module files.",
 	"module-name": "pipelineEx",
 	"config": {
-		"doc": "Using defaults from world.module.json, except we override the 'texture-dir'.",
-		"texture-dir": "textures/content/"
+		"doc": "Using defaults from world.module.json, except we override the 'generate-dir', the 'texture-dir' and specify 'autoload'.",
+		"texture-dir": "textures/content/",
+		"autoload": true		
+
 	},
 	"resources": {
 		"textures": [

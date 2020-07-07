@@ -65,6 +65,7 @@ import json
 from docopt import docopt
 from sqslogger import initSqsLogger
 from generate import runGenerate, __doc__ as generateDoc
+from build import runBuild, __doc__ as buildDoc
 from filterfile import runFilter, __doc__ as filterDoc
 from pipeline import runPipeline, __doc__ as pipelineDoc
 from serve import runServer, __doc__ as serveDoc
@@ -113,7 +114,7 @@ if __name__ == '__main__':
     if arguments['generate']:
         runGenerate(defaultConfig, arguments['<file>'])
     elif arguments['build']:
-        logger.warning("Command 'build' not yet implemented.")
+        runBuild(defaultConfig, arguments['<file>'])
     elif arguments['package']:
         logger.warning("Command 'package' not yet implemented.")
     elif arguments['filter']:
@@ -129,6 +130,8 @@ if __name__ == '__main__':
         cmd = arguments['<command>'].lower()
         if cmd == 'generate':
             print(generateDoc)
+        elif cmd == 'build':
+            print(buildDoc)
         elif cmd == 'filter':
             print(filterDoc)
         elif cmd == 'pipeline':

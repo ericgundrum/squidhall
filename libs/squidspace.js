@@ -51,11 +51,6 @@ var SQUIDSPACE = function() {
 	// Module data.
 	//
 
-	// TODO: Refactor to remove these. (Put in squidhall.js or SquidCommons?)
-	var pnlwidth = 1;
-	var norot = 0; // Do not rotate.
-	var rot = Math.PI / 2; // Rotate 90 degrees.
-
 	var logLevel = SQS_LOG_ERROR;
 
 	// This is the NW corner of the arena and the origin for layouts. 
@@ -66,6 +61,7 @@ var SQUIDSPACE = function() {
 	var materials = {};
 	var objects = {};
 	var lights = {};
+	var contentModules = [];
 	
 	//
 	// Hooks.
@@ -344,8 +340,11 @@ var SQUIDSPACE = function() {
 		// TODO: Specify camera in world file.
 		// TODO: Support switching to VirtualJoysticksCamera if running on a tablet or phone.
 		// See https://doc.babylonjs.com/babylon101/cameras#virtual-joysticks-camera
+		// HACK: The 'y + 0.4' forces the starting position to be correct so the camera 
+		//       does not 'bob up' when you start to move. 
+		// TODO: Calculate height instead of using a constant.
 		let camera = new BABYLON.UniversalCamera("usercamera", 
-												SQUIDSPACE.makePointVector(x, y, x), scene);
+												SQUIDSPACE.makePointVector(x, y + 0.4, x), scene);
 		//var camera = new BABYLON.FreeCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
 		//var camera = new BABYLON.FlyCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
 		camera.setTarget(new SQUIDSPACE.makePointVector(targetX, targetY, targetZ));
@@ -866,17 +865,17 @@ var SQUIDSPACE = function() {
 			// Do width placements.
 			for (let i = 0;i < countWide;i++) {
 				SQUIDSPACE.addLinearSeriesToPlacements(seriesName + "-top-", placements, 
-													countWide, wx, z, lengthOffset, true, norot);
+													countWide, wx, z, lengthOffset, true, 0);
 				SQUIDSPACE.addLinearSeriesToPlacements(seriesName + "-bottom-", placements, 
-													countWide, wx, bz, lengthOffset, true, norot);
+													countWide, wx, bz, lengthOffset, true, 0);
 			}
 
 			// Do depth placements.
-			for (let i = 0;i< countDeep;i++) {
+			for (let i = r;i< countDeep;i++) {
 				SQUIDSPACE.addLinearSeriesToPlacements(seriesName + "-left-", placements, 
-								countDeep, x - lengthOffset, z + lengthOffset, lengthOffset, false, rot);
+								countDeep, x - lengthOffset, z + lengthOffset, lengthOffset, false, Math.PI / 2);
 				SQUIDSPACE.addLinearSeriesToPlacements(seriesName + "-right-", placements, 
-								countDeep, rx, z + lengthOffset, lengthOffset, false, rot);
+								countDeep, rx, z + lengthOffset, lengthOffset, false, Math.PI / 2);
 			}
 		},
 
@@ -909,7 +908,7 @@ var SQUIDSPACE = function() {
 						//m.rotate(BABYLON.Axis.Y, instance[3]);
 						// TODO: Support other than 'y' axis rotation.
 						m.rotation = new BABYLON.Vector3(0, instance[3], 0);
-						m.position.z -= (pnlwidth / 2);
+						//m.position.z -= (width / 2);
 					}
 					
 					// Set other values.
@@ -1098,40 +1097,49 @@ var SQUIDSPACE = function() {
 		// Public scene management functions.
 		//
 		
-		loadContent: function(contentSpec, scene, overWrite=false) {
+		/** Loads a single content module. 
+		 */
+		loadContentModule: function(contentModule, scene, overWrite=false) {
 			// Load resources from spec using a specific order to avoid dependency issues.
-			processLoaders(SQUIDSPACE.getValIfKeyInDict("mods", contentSpec, {}), modLoaderHooks, 
+			processLoaders(SQUIDSPACE.getValIfKeyInDict("mods", contentModule, {}), modLoaderHooks, 
 							scene, "mods", overWrite)
-			processLoaders(SQUIDSPACE.getValIfKeyInDict("textures", contentSpec, {}), textureLoaderHooks, 
+			processLoaders(SQUIDSPACE.getValIfKeyInDict("textures", contentModule, {}), textureLoaderHooks, 
 							scene, "textures", overWrite)
-			processLoaders(SQUIDSPACE.getValIfKeyInDict("materials", contentSpec, {}), materialLoaderHooks, 
+			processLoaders(SQUIDSPACE.getValIfKeyInDict("materials", contentModule, {}), materialLoaderHooks, 
 							scene, "materials", overWrite)
-			processLoaders(SQUIDSPACE.getValIfKeyInDict("objects", contentSpec, {}), objectLoaderHooks, 
+			processLoaders(SQUIDSPACE.getValIfKeyInDict("objects", contentModule, {}), objectLoaderHooks, 
 							scene, "objects", overWrite)
 			
 			// Do layouts.
-			processLayouts(SQUIDSPACE.getValIfKeyInDict("layouts", contentSpec, {}), scene, overWrite);
+			processLayouts(SQUIDSPACE.getValIfKeyInDict("layouts", contentModule, {}), scene, overWrite);
 			
 			// TODO: Attach events.
+		},
+		
+		/** Adds a content module to the 'autoload' list. These are loaded after the world module
+		    and the preload modules. The order they are loaded is undefined.
+		 */
+		addAutoloadModule: function(contentModule) {
+			contentModules.push(contentModule);
 		},
 		
 		/** PoC-specific function to load the passed scene from the world 
 		    and content specs. 
          */
-		buildWorld: function(worldSpec, contentSpecs, scene, overWrite=false) {
+		buildWorld: function(worldModule, preloadContentModuleModules, scene, overWrite=false) {
 			// Assume success.
 			let success = true;
 					 
 			// Verify inputs.
 			// TODO: Add other validation checks, such as object
 			//       member validation.
-			if (typeof worldSpec != "object") {
+			if (typeof worldModule != "object") {
 				SQUIDSPACE.logWarn("buildWorld(): No valid world module supplied.")
 				success = false;
 			}
-			if ((typeof contentSpecs != "object") && !(contentSpecs instanceof Array)) {
+			if ((typeof preloadContentModuleModules != "object") && !(preloadContentModuleModules instanceof Array)) {
 				// Default to empty list.
-				contentSpecs = [];
+				preloadContentModuleModules = [];
 			}
 			if (typeof scene != "object") {
 				SQUIDSPACE.logWarn("buildWorld(): No valid scene supplied.")
@@ -1151,10 +1159,17 @@ var SQUIDSPACE = function() {
 				SQUIDSPACE.logError(`buildWorld(): Prepare Hook Function failed with error ${e}.`)
 			}
 			
-			// Load all the content.
-			SQUIDSPACE.loadContent(worldSpec, scene, overWrite);
-			for (spec of contentSpecs) {
-				SQUIDSPACE.loadContent(spec, scene, overWrite);
+			// Load all the content. We start by loading the world.
+			SQUIDSPACE.loadContentModule(worldModule, scene, overWrite);
+			
+			// Then we load the preload modules.
+			for (module of preloadContentModuleModules) {
+				SQUIDSPACE.loadContentModule(module, scene, overWrite);
+			}
+			
+			// Finally we load the autoload modules.
+			for (module of contentModules) {
+				SQUIDSPACE.loadContentModule(module, scene, overWrite);
 			}
 			
 			// Call build hook.
