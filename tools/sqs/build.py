@@ -21,6 +21,17 @@ from common import getFilterModule, ModuleConfiguration, ResourceFlavor, Resourc
 from sqslogger import logger
 
 def processBuildData(defaultConfig, buildData):
+    # TODO: Support checking if we need to perform steps because something has changed. 
+    #       Need to think about how to do this, especially for input/output pairs and 
+    #       overriding to force builds.
+    
+    # Basically build will execute the following SQS commands as steps: generate, build
+    # package, filter, and pipeline. Special functionality (merge, minify, etc) are implemented
+    # as filters and you can execute chains of filters with the filter command. Support for
+    # all the use cases may require modifications to the filter command. 
+    
+    # Steps are executed in order and can (in the case of build and package) include executing
+    # sub-build steps/files. 
     pass
 
 

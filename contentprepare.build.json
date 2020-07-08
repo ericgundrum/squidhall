@@ -4,7 +4,7 @@
 	"config": {
 		"doc": "We are overriding the 'generate-dir' from the world.module.json file and any module files, plus specifying 'autoload'.",
 		"generate-dir": "libs/modules/content/",
-		"autoload": true		
+		"autoload": true
 	},
 	"build-steps": [
 		{
