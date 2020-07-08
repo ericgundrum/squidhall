@@ -2,10 +2,10 @@
 
 Removes unhelpful or unneeded data sections from .babylon files. 
 
-Besides the standard filter() and filterFileExtensions() functions there are 
+Besides the standard filter() and cleanBabylonFileExtensions() functions there are 
 two API functions:
 
-* cleanData(data) - Cleans a Python dictionary containing a parsed .babylon file
+* cleanBabylonData(data) - Cleans a Python dictionary containing a parsed .babylon file
 
 * processDirectory(pathIn, pathOut, recurse) - Cleans all .babylon files in 
   the directory specified with pathIn, writing the files out to pathOut. If
@@ -34,7 +34,7 @@ import json
 from sqslogger import logger
 from common import PathCardinality
     
-def cleanData(data):
+def cleanBabylonData(data):
     dirty = False
     
     # Check for other unwanted sections and clean them.
@@ -64,7 +64,7 @@ def cleanData(data):
     # Done!
     return dirty
 
-def filterFile(pathIn, pathOut, options, data):
+def cleanBabylonFile(pathIn, pathOut, options, data):
     # NOTE: Currently supports no options. 
     # Assume failure.
     result = False
@@ -79,7 +79,7 @@ def filterFile(pathIn, pathOut, options, data):
                 close(babFile)
             
             # Try to clean the data.
-            if cleanData(data):
+            if cleanBabylonData(data):
                 logger.debug("Babylon file was cleaned.")
             else:
                 logger.debug("Babylon file did not require cleaning.")
@@ -92,20 +92,21 @@ def filterFile(pathIn, pathOut, options, data):
                 logger.debug("Babylon file written out.")
                 result = True
             except:
-                logger.exception("cleanbablyon.filterFile() - Command '{command}' failed to write output.".format(command))
+                logger.exception("cleanbablyon.cleanBabylonFile() - Command '{command}' failed to write output.".format(command))
         except:
-            logger.exception("cleanbablyon.filterFile() - Command '{command}' failed to parse the .babylon file.".format(command))
+            logger.exception("cleanbablyon.cleanBabylonFile() - Command '{command}' failed to parse the .babylon file.".format(command))
     else:
-        logger.error("cleanbablyon.filterFile() - Path in not a .babylon file.")
+        logger.error("cleanbablyon.cleanBabylonFile() - Path in not a .babylon file.")
     
     return result
+    
 
 def filterFileExtensions(options, data):
-    return (".babylon", ".babylon")
+    return ((".babylon"), (".babylon"))
 
 
 def filterPathCardinality(options, data):
-    return (OneToOne, DirToDir)
+    return (OneToOne, ManyToMany)
 
 
 def filter(pathIn, pathOut, options, data):
@@ -116,11 +117,11 @@ def filter(pathIn, pathOut, options, data):
     if os.path.isdir(pathIn) and os.path.isdir(pathOut):
         for item in os.listdir(path):
             if not os.path.isdir(item):
-                if not filterFile(os.path.join(pathIn, item), os.path.join(pathOut, item)):
+                if not cleanBabylonFile(os.path.join(pathIn, item), os.path.join(pathOut, item)):
                     return False;
     elif os.path.isdir(pathIn) or os.path.isdir(pathOut):
         logger.error("cleanbablyon.filter() - Paths must both be single files or both be directories.")
         return False;
     
    # Just filtering the one file.
-   return filterFile(pathIn, pathOut, options, data)
+   return cleanBabylonFile(pathIn, pathOut, options, data)

@@ -64,11 +64,11 @@ from os import chdir, path
 import json
 from docopt import docopt
 from sqslogger import initSqsLogger
-from generate import runGenerate, __doc__ as generateDoc
-from build import runBuild, __doc__ as buildDoc
-from filterfile import runFilter, __doc__ as filterDoc
-from pipeline import runPipeline, __doc__ as pipelineDoc
-from serve import runServer, __doc__ as serveDoc
+from generatecommand import runGenerate, __doc__ as generateDoc
+from buildcommand import runBuild, __doc__ as buildDoc
+from filtercommand import runFilter, __doc__ as filterDoc
+from pipelinecommand import runPipeline, __doc__ as pipelineDoc
+from servecommand import runServer, __doc__ as serveDoc
 
 ver = "sqs v0.0"
 

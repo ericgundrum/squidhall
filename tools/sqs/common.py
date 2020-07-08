@@ -28,11 +28,20 @@ class ResourceAction(Enum):
     
     
 class PathCardinality(Enum):
-    """Enumeration of different filter path cardinality modes."""
-    OneToOne = 0
-    ManyToOne = 1
-    OneToMany = 2
-    DirToDir = 3
+    """Enumeration of different filter path cardinality modes.
+    
+    * OneToOne – Input is a file, output is a file.
+    
+    * ManyToOne – Input is a list of files or a directory, output is a file.
+    
+    * OneToMany – Input is a file, output is a directory.
+    
+    * ManyToMany – Input is a list of files or a directory, output is a directory.
+    """
+    OneToOne = 0 
+    ManyToOne = 1  
+    OneToMany = 2  
+    ManyToMany = 3  
 
     
 class ModuleConfiguration(object):
