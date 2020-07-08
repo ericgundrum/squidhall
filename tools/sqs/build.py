@@ -20,35 +20,67 @@ import json
 from common import getFilterModule, ModuleConfiguration, ResourceFlavor, ResourceAction, ScratchDirManager, lookAheadIterator
 from sqslogger import logger
 
-def buildIt(buildFilePath):
+def processBuildData(defaultConfig, buildData):
     pass
 
 
-def runBuild(defaultConfig, filterProfile, outDir, fileNames):
+def processBuildString(defaultConfig, buildDataString):
+    """Loads JSON Build Data from a string and processes it."""
+
+    # Assume failure.
+    buildData = None
+    
+    try:
+        buildData = json.loads(buildDataString)
+    except json.JSONDecodeError:
+        logger.exception("generate.processBuildString() - Could not load Build string.")
+        return
+        
+    if not buildData is None:    
+        processBuildData(defaultConfig, buildData)
+
+
+def processBuildFile(defaultConfig, buildFile):
+    """Loads JSON Build data from a file-like object and processes it."""
+        
+    # Assume failure.
+    buildData = None
+    
+    try:
+        moduleData = json.load(buildFile)
+    except json.JSONDecodeError:
+        logger.exception("generate.processBuildFile() - Error loading Build File.")
+        return
+        
+    if not buildData is None:    
+        processBuildData(defaultConfig, buildData)
+
+
+def runBuild(defaultConfig, buildFileNames):
     """SQS build command."""
     # Assume Failure.
-    fileToBuld = None
-    
+    buildFile = None
+
     # We expect to process a list of file names.
-    if not isinstance(fileNames, list):
-        fileNames = [fileNames] # Force list.
+    if not isinstance(buildFileNames, list):
+        buildFileNames = [buildFileNames] # Force list.
         
-    # Create the module processing configuration.
-    modConfig = ModuleConfiguration(defaultConfig, {})
-        
-    for buildFilePath in fileNames:
-        if not buildFilePath is None and not buildFilePath == "":
-            # Use passed file name.
-            logger.info("filterfile.runBuild() - Building '{0}'.".format(buildFilePath))
-            
-            # Filter the file.
-            if not buildIt(buildFilePath):
-                logger.error("filterfile.runBuild() - Unable to build '{0}'.".format(buildFilePath))
+    for buildFileName in buildFileNames:
+        if not buildFileName is None and not buildFileName == "":
+            # Use passed Module File name.
+            logger.debug("generate.runBuild() - Build File: " + buildFileName)
+            try:
+                buildFile = open(buildFileName)
+            except:
+                logger.exception("generate.runBuild() - Error reading Build File.")
         else:
-            # Use stdin if no file name.
             # TODO: Fix here and elsewhere - this won't be reached because we are 
             #       iterating a possibly empty list.
-            # TODO: Copy STDIN to scratch directory before starting
-            #logger.info("filterfile.runBuild() - Reading file data from STDIN.")
-            logger.error("filterfile.runBuild() - Currently STDIN not supported.")
-            source = sys.stdin
+            # TODO: Copy STDIN to scratch directory before starting?
+            # Use stdin if no file name.
+            logger.info("generate.runBuild() - Reading module data from STDIN.")
+            #logger.error("generate.runBuild() - Currently STDIN not supported.")
+            buildFile = sys.stdin
+
+        if not buildFile is None:    
+            processBuildFile(defaultConfig, buildFile)

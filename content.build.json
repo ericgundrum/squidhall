@@ -7,11 +7,15 @@
 	},
 	"build-steps": [
 		{
-			"doc": "Executes sub-build files.",
+			"doc": "Executes sub-build files to manage the pipeline and generate the javascript.",
 			"step-name": "run-content-sub-build-files",
-			"step-type": "build",
+			"builder": "command",
+			"config": {
+				"doc": "You can override the file configuration for this step if required.",
+			},
 			"options": {
-				"doc": "There are no options at this time, the 'options' section may be left out.",
+				"doc": "For a command step you specify the command to run in 'options' and the data files to use in 'data'.",
+				"command-name": "build"
 			},
 			"data": [
 				"contentpipeline.build.json",
@@ -19,7 +23,7 @@
 			]
 		}
 	],
-	"doc": "There are no package steps for this file, the 'package-steps' section may be left out.",
+	"doc": "This file may include package steps in the future.",
 	"package-steps": [
 	]
 }

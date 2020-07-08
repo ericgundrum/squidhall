@@ -401,7 +401,7 @@ def processModuleString(defaultConfig, moduleDataString):
     try:
         moduleData = json.loads(moduleDataString)
     except json.JSONDecodeError:
-        logger.exception("generate.processModuleString() - Could not load pack string.")
+        logger.exception("generate.processModuleString() - Could not load Module string.")
         return
         
     if not moduleData is None:    
@@ -446,8 +446,8 @@ def runGenerate(defaultConfig, moduleFileNames):
             #       iterating a possibly empty list.
             # TODO: Copy STDIN to scratch directory before starting?
             # Use stdin if no file name.
-            #logger.info("generate.runGenerate() - Reading module data from STDIN.")
-            logger.error("generate.runGenerate() - Currently STDIN not supported.")
+            logger.info("generate.runGenerate() - Reading module data from STDIN.")
+            #logger.error("generate.runGenerate() - Currently STDIN not supported.")
             moduleFile = sys.stdin
 
         if not moduleFile is None:    

@@ -5,7 +5,6 @@
 		"doc": "Using defaults from world.module.json, except we override the 'generate-dir', the 'texture-dir' and specify 'autoload'.",
 		"texture-dir": "textures/content/",
 		"autoload": true		
-
 	},
 	"resources": {
 		"textures": [
