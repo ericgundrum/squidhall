@@ -12,7 +12,7 @@ import os
 import unittest
 from filecmp import cmp
 from common import ScratchDirManager, ModuleConfiguration
-from filterfile import filterFile, runFilter
+from filterfile import processFilterChain, runFilter
 
 
 testDir1 = "test/sqs_test/scratch1"
@@ -48,7 +48,7 @@ class TestFilterFile(unittest.TestCase):
         file.write("This is a temporary test text file.") 
         file.close()
         
-        self.assertTrue(filterFile(inFile, outFile, sd, modConfig.getFilters(None, copyFilterProfile)))
+        self.assertTrue(processFilterChain(inFile, outFile, sd, modConfig.getFilters(None, copyFilterProfile)))
         
         # Double check the files are the same.
         self.assertTrue(cmp(inFile, outFile), msg="The input and output files should be identical.")

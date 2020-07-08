@@ -25,13 +25,27 @@
 		{
 			"doc": "Merges all *.js files in 'libs/modules/content' into the file 'libs/modules/content.js'.",
 			"step-name": "combine-modules",
-			"step-type": "merge",
+			"step-type": "filter",
 			"options": {
-				"doc": "There are no options for 'merge' at this time, the 'options' section may be left out. The 'data' specifies input file(s) and output file.",
+				"doc": "TODO.",
 			},
 			"data": {
 				"in-files": ["libs/modules/content/*.js"],
-				"out-file": "libs/modules/content.js"
+				"out-file": "libs/modules/content.js",
+				"filters": [
+					{
+						"doc": "Merge multiple input files into a single output file.",
+		                "filter": "merge",
+		                "options": {
+		                }
+					},
+					{
+						"doc": "Minify the Javacript.",
+		                "filter": "jsminify",
+		                "options": {
+		                }
+					}
+				]
 			}
 		}
 	],

@@ -32,7 +32,7 @@ import sys
 import os
 import json
 from sqslogger import logger
-
+from common import PathCardinality
     
 def cleanData(data):
     dirty = False
@@ -64,27 +64,8 @@ def cleanData(data):
     # Done!
     return dirty
 
-
-def processDirectory(pathIn, pathOut, recurse):
-    logger.debug("cleanbabylon.processDirectory() - Processing pathIn: {pathIn} pathOut: {pathOut} recurse: {recurse}".format(pathIn, pathOut, recurse))
-
-    for item in os.listdir(path):
-        if os.path.isdir(item):
-            if recurse:
-                processDirectory(item, recurse)
-        else:
-            filter(os.path.join(pathIn, item), os.path.join(pathOut, item))
-
-    # DEBUG: Comment out for production.
-    #print("Path processing complete.")
-
-def filterFileExtensions(options, data):
-    return (".babylon", ".babylon")
-
-def filter(pathIn, pathOut, options, data):
-    # NOTE: Currently supports no options.
-    logger.debug("cleanbabylon.filter() - Processing pathIn: {pathIn} pathOut: {pathOut} options: options".format(pathIn, pathOut, options))
-    
+def filterFile(pathIn, pathOut, options, data):
+    # NOTE: Currently supports no options. 
     # Assume failure.
     result = False
     
@@ -111,8 +92,35 @@ def filter(pathIn, pathOut, options, data):
                 logger.debug("Babylon file written out.")
                 result = True
             except:
-                logger.exception("shellexec.filter() - Command '{command}' failed to write output.".format(command))
+                logger.exception("cleanbablyon.filterFile() - Command '{command}' failed to write output.".format(command))
         except:
-            logger.exception("shellexec.filter() - Command '{command}' failed to parse the .babylon file.".format(command))
+            logger.exception("cleanbablyon.filterFile() - Command '{command}' failed to parse the .babylon file.".format(command))
+    else:
+        logger.error("cleanbablyon.filterFile() - Path in not a .babylon file.")
     
     return result
+
+def filterFileExtensions(options, data):
+    return (".babylon", ".babylon")
+
+
+def filterPathCardinality(options, data):
+    return (OneToOne, DirToDir)
+
+
+def filter(pathIn, pathOut, options, data):
+    # NOTE: Currently supports no options. Currently no support for directory recursion.
+    logger.debug("cleanbabylon.filter() - Processing pathIn: {pathIn} pathOut: {pathOut} options: options".format(pathIn, pathOut, options))
+    
+    # Are we filtering one file or a whole directory? (See filterPathCardinality() above.)
+    if os.path.isdir(pathIn) and os.path.isdir(pathOut):
+        for item in os.listdir(path):
+            if not os.path.isdir(item):
+                if not filterFile(os.path.join(pathIn, item), os.path.join(pathOut, item)):
+                    return False;
+    elif os.path.isdir(pathIn) or os.path.isdir(pathOut):
+        logger.error("cleanbablyon.filter() - Paths must both be single files or both be directories.")
+        return False;
+    
+   # Just filtering the one file.
+   return filterFile(pathIn, pathOut, options, data)

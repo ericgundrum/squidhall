@@ -27,6 +27,10 @@ prints the exit status and returns False.
 
 Options: 
 
+* "in-dir" – [optional, boolean] True if the input must be a directory, false or not specified if the input must be a file 
+
+* "out-dir" – [optional, boolean] True if the output must be a directory, false or not specified if the output must be a file 
+
 * "in-ext" – [optional, string] Specifies the expected input file extension; do not use if
   the input file type is determined by its extension 
 
@@ -48,9 +52,23 @@ Jack William Bell 2020 except where noted. All other content, including HTML fil
 assets, are copyright their respective authors."""
 
 
+import os
 import subprocess
 from sqslogger import logger
+from common import PathCardinality
 
+def _pathCardinaltiy(options, data):
+    inDir = "in-dir" in options and options["in-dir"]
+    outDir = "out-dir" in options and options["out-dir"]
+    if inDir and outDir:
+        return (DirToDir)
+    elif inDir and not outDir:
+        return (ManyToOne)
+    elif not inDir and outDir:
+        return (OneToMany)
+    else:
+        return (OneToOne)
+        
 
 def filterFileExtensions(options, data):
     inExt = None
@@ -63,18 +81,40 @@ def filterFileExtensions(options, data):
     return (inExt, outExt)
     
 
+def filterPathCardinality(options, data):
+    return (_pathCardinaltiy(options, data))
+    
+
 def filter(pathIn, pathOut, options, data):
-    #logger.debug("shellexec.filter() - Processing pathIn: {pathIn} pathOut: {pathOut} options: %{options}.".format(
-    #        pathIn=pathIn, pathOut=pathOut, options=options))
+    logger.debug("shellexec.filter() - Processing pathIn: {pathIn} pathOut: {pathOut} options: %{options}.".format(pathIn=pathIn, pathOut=pathOut, options=options))
+    
+    # Verify path cardinality.
+    pc = _pathCardinaltiy(options, data)
+    if os.path.isdir(pathIn) and os.path.isdir(pathOut) and pc != DirToDir:
+        logger.error("shellexec.filter() - Invalid path cardinality: paths are both directories.")
+        return False;
+    elif os.path.isdir(pathIn) and not os.path.isdir(pathOut) and pc != ManyToOne:
+        logger.error("shellexec.filter() - Invalid path cardinality: path in is a directory, path out is a file.")
+        return False;
+    elif not os.path.isdir(pathIn) and os.path.isdir(pathOut) and pc != OneToMany:
+        logger.error("shellexec.filter() - Invalid path cardinality: path in is a file, path out is a directory.")
+        return False;
+    elif not os.path.isdir(pathIn) and not os.path.isdir(pathOut) and pc != OneToOne:
+        logger.error("shellexec.filter() - Invalid path cardinality: paths are both files.")
+        return False;
+    
     
     # TODO: Determine if we want to verify the path in/out file extensions based on the result 
     #       from filterFileExtensions().
+    
+    # TODO: Support for path cardinalities other than OneToOne. (Other cardinalities might 
+    #       just work with the below, but we need to verify.)
     
     # Create the command to execute.
     command = None
     if "command-template" in options:
         command = options["command-template"]
-        # TODO: Verify "command-arguments" is a dict or not there.
+        # TODO: Verify "command-arguments" is a dict.
         if "command-arguments" in options:
             command = command.format(pathIn=pathIn, pathOut=pathOut, **options["command-arguments"])
         else:

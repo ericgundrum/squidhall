@@ -27,6 +27,14 @@ class ResourceAction(Enum):
     LINK = 2
     
     
+class PathCardinality(Enum):
+    """Enumeration of different filter path cardinality modes."""
+    OneToOne = 0
+    ManyToOne = 1
+    OneToMany = 2
+    DirToDir = 3
+
+    
 class ModuleConfiguration(object):
     """Contains a module configuration."""
     def __init__(self, defaultConfigData, moduleConfigData):

@@ -21,8 +21,11 @@ import json
 from common import getFilterModule, ModuleConfiguration, ResourceFlavor, ResourceAction, ScratchDirManager, lookAheadIterator
 from sqslogger import logger
 
+def processFilter(sourcePath, destPath, filter):
+    # TODO: Implement.
+    pass
 
-def filterFile(sourcePath, destPath, scratchDirMgr, filters):
+def processFilterChain(sourcePath, destPath, scratchDirMgr, filters):
     """Accepts a source path, and destination path, a scratch directory manager object,
     and a list of filters. Executes each filter in turn, using the scratch directory for
     intermediate files, with the result that the file referred to by the source path 
@@ -38,13 +41,13 @@ def filterFile(sourcePath, destPath, scratchDirMgr, filters):
     # Check args.
     # TODO: Type checking. Better error handling.
     if not sourcePath:
-        logger.error("filterfile.filterFile() - Source path required.")
+        logger.error("filterfile.processFilter() - Source path required.")
         return False
     if not destPath:
-        logger.error("filterfile.filterFile() - Destination path required.")
+        logger.error("filterfile.processFilter() - Destination path required.")
         return False
     if not scratchDirMgr:
-        logger.error("filterfile.filterFile() - Scratch Directory Manager required.")
+        logger.error("filterfile.processFilter() - Scratch Directory Manager required.")
         return False
     
     # Do we have filters?
@@ -65,9 +68,10 @@ def filterFile(sourcePath, destPath, scratchDirMgr, filters):
     for fd, isLastFD in lookAheadIterator(filters):
         # Get the named filter module.
         # logger.debug("filterfile.filterFile() - Lookahead: " + str(isLastFD) + " / " + str(fd))
+        # TODO: Support path cardinality
         filterExt, filterFunc, filterDoc = getFilterModule(fd.get("filter"))
         if not filterExt or not filterFunc:
-            logger.error("filterfile.filterFile() - Could not load filter module for '{0}'.".format(fd.get("filter")))
+            logger.error("filterfile.processFilter() - Could not load filter module for '{0}'.".format(fd.get("filter")))
             return False
         
         # Get valid file extensions for the filter module.
@@ -85,12 +89,12 @@ def filterFile(sourcePath, destPath, scratchDirMgr, filters):
         # Execute the filter function
         result = filterFunc(inFile, outFile, fd.get("options"), fd.get("data"))
         if not result:
-            logger.error("filterfile.filterFile() - filter module '{0}' failed, aborting.".format(fd.get("filter")))
+            logger.error("filterfile.processFilter() - filter module '{0}' failed, aborting.".format(fd.get("filter")))
             return False
 
     # Success!
     return True
-
+    
 
 def runFilter(defaultConfig, filterProfile, outDir, fileNames):
     """SQS filter command."""
@@ -116,8 +120,8 @@ def runFilter(defaultConfig, filterProfile, outDir, fileNames):
             sourceFileName = os.path.basename(sourcePath)
             destPath = os.path.join(outDir, sourceFileName)
             
-            # Filter the file.
-            if not filterFile(sourcePath, destPath, scratchDirMgr, modConfig.getFilters(None, filterProfile)):
+            # Process the filters.
+            if not processFilterChain(sourcePath, destPath, scratchDirMgr, modConfig.getFilters(None, filterProfile)):
                 logger.error("filterfile.runFilter() - Unable to filter '{0}'.".format(sourcePath))
         else:
             # Use stdin if no file name.
