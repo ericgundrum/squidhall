@@ -183,7 +183,7 @@ var furniture = (function(){
                            "placer": "LinearSeries"
                         },
                         "data": {
-                           "count": 2,
+                           "count": 1,
                            "position": [
                               7.5,
                               0.01,
@@ -204,9 +204,9 @@ var furniture = (function(){
                            "placer": "LinearSeries"
                         },
                         "data": {
-                           "count": 2,
+                           "count": 1,
                            "position": [
-                              10,
+                              9.85,
                               0.01,
                               9
                            ],
@@ -225,9 +225,9 @@ var furniture = (function(){
                            "placer": "LinearSeries"
                         },
                         "data": {
-                           "count": 2,
+                           "count": 1,
                            "position": [
-                              12.5,
+                              12.25,
                               0.01,
                               9
                            ],
@@ -305,11 +305,11 @@ var furniture = (function(){
                            "placer": "LinearSeries"
                         },
                         "data": {
-                           "count": 2,
+                           "count": 1,
                            "position": [
                               7.5,
                               0.01,
-                              14
+                              15.3
                            ],
                            "offset": 1.3,
                            "across": false,
@@ -326,11 +326,11 @@ var furniture = (function(){
                            "placer": "LinearSeries"
                         },
                         "data": {
-                           "count": 2,
+                           "count": 1,
                            "position": [
-                              10,
+                              9.85,
                               0.01,
-                              14
+                              15.3
                            ],
                            "offset": 1.3,
                            "across": false,
@@ -347,11 +347,11 @@ var furniture = (function(){
                            "placer": "LinearSeries"
                         },
                         "data": {
-                           "count": 2,
+                           "count": 1,
                            "position": [
-                              12.5,
+                              12.25,
                               0.01,
-                              14
+                              15.3
                            ],
                            "offset": 1.3,
                            "across": false,
