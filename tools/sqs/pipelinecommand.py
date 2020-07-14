@@ -20,7 +20,7 @@ import json
 
 from sqslogger import logger
 from common import ResourceFlavor, ModuleConfiguration, ScratchDirManager, getSourceURL, getSourceFile, getDestFile, copySourceToDestAndClose
-from filterfile import filterFile
+from filtercommand import filterFileTODO_FIXME
 
     
 def processPipelineForResource(resourceFlavor, elem, scratchDirMgr, modConfig):

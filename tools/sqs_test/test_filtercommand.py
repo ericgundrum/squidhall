@@ -13,6 +13,7 @@ import unittest
 from filecmp import cmp
 from common import ScratchDirManager, ModuleConfiguration
 from filtercommand import processFilterChain, runFilter
+import logger
 
 
 testDir1 = "test/sqs_test/scratch1"

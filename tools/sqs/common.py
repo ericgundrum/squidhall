@@ -3,14 +3,13 @@
 Shared code used by all SQS tools and APIs.
 """
 
+# TODO: Refactor to pass the logger in as an argument to all functions?
+
 from enum import Enum
 import os 
 import shutil
 import urllib.request
 from sqslogger import logger
-from filters.shellexec import filterFileExtensions as shellexec_filter_ext, filter as shellexec_filter, __doc__ as shellexec_doc
-from filters.cleanbabylon import filterFileExtensions as cleanbab_filter_ext, filter as cleanbab_filter, __doc__ as cleanbab_doc
-
 
 class ResourceFlavor(Enum):
     """Enumeration of supported resource types."""
@@ -26,24 +25,7 @@ class ResourceAction(Enum):
     INSERT = 1
     LINK = 2
     
-    
-class PathCardinality(Enum):
-    """Enumeration of different filter path cardinality modes.
-    
-    * OneToOne – Input is a file, output is a file.
-    
-    * ManyToOne – Input is a list of files or a directory, output is a file.
-    
-    * OneToMany – Input is a file, output is a directory.
-    
-    * ManyToMany – Input is a list of files or a directory, output is a directory.
-    """
-    OneToOne = 0 
-    ManyToOne = 1  
-    OneToMany = 2  
-    ManyToMany = 3  
-
-    
+        
 class ModuleConfiguration(object):
     """Contains a module configuration."""
     def __init__(self, defaultConfigData, moduleConfigData):
@@ -188,10 +170,18 @@ class ScratchDirManager(object):
         # TODO: This is kind of a brute-force method. Might want to revisit it.
         self.create()
     
-    def makeTempFilePath(self, fileName):
+    def makeFilePath(self, fileName):
         """Returns a file path using the file name for use by as a temp file 
         in the scratch directory. Does not create the file. Does not guarantee no
         collisions if two processes are using the same scratch directory."""
+        return os.path.join(self.path, fileName)
+    
+    def makeTempFilePath(self, fileName):
+        """Returns a file path using the file name for use by as a temp file 
+        in the scratch directory. Does not create the file. Does not guarantee no
+        collisions if two processes are using the same scratch directory.
+        
+        NOTE: The file name will have 'temp_' prepended."""
         return os.path.join(self.path, "temp_" + fileName)
     
     def getTempFilePath(self, fileExtension):
@@ -204,21 +194,29 @@ class ScratchDirManager(object):
         self.ctr = self.ctr + 1
         return os.path.join(self.path, "temp_" + str(self.ctr) + fileExtension)
         
+    def makeOutputFilesFunc(self):
+        """Returns an 'outputs()' function, such as those used by the filters, which
+        returns a file path for a file name."""
+        def outputFilesFunc(fileName):
+            return self.makeFilePath(fileName)
+        
+        return outputFilesFunc
+ 
+        
+def makeOutputFilesFuncForDir(dirPath):
+    """Returns an 'outputs()' function, such as those used by the filters, which
+    returns a file path for a file name."""
+    def outputFilesFunc(fileName):
+        return os.path.join(dirPath, fileName)
+    
+    return outputFilesFunc
 
-def getFilterModule(filterName):
-    """Returns a tuple for the passed filter name containing filter extension 
-    function, the filter function, and the filter doc string. Returns 'None' if  
-    the filter could not be located and/or loaded.
-    
-    TODO: Support dynamic imports from a 'filters' directory."""
-    
-    # Is it a 'built-in' filter?
-    if filterName == "shellexec":
-        return (shellexec_filter_ext, shellexec_filter, shellexec_doc)
-    elif filterName == "cleanbabylon":
-        return (cleanbab_filter_ext, cleanbab_filter, cleanbab_doc)
-    
-    return (None, None, None)
+
+def forceFileExtension(filePath, exToUse):
+    """Forces the passed file path to have the passed extension."""
+    if not exToUse.startswith("."): exToUse = "." + exToUse
+    root, ex = os.path.splitext(filePath)
+    return root + exToUse
     
 
 def getSourceURL(urlSource): 
@@ -317,9 +315,8 @@ def lookAheadIterator(iterable):
     # Iterate, yielding the value and False.
     for val in it:
         yield last, False
+        # Make the current value last.
         last = val
         
     # Yield the last value and True.
     yield last, True
-
-    

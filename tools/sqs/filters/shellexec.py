@@ -25,24 +25,22 @@ will be written to the terminal during execution unless redirected in the templa
 If the command completes with a '0' exit status the filter returns True. Otherwise the filter 
 prints the exit status and returns False.
 
+Besides the standard filterFile() functions there is one API function:
+
+1. shellExec(pathIn, pathOut, options, logger) – Executes a shell command 
+
+### Filter File function
+
 Options: 
 
-* "in-dir" – [optional, boolean] True if the input must be a directory, false or not specified if the input must be a file 
+* "in-ext" [optional, string] Specifies the allowed input file extension
 
-* "out-dir" – [optional, boolean] True if the output must be a directory, false or not specified if the output must be a file 
-
-* "in-ext" – [optional, string] Specifies the expected input file extension; do not use if
-  the input file type is determined by its extension 
-
-* "out-ext" – [optional, string] Specifies the expected output file extension; do not use if
-  the output file type will be the same as the input file type 
+* "out-ext" [optional, string] Specifies the output file extension to use
 
 * "command-template" [required, string] Specifies the command template string as described above
 
 * "command-arguments" [optional, string] Specifies command arguments which may be replaced 
   by name in the command template string as described above
-
-Data: None.
 
 File Extensions: Determined by option values."""
 
@@ -54,61 +52,15 @@ assets, are copyright their respective authors."""
 
 import os
 import subprocess
-from sqslogger import logger
-from common import PathCardinality
+from common import forceFileExtension
 
-def _pathCardinaltiy(options, data):
-    inDir = "in-dir" in options and options["in-dir"]
-    outDir = "out-dir" in options and options["out-dir"]
-    if inDir and outDir:
-        return (DirToDir)
-    elif inDir and not outDir:
-        return (ManyToOne)
-    elif not inDir and outDir:
-        return (OneToMany)
-    else:
-        return (OneToOne)
-        
-
-def filterFileExtensions(options, data):
-    inExt = None
-    outExt = None
-    if "in-ext" in options:
-        inExt = options["in-ext"]
-    if "out-ext" in options:
-        outExt = options["out-ext"]
-    
-    return (inExt, outExt)
-    
-
-def filterPathCardinality(options, data):
-    return (_pathCardinaltiy(options, data))
-    
-
-def filter(pathIn, pathOut, options, data):
-    logger.debug("shellexec.filter() - Processing pathIn: {pathIn} pathOut: {pathOut} options: %{options}.".format(pathIn=pathIn, pathOut=pathOut, options=options))
-    
-    # Verify path cardinality.
-    pc = _pathCardinaltiy(options, data)
-    if os.path.isdir(pathIn) and os.path.isdir(pathOut) and pc != DirToDir:
-        logger.error("shellexec.filter() - Invalid path cardinality: paths are both directories.")
-        return False;
-    elif os.path.isdir(pathIn) and not os.path.isdir(pathOut) and pc != ManyToOne:
-        logger.error("shellexec.filter() - Invalid path cardinality: path in is a directory, path out is a file.")
-        return False;
-    elif not os.path.isdir(pathIn) and os.path.isdir(pathOut) and pc != OneToMany:
-        logger.error("shellexec.filter() - Invalid path cardinality: path in is a file, path out is a directory.")
-        return False;
-    elif not os.path.isdir(pathIn) and not os.path.isdir(pathOut) and pc != OneToOne:
-        logger.error("shellexec.filter() - Invalid path cardinality: paths are both files.")
-        return False;
-    
-    
-    # TODO: Determine if we want to verify the path in/out file extensions based on the result 
-    #       from filterFileExtensions().
-    
-    # TODO: Support for path cardinalities other than OneToOne. (Other cardinalities might 
-    #       just work with the below, but we need to verify.)
+def shellExec(pathIn, pathOut, options, logger):
+    """Executes a shell command and returns True if the command can be executed and 
+    results in a return code of zero, otherwise returns false. The options is a dictionary 
+    which must contain the named value 'command-template' and may optionally contain the 
+    named value 'command-arguments'. The command template may contain template values for 
+    pathIn, pathOut and any named values in the 'command-arguments' dictionary."""
+    logger.debug("shellexec.shellExec() - Processing pathIn: {pathIn} pathOut: {pathOut} options: %{options}.".format(pathIn=pathIn, pathOut=pathOut, options=options))
     
     # Create the command to execute.
     command = None
@@ -122,20 +74,49 @@ def filter(pathIn, pathOut, options, data):
     
     # Do we have a command?
     if command == None or len(command) <= (len(pathIn) + len(pathOut)):
-        logger.error("shellexec.filter() - Command '{0}' is invalid.".format(command))
+        logger.error("shellexec.shellExec() - Command '{0}' is invalid.".format(command))
         return False
     
     # Execute the command.
     try:
         retcode = subprocess.call(command, shell=True)
         if retcode < 0:
-            logger.error("shellexec.filter() - Command '{0}' was terminated by a signal. Return code: {1}.".format(
+            logger.error("shellexec.shellExec() - Command '{0}' was terminated by a signal. Return code: {1}.".format(
                     command, -retcode))
         elif retcode != 0:
-            logger.error("shellexec.filter() - Command '{0}' was terminated by a signal. Return code: {1}.".format(
+            logger.error("shellexec.shellExec() - Command '{0}' resulted in a non-zero return code. Return code: {1}.".format(
                     command, retcode))
     except OSError:
-            logger.exception("shellexec.filter() - Command '{0}' failed with an exception.".format(command))
+            logger.exception("shellexec.shellExec() - Command '{0}' failed with an exception.".format(command))
     
     # Done!
     return retcode == 0
+
+
+def filterFiles(inputs, outputs, options, logger):
+    """SQS filter files function that executes a shell command.
+    
+    NOTE: Currently supports no options."""
+    
+    logger.debug("shellexec.filterFiles().")
+    
+    # Setup
+    result = 0
+    outExt = None
+    if "out-ext" in options:
+        outExt = options["out-ext"]
+
+    # Process input files.
+    for pathIn in inputs:
+        # Output name will be same as input name, optionally with a different file extension.
+        nameOut = os.path.basename(pathIn)
+        if outExt:
+            nameOut = forceFileExtension(nameOut, outExt)
+            
+        # Filter it.
+        if shellExec(pathIn, outputs(nameOut), options, logger):
+            result = result + 1
+            
+    # Done.
+    return result
+    

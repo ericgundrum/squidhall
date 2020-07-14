@@ -21,9 +21,121 @@ import json
 from common import getFilterModule, ModuleConfiguration, ResourceFlavor, ResourceAction, ScratchDirManager, lookAheadIterator
 from sqslogger import logger
 
+
+def filterFilesFunctionSignature(inputs, outputs, options, logger):
+    """## Filter Functions
+    
+    Filter functions process input data delivered in the form of one or more 
+    file-like objects and write the processed data out to one or more file-like 
+    objects. How any one filter function implementation does this is entirely 
+    arbitrary, but it should be done in a stateless manner; using only the passed 
+    arguments and no other state.
+    
+    Filter functions return the number of files successfully processed. 
+    
+    ### Arguments
+    
+    * inputs: A list of zero to many input file paths
+    
+    * outputs: A function that, when called with a file name, returns 
+      a file path to write to
+    
+    * options: An options dictionary or None; options may or may not contain
+      named values the implementation knows about
+    
+    * logger: A Python logger instance for the implementation to use as needed
+    
+    ### Pseudocode 
+    
+    A 'read a file, write a file' implementation:
+    
+            prepare internal state based on options, assume success
+    
+            for every input file path provided by inputs:
+    
+                open the file
+    
+                while reading file data:
+                
+                    process data:
+                        
+                        on success:
+    
+                            request an output file path from outputs
+    
+                            open the output file
+    
+                            write processed data to output file
+    
+                            close the output file
+    
+                            increment the files processed count
+                        
+                        on failure:
+                    
+                            log error
+    
+                close the input file
+    
+            return the files processed count
+    
+    A 'read many files, write one file' implementation:
+    
+            prepare internal state based on options, assume success
+    
+            request an output file path from outputs
+
+            open the output file
+        
+            for every input file provided by inputs:    
+    
+                open the file
+    
+                while reading file data:
+                
+                    process data:
+                        
+                        on success:
+    
+                            write processed data to output file
+    
+                            increment the files processed count
+                        
+                        on failure:
+                    
+                            log error
+    
+                close the input file
+    
+            close the output file
+    
+            return the files processed count
+    
+    ### Notes
+    
+    1. Filter functions may read one file and write several or they may read multiple
+       files and write one or none; everything is up to the implementation
+    
+    2. Filter functions are free to use the same name as the input file for the output 
+       file or to rename the output file; whatever makes sense for the use case
+    
+    3. Every filter function should include a docstring with extensive documentation 
+       covering how the filter works, what the options are, and giving examples.
+    
+    4. Unless an unrecoverable error occurs, filter functions should process every 
+       input file until the generator is exhausted, unless there is a clear use 
+       case for doing otherwise
+    
+    5. If an error or exception occurs the filter function should log detailed 
+       information about the problem and then continue processing the next input file
+    """
+    pass
+
+
 def processFilter(sourcePath, destPath, filter):
     # TODO: Implement.
     pass
+    
 
 def processFilterChain(sourcePath, destPath, scratchDirMgr, filters):
     """Accepts a source path, and destination path, a scratch directory manager object,

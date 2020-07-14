@@ -4,23 +4,22 @@
 SQS is the command runner for the SquidSpace.js tooling. The command format 
 is 'sqs.py command <what> [options ...]'. The commands are:
 
-* generate - Generates a Javascript module files from module.json input files
-* build    - Generates code for all module.json files specified with a 
-             build.json file
-* package  - Performs a build and creates a distributable package specified 
-             with a build.json file
+* generate - Generates Javascript module files from module.json input files
+* build    - Executes a series of build commands in build.json input files
+* package  - Performs a build and then executes a series of package commands in 
+             build.json input files
 * filter   - Based on the filter profile and the configuration, runs input files
-             through zero to many pre-built filtering functions and writes the 
-             output to the output directory with the same file names
+             through zero to many pre-built filtering functions (a filter chain) 
+             writing the output to the output directory with the same file names
 * pipeline - Processes the asset pipeline specified by module.json input files,
              including resource filtering and caching
 * scaffold - Creates a new SquidSpace.js project directory with default content
 * serve    - Starts a test web server, 'ctrl-c' to exit
 * explain  - Explains a command in more detail
 
-In most cases a separate 'config' module.json file provides the default configuraton
+In most cases a separate 'config' module.json file provides the default configuration
 used by the command. When the command is processing a file containing it's own 
-configuraton, the local configuraton can override any values in the default 
+configuration, the local configuration can override any values  in the default 
 configuration. If a default configuration is not specified and the working directory 
 contains a file named 'world.module.json', that file is automatically used for the 
 default configuration. If you do not want to use the world file for the default,
@@ -45,10 +44,10 @@ Usage:
   sqs.py --version
 
 Options:
-  -h --help       Show this help message
-  --version       Show version
-  --config <cfg>  Module file to use for default configuration
-  --dir <path>    Working directory to use instead of current directory
+  -h --help      Show this help message
+  --version      Show version
+  --config <cfg> Module file to use for default configuration
+  --dir <path>   Working directory to use instead of current directory
 
 """
 
@@ -68,9 +67,10 @@ from generatecommand import runGenerate, __doc__ as generateDoc
 from buildcommand import runBuild, __doc__ as buildDoc
 from filtercommand import runFilter, __doc__ as filterDoc
 from pipelinecommand import runPipeline, __doc__ as pipelineDoc
-from servecommand import runServer, __doc__ as serveDoc
+from servecommand import runServe, __doc__ as serveDoc
 
-ver = "sqs v0.0"
+
+ver = "sqs v0.5"
 
 
 if __name__ == '__main__':
@@ -125,7 +125,7 @@ if __name__ == '__main__':
     elif arguments['scaffold']:
         logger.warning("Command 'scaffold' not yet implemented.")
     elif arguments['serve']:
-        runServer()
+        runServe()
     elif arguments['explain']:
         cmd = arguments['<command>'].lower()
         if cmd == 'generate':
