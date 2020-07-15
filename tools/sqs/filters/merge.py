@@ -1,6 +1,6 @@
-"""## shellexec.py – SQS Filter Module that executes a shell command
+"""## filters.merge.py – SQS Filter Module that merges files
 
-Merges multiple 
+Merges multiple input files into a single output file.
 
 Besides the standard filterFile() functions there is one API function:
 
@@ -23,7 +23,6 @@ assets, are copyright their respective authors."""
 
 
 import os
-import subprocess
 from common import forceFileExtension
 
 

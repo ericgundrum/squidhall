@@ -17,7 +17,9 @@ import os
 import json
 
 
-from common import ModuleConfiguration, ResourceFlavor, ResourceAction, ScratchDirManager, lookAheadIterator
+from common import ModuleConfiguration
+from filtercommand import runFilter
+from generatecommand import runGenerate
 from sqslogger import logger
 
 def processBuildData(defaultConfig, buildData):
@@ -44,7 +46,7 @@ def processBuildString(defaultConfig, buildDataString):
     try:
         buildData = json.loads(buildDataString)
     except json.JSONDecodeError:
-        logger.exception("generate.processBuildString() - Could not load Build string.")
+        logger.exception("buildcommand.processBuildString() - Could not load Build string.")
         return
         
     if not buildData is None:    
@@ -60,7 +62,7 @@ def processBuildFile(defaultConfig, buildFile):
     try:
         moduleData = json.load(buildFile)
     except json.JSONDecodeError:
-        logger.exception("generate.processBuildFile() - Error loading Build File.")
+        logger.exception("buildcommand.processBuildFile() - Error loading Build File.")
         return
         
     if not buildData is None:    
@@ -79,9 +81,9 @@ def runBuild(defaultConfig, buildFileNames):
     for buildFileName in buildFileNames:
         if not buildFileName is None and not buildFileName == "":
             # Use passed Module File name.
-            logger.debug("generate.runBuild() - Build File: " + buildFileName)
+            logger.debug("buildcommand.runBuild() - Build File: " + buildFileName)
             try:
-                buildFile = open(buildFileName)
+                processBuildFile(buildFileName)
             except:
                 logger.exception("generate.runBuild() - Error reading Build File.")
         else:
@@ -89,7 +91,7 @@ def runBuild(defaultConfig, buildFileNames):
             #       iterating a possibly empty list.
             # TODO: Copy STDIN to scratch directory before starting?
             # Use stdin if no file name.
-            logger.info("generate.runBuild() - Reading module data from STDIN.")
+            logger.info("buildcommand.runBuild() - Reading module data from STDIN.")
             #logger.error("generate.runBuild() - Currently STDIN not supported.")
             buildFile = sys.stdin
 

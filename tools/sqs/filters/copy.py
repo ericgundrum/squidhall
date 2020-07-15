@@ -1,1 +1,0 @@
-# TODO: Determine if we need a 'copy' filter, since it doesn't actually filter anything.

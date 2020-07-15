@@ -1,4 +1,4 @@
-"""## shellexec.py – SQS Filter Module that executes a shell command
+"""## filters.shellexec.py – SQS Filter Module that executes a shell command
 
 Passes a file to a shell command for filtering. The filter options must contain a value
 named 'command-template' consisting of a template string with the command to execute. 
