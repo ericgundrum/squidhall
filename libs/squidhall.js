@@ -72,6 +72,54 @@ document.addEventListener("DOMContentLoaded", (event) =>{
 	);
 });
 
+var aCtx;
+var aSource;
+var aBuff;
+var aGainNode;
+var aVolume = 0.075;
+
+var audioCkbox = function(el) {
+	if (AudioContext) {
+		if (el.checked) {
+			aSource.start(0); // start our bufferSource
+		} 
+		else {
+			aSource.stop(0); // this destroys the buffer source
+			aSource = aCtx.createBufferSource(); // so we need to create a new one
+			aSource.buffer = aBuff;
+			aSource.loop = true;
+			//aSource.connect(aCtx.destination);
+			aGainNode = aCtx.createGain();
+		    aGainNode.gain.value = aVolume;
+		    aSource.connect(aGainNode);
+		    aGainNode.connect(aCtx.destination);
+	  	}
+	}
+}
+
+var playSound = function() {
+	// Play audio loop. (No audio if browser doesn't support AudioContext.)
+	if (AudioContext) {
+		aCtx = new AudioContext();
+		aSource = aCtx.createBufferSource();
+		fetch('audio/crowdambiance.wav') 
+		  .then(resp => resp.arrayBuffer())
+		  .then(aBuff => aCtx.decodeAudioData(aBuff))
+		  .then(decoded => {
+		    aSource.buffer = aBuff = decoded;
+		    aSource.loop = true;
+		    //aSource.connect(aCtx.destination);
+			aGainNode = aCtx.createGain();
+		    aGainNode.gain.value = aVolume;
+		    aSource.connect(aGainNode);
+		    aGainNode.connect(aCtx.destination);
+			audioCkbox(document.getElementById('mAudioCB'))
+		});
+	}
+	else {
+		console.log("No AudioContext available. Sound will not play.")
+	}
+}
 
 //
 // Squid Hall mod.
@@ -752,7 +800,7 @@ var SquidHall = function() {
 			}, scene);
 		
 			// Put an invisible box around the floor to keep you in.
-			origin = SQUIDSPACE.makePointXYX(32, 50, 35)
+			origin = SQUIDSPACE.makePointXYZ(32, 50, 35)
 			boundsBox = BABYLON.MeshBuilder.CreateBox('_bndsbx_', 
 				{width: 70, depth: 70, height: 120, sideOrientation: BABYLON.Mesh.BACKSIDE})
 			boundsBox.position = new BABYLON.Vector3(origin[0], origin[1], origin[2])
@@ -839,6 +887,10 @@ var SquidHall = function() {
 					window.addEventListener("resize", function() {
 						engine.resize();
 					});
+					
+					// Play crowd sound.
+					playSound();
+					
 				}
 				else {
 					console.log("Failed to load world space.")

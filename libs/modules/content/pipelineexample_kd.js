@@ -6,24 +6,24 @@ var pipelineexample_kd = (function(){
                "options": {
                },
                "data": {
-                  "file-name": "kathryn-duval-1.png",
-                  "dir": "textures/content/"
+                  "dir": "textures/content/",
+                  "file-name": "kathryn-duval-1.png"
                }
          },
          "kathryn-duval-2": {
                "options": {
                },
                "data": {
-                  "file-name": "kathryn-duval-2.png",
-                  "dir": "textures/content/"
+                  "dir": "textures/content/",
+                  "file-name": "kathryn-duval-2.png"
                }
          },
          "kathryn-duval-3": {
                "options": {
                },
                "data": {
-                  "file-name": "kathryn-duval-3.png",
-                  "dir": "textures/content/"
+                  "dir": "textures/content/",
+                  "file-name": "kathryn-duval-3.png"
                }
          },},
       materials: {},
@@ -37,19 +37,9 @@ var pipelineexample_kd = (function(){
             },
             "objectPlacements": [
                {
-                  "object": "artshow.artpnl-1-ns-1-0",
                   "data": [
                      {
                         "place-name": "kathryn-duval",
-                        "options": {
-                           "moreInfoData": {
-                              "link": "https://squid.fanac.com/kathryn-duval/",
-                              "title": "Kathryn Duval",
-                              "link-text": "Kathryn Duval's Page",
-                              "text": "Kathryn is located in Hilo Hawaii. She’s interested in alternate realities of nature."
-                           },
-                           "placer": "ArtPlacer"
-                        },
                         "data": {
                            "textures": [
                               {
@@ -57,52 +47,54 @@ var pipelineexample_kd = (function(){
                                     0,
                                     0
                                  ],
-                                 "texture": "kathryn-duval-1",
                                  "size": [
                                     0.6,
                                     0.45
-                                 ]
+                                 ],
+                                 "texture": "kathryn-duval-1"
                               },
                               {
                                  "position": [
                                     0.45,
                                     0.5
                                  ],
-                                 "texture": "kathryn-duval-2",
                                  "size": [
                                     0.6,
                                     0.45
-                                 ]
+                                 ],
+                                 "texture": "kathryn-duval-2"
                               },
                               {
                                  "position": [
                                     0,
                                     1
                                  ],
-                                 "texture": "kathryn-duval-3",
                                  "size": [
                                     0.6,
                                     0.45
-                                 ]
+                                 ],
+                                 "texture": "kathryn-duval-3"
                               }
                            ],
                            "place-on": "front"
+                        },
+                        "options": {
+                           "moreInfoData": {
+                              "title": "Kathryn Duval",
+                              "text": "Kathryn is located in Hilo Hawaii. She’s interested in alternate realities of nature.",
+                              "link": "https://squid.fanac.com/kathryn-duval/",
+                              "link-text": "Kathryn Duval's Page"
+                           },
+                           "placer": "ArtPlacer"
                         }
                      }
-                  ]
+                  ],
+                  "object": "artshow.artpnl-1-ns-1-0"
                },
                {
-                  "object": "artshow.ArtShowDesk-1-0",
                   "data": [
                      {
                         "place-name": "table-test-3",
-                        "options": {
-                           "moreInfoData": {
-                              "title": "Table Test 3",
-                              "text": "This is just a test popup."
-                           },
-                           "placer": "TablePlacer"
-                        },
                         "data": {
                            "textures": [
                               {
@@ -110,39 +102,47 @@ var pipelineexample_kd = (function(){
                                     0.4,
                                     0
                                  ],
-                                 "texture": "kathryn-duval-2",
                                  "size": [
                                     0.3,
                                     0.4
-                                 ]
+                                 ],
+                                 "texture": "kathryn-duval-2"
                               },
                               {
                                  "position": [
                                     0.9,
                                     0.3
                                  ],
-                                 "texture": "kathryn-duval-3",
                                  "size": [
                                     0.3,
                                     0.225
-                                 ]
+                                 ],
+                                 "texture": "kathryn-duval-3"
                               },
                               {
                                  "position": [
                                     1.3,
                                     0.15
                                  ],
-                                 "texture": "kathryn-duval-1",
                                  "size": [
                                     0.3,
                                     0.225
-                                 ]
+                                 ],
+                                 "texture": "kathryn-duval-1"
                               }
                            ],
                            "origin-corner": "nw"
+                        },
+                        "options": {
+                           "moreInfoData": {
+                              "title": "Table Test 3",
+                              "text": "This is just a test popup."
+                           },
+                           "placer": "TablePlacer"
                         }
                      }
-                  ]
+                  ],
+                  "object": "artshow.ArtShowDesk-1-0"
                },
             ]
          },
