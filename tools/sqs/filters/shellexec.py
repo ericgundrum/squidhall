@@ -56,10 +56,10 @@ from common import forceFileExtension
 
 def shellExec(pathIn, pathOut, options, logger):
     """Executes a shell command and returns True if the command can be executed and 
-    results in a return code of zero, otherwise returns false. The options is a dictionary 
-    which must contain the named value 'command-template' and may optionally contain the 
-    named value 'command-arguments'. The command template may contain template values for 
-    pathIn, pathOut and any named values in the 'command-arguments' dictionary."""
+    results in a return code of zero, otherwise returns false. The options argument is a  
+    dictionary which must contain the named value 'command-template' and may optionally 
+    contain the named value 'command-arguments'. The command template may contain template 
+    values for pathIn, pathOut and any named values in the 'command-arguments' dictionary."""
     logger.debug("shellexec.shellExec() - Processing pathIn: {pathIn} pathOut: {pathOut} options: %{options}.".format(pathIn=pathIn, pathOut=pathOut, options=options))
     
     # Create the command to execute.
@@ -94,9 +94,10 @@ def shellExec(pathIn, pathOut, options, logger):
 
 
 def filterFiles(inputs, outputs, options, logger):
-    """SQS filter files function that executes a shell command.
-    
-    NOTE: Currently supports no options."""
+    """SQS filter files function that executes a shell command. The options argument is a  
+    dictionary which must contain the named value 'command-template' and may optionally 
+    contain the named value 'command-arguments'. The command template may contain template 
+    values for pathIn, pathOut and any named values in the 'command-arguments' dictionary."""
     
     logger.debug("shellexec.filterFiles().")
     

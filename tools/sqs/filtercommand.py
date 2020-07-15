@@ -18,7 +18,8 @@ import os
 import json
 
 
-from common import getFilterModule, ModuleConfiguration, ResourceFlavor, ResourceAction, ScratchDirManager, lookAheadIterator
+from common import ModuleConfiguration, ScratchDirManager, makeOutputFilesFuncForDir, copyFileToDir, lookAheadIterator
+from filterhelpers import getFilterModule
 from sqslogger import logger
 
 
@@ -132,118 +133,117 @@ def filterFilesFunctionSignature(inputs, outputs, options, logger):
     pass
 
 
-def processFilter(sourcePath, destPath, filter):
-    # TODO: Implement.
-    pass
+def processFilterChain(inFiles, outDir, scratchDirMgr, filterChain):
+    """Accepts a list of input file paths, an output directory path, a scratch directory 
+    manager object, and a list of filters. Executes each filter in turn, using the scratch 
+    directory for intermediate files, with the result that all file in the input files list 
+    are filtered and written out the output directory. Returns True on success, 
+    otherwise returns False.
     
-
-def processFilterChain(sourcePath, destPath, scratchDirMgr, filters):
-    """Accepts a source path, and destination path, a scratch directory manager object,
-    and a list of filters. Executes each filter in turn, using the scratch directory for
-    intermediate files, with the result that the file referred to by the source path 
-    is filtered and written out the destination path. Returns True on success, otherwise
-    returns False.
+    NOTE: If no filters are supplied, the input files are simply copied to the output directory.
     
-    NOTE: If no filters are supplied, the source path is simply copied to the destination 
-    path.
+    NOTE: Unless an unrecoverable error occurs, all files and filters will be processed as best
+    as possible. If a recoverable problem occurs errors and warnings will be logged and the 
+    function will return False.
     
-    NOTE: Adds temporary files to the scratch directory without clearing them. Calling code
+    NOTE: May add temporary files to the scratch directory without clearing them. Calling code
     is responsible for managing the scratch directory."""
-    
     # Check args.
     # TODO: Type checking. Better error handling.
-    if not sourcePath:
-        logger.error("filterfile.processFilter() - Source path required.")
+    if not inFiles:
+        logger.error("filtercommand.processFilterChain() - Input file list required.")
         return False
-    if not destPath:
-        logger.error("filterfile.processFilter() - Destination path required.")
+    if not outDir:
+        logger.error("filtercommand.processFilterChain() - Output Directory required.")
         return False
     if not scratchDirMgr:
-        logger.error("filterfile.processFilter() - Scratch Directory Manager required.")
+        logger.error("filtercommand.processFilterChain() - Scratch Directory Manager required.")
         return False
-    
-    # Do we have filters?
-    if filters is None:
-        # No filters? Simply copy the file and get out, unless the source and destination 
-        # paths are the same.
-        if os.path.realpath(sourcePath) != os.path.realpath(destPath):
-            sourceFile = getSourceFile(sourcePath)
-            destFile = getDestFile(destPath)
-            return copySourceToDestAndClose(sourceFile, destFile)
-        # They were the same file.
-        return True
-    
-    # initialize the filter file paths.
-    inFile = None
-    outFile = sourcePath # This makes the source path the in file for the first iteration, see below.
-    
-    for fd, isLastFD in lookAheadIterator(filters):
-        # Get the named filter module.
-        # logger.debug("filterfile.filterFile() - Lookahead: " + str(isLastFD) + " / " + str(fd))
-        # TODO: Support path cardinality
-        filterExt, filterFunc, filterDoc = getFilterModule(fd.get("filter"))
-        if not filterExt or not filterFunc:
-            logger.error("filterfile.processFilter() - Could not load filter module for '{0}'.".format(fd.get("filter")))
-            return False
         
-        # Get valid file extensions for the filter module.
-        inExt, outExt = filterExt(fd.get("options"), fd.get("data"))
+    # Setup.
+    result = True # Assume success
+    
+    # Do we have a filter chain?
+    if filterChain is None:
+        # No filters? Simply copy the files and get out.
+        for filePath in inFiles:
+            if not copyFileToDir(filePath, outDir):
+                logger.error("filtercommand.processFilterChain() - Could not copy '{0}' to '{1}'.".format(filePath, outDir))
+                result = False
+    else:
+        # Set up the scratch work areas.
+        # NOTE: first time through the inFiles list is the passed in argument. Afterwards
+        #       it is from the outdir.
+        sdIn = scratchDirMgr.makeSubScratchDirManager("sd1")
+        sdOut = scratchDirMgr.makeSubScratchDirManager("sd2")
         
-        # Set up filter file paths.
-        inFile = outFile # Chain out to in.
-        # TODO: Verify inFile has the same extension as inExt.
-        # TODO: Determine how to handle the possibility of mulitple valid extensions or any extension.
-        if isLastFD:
-            outFile = destPath # For the last one, we want the output going to the destination path.
-        else:
-            outFile = scratchDirMgr.getTempFilePath(outExt)  
+        # Process the filter chain.
+        for fd, isLastFD in lookAheadIterator(filterChain):
+            #logger.debug("filtercommand.filterFile() - Lookahead: " + str(isLastFD) + " / " + str(fd))
+            # Get the named filter module.
+            filterFunc, filterDoc = getFilterModule(fd.get("filter"))
+            if not filterFunc:
+                logger.error("filtercommand.processFilterChain() - Could not load filter module for '{0}'.".format(fd.get("filter")))
+                # We cannot continue without a valid filter.
+                result = False
+                break
+            
+            # For the last iteration, we want the output going to the output directory.
+            outputs = sdOut.makeOutputFilesFunc()
+            if isLastFD:
+                outputs = makeOutputFilesFuncForDir(outDir) 
+            
+            # Execute the filter function
+            cnt = filterFunc(inFiles, outputs, fd.get("options"), logger)
+            if cnt < 1:
+                logger.warning("filtercommand.processFilterChain() - filter module '{0}' processed zero files.".format(fd.get("filter")))
+                result = False
+            elif cnt != len(inFiles):
+                logger.warning("filtercommand.processFilterChain() - filter module '{0}' processed {1} files out of {2}.".format(fd.get("filter"), cnt, len(inFiles)))
+                result = False
+            
+            # Get the file list from the out for the next iteration.
+            inFiles = sdOut.listFiles()
+            
+            # Swap the ins and outs.
+            sdt = sdIn 
+            sdIn = sdOut 
+            sdOut = sdt
+            
+            # Clear the new out
+            sdOut.clear()
         
-        # Execute the filter function
-        result = filterFunc(inFile, outFile, fd.get("options"), fd.get("data"))
-        if not result:
-            logger.error("filterfile.processFilter() - filter module '{0}' failed, aborting.".format(fd.get("filter")))
-            return False
+    return result
 
-    # Success!
-    return True
-    
 
-def runFilter(defaultConfig, filterProfile, outDir, fileNames):
+def runFilter(defaultConfig, filterProfile, inFiles, outDir):
     """SQS filter command."""
     # Assume Failure.
     fileToFilter = None
     
     # We expect to process a list of file names.
-    if not isinstance(fileNames, list):
-        fileNames = [fileNames] # Force list.
+    if not isinstance(inFiles, list):
+        inFiles = [inFiles] # Force list.
         
     # Create the module processing configuration.
     modConfig = ModuleConfiguration(defaultConfig, {})
         
     # Create scratchDirMgr.
-    scratchDirMgr = modConfig.getScratchDirManager()
-        
-    for sourcePath in fileNames:
-        if not sourcePath is None and not sourcePath == "":
-            # Use passed file name.
-            logger.info("filterfile.runFilter() - Filtering '{0}'.".format(sourcePath))
-            
-            # Create the destination path.
-            sourceFileName = os.path.basename(sourcePath)
-            destPath = os.path.join(outDir, sourceFileName)
-            
-            # Process the filters.
-            if not processFilterChain(sourcePath, destPath, scratchDirMgr, modConfig.getFilters(None, filterProfile)):
-                logger.error("filterfile.runFilter() - Unable to filter '{0}'.".format(sourcePath))
-        else:
-            # Use stdin if no file name.
-            # TODO: Fix here and elsewhere - this won't be reached because we are 
-            #       iterating a possibly empty list.
-            # TODO: Copy STDIN to scratch directory before starting
-            #logger.info("filterfile.runFilter() - Reading file data from STDIN.")
-            logger.error("filterfile.runFilter() - Currently STDIN not supported.")
-            source = sys.stdin
+    sd = modConfig.getScratchDirManager()
+    
+    # Process the filters.
+    if not processFilterChain(inFiles, outDir, sd, modConfig.getFilters(None, filterProfile)):
+        logger.warning("filtercommand.runFilter() - Unable to completely process all files and filters.")
     
     # Cleanup.
     # TODO: If anything above fails with an exception the scratch dir is not cleaned up.
-    scratchDirMgr.remove()
+    sd.remove()
+    
+    # TODO: Support STDIN if inFiles is empty. See junk code below.
+    # Use stdin if no file name.
+    # TODO: Fix here and elsewhere - this won't be reached because we are 
+    #       iterating a possibly empty list.
+    # TODO: Copy STDIN to scratch directory before starting
+    #logger.info("filtercommand.runFilter() - Reading file data from STDIN.")
+    #logger.error("filtercommand.runFilter() - Currently STDIN not supported.")
+    #source = sys.stdin

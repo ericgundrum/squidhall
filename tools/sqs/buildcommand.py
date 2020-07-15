@@ -17,7 +17,7 @@ import os
 import json
 
 
-from common import getFilterModule, ModuleConfiguration, ResourceFlavor, ResourceAction, ScratchDirManager, lookAheadIterator
+from common import ModuleConfiguration, ResourceFlavor, ResourceAction, ScratchDirManager, lookAheadIterator
 from sqslogger import logger
 
 def processBuildData(defaultConfig, buildData):

@@ -67,7 +67,7 @@ from generatecommand import runGenerate, __doc__ as generateDoc
 from buildcommand import runBuild, __doc__ as buildDoc
 from filtercommand import runFilter, __doc__ as filterDoc
 from pipelinecommand import runPipeline, __doc__ as pipelineDoc
-from servecommand import runServe, __doc__ as serveDoc
+from servecommand import runServer, __doc__ as serveDoc
 
 
 ver = "sqs v0.5"
@@ -119,13 +119,13 @@ if __name__ == '__main__':
         logger.warning("Command 'package' not yet implemented.")
     elif arguments['filter']:
         runFilter(defaultConfig, arguments['<resource_type>'], arguments['<filter_profile>'],
-                  arguments['<output_directory>'], arguments['<file>'])
+                   arguments['<file>'], arguments['<output_directory>'])
     elif arguments['pipeline']:
         runPipeline(defaultConfig, arguments['<file>'])
     elif arguments['scaffold']:
         logger.warning("Command 'scaffold' not yet implemented.")
     elif arguments['serve']:
-        runServe()
+        runServer()
     elif arguments['explain']:
         cmd = arguments['<command>'].lower()
         if cmd == 'generate':

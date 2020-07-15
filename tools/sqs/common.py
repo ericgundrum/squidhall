@@ -170,6 +170,42 @@ class ScratchDirManager(object):
         # TODO: This is kind of a brute-force method. Might want to revisit it.
         self.create()
     
+    def listFiles(self, subDirName = None):
+        """Returns a list of files paths in the scratch directory. May return an empty 
+        list if the directory could not be listed. You can optionally specify a sub 
+        directory name of the scratch directory to list."""
+        path = self.path
+        if (subDirName): path = os.path.join(path, subDirName)
+        try: 
+            result = [os.path.join(path, f) for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
+        except:
+            pass
+        
+        return result;
+    
+    def listSubdirs(self):
+        """Returns a list of subdirectories in the scratch directory. May return an empty 
+        list if the directory could not be listed."""
+        result = []
+        try: 
+            result = [os.path.join(path, f) for f in os.listdir(self.path) if not os.path.isfile(os.path.join(self.path, f))]
+        except:
+            pass
+        
+        return result;
+    
+    def makeSubDir(self, dirName):
+        """Creates a subdirectory using the passed directory name and returns
+        the path."""
+        path = os.path.join(self.path, dirName)
+        os.makedirs(path)
+        return path
+    
+    def makeSubScratchDirManager(self, dirName):
+        """Returns a new ScratchDirManager instance using the passed directory
+        name as a subdirectory of the current ScratchDirManager instance."""
+        return ScratchDirManager(os.path.join(self.path, dirName))
+    
     def makeFilePath(self, fileName):
         """Returns a file path using the file name for use by as a temp file 
         in the scratch directory. Does not create the file. Does not guarantee no
@@ -184,7 +220,7 @@ class ScratchDirManager(object):
         NOTE: The file name will have 'temp_' prepended."""
         return os.path.join(self.path, "temp_" + fileName)
     
-    def getTempFilePath(self, fileExtension):
+    def makeTempFilePathForExt(self, fileExtension):
         """Returns a file path using the file extension for use by as a temp file 
         in the scratch directory. Does not create the file. Does not guarantee no
         collisions if two processes are using the same scratch directory."""
@@ -211,7 +247,7 @@ def makeOutputFilesFuncForDir(dirPath):
     
     return outputFilesFunc
 
-
+    
 def forceFileExtension(filePath, exToUse):
     """Forces the passed file path to have the passed extension."""
     if not exToUse.startswith("."): exToUse = "." + exToUse
@@ -303,6 +339,10 @@ def copySourceToDestAndClose(sourceFile, destFile):
             
     # Done!
     return result
+
+def copyFileToDir(inFilePath, outDirPath):
+    return copySourceToDestAndClose(getSourceFile(inFilePath), 
+            getDestFile(os.path.join(outDirPath, os.path.basename(inFilePath))))
 
 
 def lookAheadIterator(iterable):

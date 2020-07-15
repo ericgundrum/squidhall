@@ -26,7 +26,7 @@ fileData4 = "This is temporary test text file 4."
 combinedData = fileData1 + "\n\n" + fileData2 + "\n\n" + fileData3 + "\n\n" + fileData4 + "\n\n"
 
 def makeTestFile(sd, fileData):
-    fp = sd.getTempFilePath(".txt")
+    fp = sd.makeTempFilePathForExt(".txt")
     file = open(fp, "w") 
     file.write(fileData) 
     file.close()
@@ -45,7 +45,7 @@ class TestFilterShellExec(unittest.TestCase):
         filterFunc = filterMod[0]
         
         # Create scratch dir and add files.
-        sd = ScratchDirManager("tools/sqs_test/scratch")
+        sd = ScratchDirManager("tools/tools/sqs_test/scr/scratch")
         outputs = sd.makeOutputFilesFunc()
         fp1 = makeTestFile(sd, fileData1)
         fp2 = makeTestFile(sd, fileData2)

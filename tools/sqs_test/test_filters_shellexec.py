@@ -33,8 +33,8 @@ class TestFilterShellExec(unittest.TestCase):
         filterFunc = filterMod[0]
         
         # Create scratch dir and add file.
-        sd = ScratchDirManager("tools/sqs_test/scratch")
-        fp1 = sd.getTempFilePath(".txt")
+        sd = ScratchDirManager("tools/sqs_test/scr/scratch")
+        fp1 = sd.makeTempFilePathForExt(".txt")
         fp2 = forceFileExtension(fp1, ".md")
         outputs = sd.makeOutputFilesFunc()
         file = open(fp1, "w") 
@@ -62,7 +62,7 @@ class TestFilterShellExec(unittest.TestCase):
         
         # Apply filter to non-existent files.
         fp1 = "tools/sqs_test/scratch/test.text"
-        outputs = makeOutputFilesFuncForDir("tools/sqs_test/scratch")
+        outputs = makeOutputFilesFuncForDir("tools/sqs_test/scr/scratch")
         self.assertEqual(filterFunc([fp1], outputs, copyFilterOptions, logger), 0)
 
     # TODO: More tests. Test 'command-arguments' option.
