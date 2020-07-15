@@ -20,6 +20,16 @@
 	                    "command-template": "magick {pathIn} -colorspace RGB -resize 300 {pathOut}"
 	                }
 				}
+			],
+			"MergeContentJS": [
+				{
+					"doc": "Merges all content Javascript Files.",
+	                "filter": "merge",
+	                "options": {
+						"out-name": "content.js",
+						"file-separator": "\n\n/*=============================*/\n\n"
+	                }
+				}
 			]
 		}
 	},
