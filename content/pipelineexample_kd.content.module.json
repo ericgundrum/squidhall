@@ -120,6 +120,7 @@
 									},
 									{
 										"texture": "kathryn-duval-3",
+										"tilted": true,
 										"size": [0.3, 0.225],
 										"position": [0.9, 0.3]
 									},

@@ -142,6 +142,7 @@
 									{
 										"texture": "Ai-Weiwei-2",
 										"doc": "Size and position must fit with table size of X=0.9 and Y=0.375.",
+										"tilted": true,
 										"size": [0.3, 0.4],
 										"position": [0.4, 0]
 									},
@@ -175,6 +176,7 @@
 								"textures": [
 									{
 										"texture": "Ai-Weiwei-1",
+										"tilted": true,
 										"size": [0.3, 0.225],
 										"position": [0, 0]
 									},

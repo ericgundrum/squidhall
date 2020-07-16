@@ -606,7 +606,7 @@ var SquidHall = function() {
 		
 			count = 0;
 			for (tx of dt) {
-				// Get texture data dsvalues.
+				// Get texture data values.
 				txName = tx["texture"];
 				size = tx["size"];
 				position = tx["position"];
@@ -643,7 +643,7 @@ var SquidHall = function() {
 			
 				// Place on target.
 				let nm = areaName + "." + txName + "-" + count++;
-				makeArtFrame(nm, txName, size, posV, tgtRot, ed);
+				frm = makeArtFrame(nm, txName, size, posV, tgtRot, ed);
 			}
 		
 			return true;
@@ -724,7 +724,13 @@ var SquidHall = function() {
 				
 				// Place on target.
 				let nm = areaName + "." + txName + "-" + count++;
-				makeArtFrame(nm, txName, size, posV, tgtRot, ed);
+				frm = makeArtFrame(nm, txName, size, posV, tgtRot, ed);
+				
+				// Is it tilted?
+				if (tx["tilted"]) {
+					frm.rotation.x = 0.3;
+					frm.position.y = frm.position.y + (size[0] / 2);
+				}
 			}
 			
 			return true;
@@ -885,7 +891,8 @@ var SquidHall = function() {
 				p2.material = blackMat;
 				avatarBase.addChild(b2);
 				avatarBase.addChild(e2);
-				avatarBase.addChild(p2);				
+				avatarBase.addChild(p2);		
+				avatarBase.position = new BABYLON.Vector3(0, -5, 0);		
 			}
 			
 			// Clone.
