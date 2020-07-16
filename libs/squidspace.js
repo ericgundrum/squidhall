@@ -97,9 +97,7 @@ var SQUIDSPACE = function() {
 		},
 		"UserCamera": function(objName, options, data, scene) {
 			// TODO: Size should be 3 elements.
-			let sz = SQUIDSPACE.getValIfKeyInDict("size", data, [1, 1]);
 			let pos = SQUIDSPACE.getValIfKeyInDict("position", data, [0, 0, 0]);
-			let mn = SQUIDSPACE.getValIfKeyInDict("material", data, "");
 			let targetPos = SQUIDSPACE.getValIfKeyInDict("target-position", data, [20, 1.6, 20]);
 			return addCamera(pos[0], pos[1], pos[2], 
 							targetPos[0], targetPos[1], targetPos[2], scene);
@@ -335,6 +333,7 @@ var SQUIDSPACE = function() {
 	}
 	
 	var addCamera = function(x, y, z, targetX, targetY, targetZ, scene) {
+		//SQUIDSPACE.logDebug(`addCamera() - Pos: [${x}, ${y}, ${z}] Target: [${targetX}, ${targetY}, ${targetZ}]`);
 
 		// Add a camera to the scene and attach it to the canvas
 		// TODO: Specify camera in world file.
@@ -343,12 +342,14 @@ var SQUIDSPACE = function() {
 		// HACK: The 'y + 0.4' forces the starting position to be correct so the camera 
 		//       does not 'bob up' when you start to move. 
 		// TODO: Calculate height instead of using a constant.
-		let camera = new BABYLON.UniversalCamera("usercamera", 
-												SQUIDSPACE.makePointVector(x, y + 0.4, x), scene);
+		let camera = new BABYLON.UniversalCamera("usercamera", SQUIDSPACE.makePointVector(x, y, z), scene);
 		//var camera = new BABYLON.FreeCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
 		//var camera = new BABYLON.FlyCamera("default camera", new BABYLON.Vector3(0, 5, -10), scene);
 		camera.setTarget(new SQUIDSPACE.makePointVector(targetX, targetY, targetZ));
 		camera.attachControl(canvas, true);
+
+		//SQUIDSPACE.logDebug(`addCamera() - floorOriginNW: ${floorOriginNW}`);
+		//SQUIDSPACE.logDebug(`addCamera() - Camera Pos: ${camera.position}`);
 
 		//
 		// Enable walking.
@@ -363,7 +364,7 @@ var SQUIDSPACE = function() {
 		//       up close to objects, while still allowing you to navigate around without
 		//       getting stuck between things. However, this does mean you can't get really
 		//       close to anything straight in front of you.
-		camera.ellipsoid = new BABYLON.Vector3(1, 1, 1);
+		camera.ellipsoid = new BABYLON.Vector3(0.85, 0.8, 0.85);
 
 		// WASD movement.
 	    camera.keysUp.push(87);    //W
@@ -460,7 +461,7 @@ var SQUIDSPACE = function() {
 		
 			TODO: Add origin argument, which if undefined defaults to floor origin.
 		 */
-		makePointXYX: function(x, y, z) {
+		makePointXYZ: function(x, y, z) {
 			// TODO: This function was created because I don't understand how Babylon
 			//       does local vectors and was under time pressure, so couldn't do the
 			//       research. At some point we need to use the BJS code instead, but could

@@ -12,14 +12,14 @@ var world = (function(){
                },
                "data": {
                      "material": "macadam",
+                     "size": [
+                        40,
+                        68.7
+                     ],
                      "position": [
                         0,
                         0,
                         0
-                     ],
-                     "size": [
-                        40,
-                        68.7
                      ]
                   }
          },
@@ -39,14 +39,14 @@ var world = (function(){
                },
                "data": {
                      "material": "marble",
+                     "size": [
+                        14,
+                        17
+                     ],
                      "position": [
                         3,
                         0.01,
                         0
-                     ],
-                     "size": [
-                        14,
-                        17
                      ]
                   }
          },
@@ -58,14 +58,14 @@ var world = (function(){
                },
                "data": {
                      "material": "marble",
+                     "size": [
+                        13,
+                        27.5
+                     ],
                      "position": [
                         21.6,
                         0.01,
                         6.5
-                     ],
-                     "size": [
-                        13,
-                        27.5
                      ]
                   }
          },
@@ -77,14 +77,14 @@ var world = (function(){
                },
                "data": {
                      "material": "marble",
+                     "size": [
+                        13,
+                        17.5
+                     ],
                      "position": [
                         4.5,
                         0.01,
                         39
-                     ],
-                     "size": [
-                        13,
-                        17.5
                      ]
                   }
          },
@@ -96,14 +96,14 @@ var world = (function(){
                },
                "data": {
                      "material": "marble",
+                     "size": [
+                        13,
+                        17.5
+                     ],
                      "position": [
                         22.5,
                         0.01,
                         39
-                     ],
-                     "size": [
-                        13,
-                        17.5
                      ]
                   }
          },
@@ -150,7 +150,7 @@ var world = (function(){
                },
                "data": {
                      "position": [
-                        3,
+                        36.5,
                         1.6,
                         3
                      ]
@@ -163,27 +163,27 @@ var world = (function(){
          
          "arena": {
             "options": {
+               "size": [
+                  50,
+                  30,
+                  72
+               ],
                "doc": "Area origin and size are required are not currently implemented.",
                "origin": [
                   0,
                   0,
                   0
-               ],
-               "size": [
-                  50,
-                  30,
-                  72
                ]
             },
             "objectPlacements": [
                {
                   "data": [
                      {
-                        "place-name": "beams",
                         "options": {
                            "placer": "BeamPlacer",
                            "doc": "Uses a hook placer function that knows where it wants things."
-                        }
+                        },
+                        "place-name": "beams"
                      }
                   ],
                   "object": "beam"
@@ -191,11 +191,11 @@ var world = (function(){
                {
                   "data": [
                      {
-                        "place-name": "banners",
                         "options": {
                            "placer": "BannerPlacer",
                            "doc": "Uses a hook placer function that knows where it wants things."
-                        }
+                        },
+                        "place-name": "banners"
                      }
                   ],
                   "object": "banner"
@@ -203,11 +203,11 @@ var world = (function(){
                {
                   "data": [
                      {
-                        "place-name": "curtains",
                         "options": {
                            "placer": "CurtainPlacer",
                            "doc": "Uses a hook placer function that knows where it wants things."
-                        }
+                        },
+                        "place-name": "curtains"
                      }
                   ],
                   "object": "curtain"
@@ -215,18 +215,19 @@ var world = (function(){
                {
                   "data": [
                      {
-                        "place-name": "squid",
+                        "data": {
+                           "rotation": 3.14,
+                           "position": [
+                              34.5,
+                              11,
+                              62.5
+                           ]
+                        },
                         "options": {
                            "placer": "SquidPlacer",
                            "doc": "Uses a hook placer function that requires some option values."
                         },
-                        "data": {
-                           "position": [
-                              3,
-                              11,
-                              62.5
-                           ]
-                        }
+                        "place-name": "squid"
                      }
                   ],
                   "object": "squid"
@@ -234,15 +235,15 @@ var world = (function(){
                {
                   "data": [
                      {
-                        "place-name": "lights",
                         "options": {
                            "placer": "LightPlacer",
                            "doc": "Uses a hook placer function that knows where it wants things."
-                        }
+                        },
+                        "place-name": "lights"
                      }
                   ],
-                  "doc": "TODO: this needs to refer to a light object, will require rework of the hook function.",
-                  "object": "_none_"
+                  "object": "_none_",
+                  "doc": "TODO: this needs to refer to a light object, will require rework of the hook function."
                },
             ]
          },
