@@ -250,7 +250,8 @@
 								"placer": "SquidPlacer"
 							},
 							"data": {
-								"position": [3, 11, 62.5]
+								"position": [34.5, 11, 62.5],
+								"rotation": 3.14
 							}
 						}
 					]

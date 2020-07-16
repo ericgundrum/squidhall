@@ -76,7 +76,7 @@ var aCtx;
 var aSource;
 var aBuff;
 var aGainNode;
-var aVolume = 0.075;
+var aVolume = 0.05;
 
 var audioCkbox = function(el) {
 	if (AudioContext) {
@@ -95,6 +95,9 @@ var audioCkbox = function(el) {
 		    aGainNode.connect(aCtx.destination);
 	  	}
 	}
+	else {
+		console.log("No AudioContext available. Sound will not play.")
+	}
 }
 
 var playSound = function() {
@@ -102,7 +105,7 @@ var playSound = function() {
 	if (AudioContext) {
 		aCtx = new AudioContext();
 		aSource = aCtx.createBufferSource();
-		fetch('audio/crowdambiance.wav') 
+		fetch('audio/crowdambiance.mp3') 
 		  .then(resp => resp.arrayBuffer())
 		  .then(aBuff => aCtx.decodeAudioData(aBuff))
 		  .then(decoded => {
@@ -249,13 +252,6 @@ var SquidHall = function() {
 			"rotateY":0,
 			"texture":"arena-banner-artshow.png"
 		},
-		"autograph":{
-			"x":32,
-			"y":11.7,
-			"z":-1 * 8.3 * 5 - 2,
-			"rotateY":-1 * Math.PI/2,
-			"texture":"arena-banner-autographing.png"
-		},
 		"dealers-chatham":{
 			"x":10,
 			"y":11.7,
@@ -296,8 +292,15 @@ var SquidHall = function() {
 			"y":11.7,
 			"z":-1 * 8.3 * 3 - 2,
 			"rotateY":Math.PI / 2,
-			"texture":"arena-banner-siteseleciton.png"
+			"texture":"arena-banner-siteselection.png"
 		},
+		"displays":{
+			"x":28,
+			"y":11.7,
+			"z":-1 * 4.5 * 2 - 2,
+			"rotateY": 0,
+			"texture":"arena-banner-displays.png"
+		}
 	};
 
 	// TODO: Add support for expression strings and move this to the world.json.file as 'data'.
@@ -460,7 +463,7 @@ var SquidHall = function() {
 				for (i = 0; i < 7; i++ ) {
 					let bm = curtainmesh.createInstance("curtain2-" + i);
 					bm.rotation.y = Math.PI;
-					bm.position.x = 38;
+					bm.position.x = 39;
 					bm.position.y = 0;
 					bm.position.z = -1 * i * 10 - 10;
 					bm.checkCollisions = false;
@@ -472,6 +475,15 @@ var SquidHall = function() {
 					bm.position.x = i * 10;
 					bm.position.y = 0;
 					bm.position.z = -64;
+					bm.checkCollisions = false;
+				}
+
+				for (i = 1; i < 4; i++ ) {
+					let bm = curtainmesh.createInstance("curtain4-" + i);
+					bm.rotation.y = Math.PI / 2;
+					bm.position.x = (i * 10) + 5.71;
+					bm.position.y = 0;
+					bm.position.z = 0;
 					bm.checkCollisions = false;
 				}
 			}
@@ -489,6 +501,7 @@ var SquidHall = function() {
 		        for (var i = 0; i < 1; i++ ) {
 		            var bm = squidmesh.createInstance("squid1-" + i);
 		            bm.position = squidSpace.makePointVector(data.position[0], data.position[1], data.position[2]);
+					bm.rotation.y = data.rotation;
 		            bm.checkCollisions = false;
 		        }
 		    }
@@ -809,7 +822,84 @@ var SquidHall = function() {
 		});
 	}
 	
+	var avatarBase = undefined;
+		
 	return {
+		/** Creates a user avatar with the specified user ID at the specified position with the
+		    specified rotation. Position and rotation are BABYLON.Vector3 values.
+		 */
+		makeAvatar: function(userId, position, rotation, scene) {
+			// Lazy load the base object.
+			if (!avatarBase) {
+				// Create a UV mapping that turns off the material for every face but the front one.
+				let faceUV = new Array(6);
+				faceUV[0] = new BABYLON.Vector4(0, 0, 0);
+				faceUV[2] = new BABYLON.Vector4(0, 0, 0);
+				faceUV[3] = new BABYLON.Vector4(0, 0, 0);
+				faceUV[4] = new BABYLON.Vector4(0, 0, 0);
+				faceUV[5] = new BABYLON.Vector4(0, 0, 0);
+			  
+				// Make options with the UV.
+				let options = {height: 0.36, width: 0.54, depth: 0.025, faceUV: faceUV};
+			
+				// Make the avatar object.
+				let badgeMat = new BABYLON.StandardMaterial("badge", scene);
+				let badgeTex = new BABYLON.Texture("/textures/conbadge.png", scene);
+				//badgeTex.vScale = -1;
+				badgeMat.diffuseTexture = badgeTex;
+				badgeMat.emissiveTexture = badgeTex;
+				badgeMat.backFaceCulling = false;
+				avatarBase = BABYLON.MeshBuilder.CreateBox("avatarBase", options, scene);
+				avatarBase.material = badgeMat;
+				avatarBase.checkCollisions = false;
+			
+				// Add googly eyes.
+				let whiteMat = new BABYLON.StandardMaterial("white", scene);
+				whiteMat.diffuseColor = new BABYLON.Color3(1, 1, 1);
+				//whiteMat.ambientColor = new BABYLON.Color3(1, 1, 1);
+				whiteMat.emissiveColor = new BABYLON.Color3(1, 1, 1);
+				let blackMat = new BABYLON.StandardMaterial("black", scene);
+				blackMat.diffuseColor = new BABYLON.Color3(0, 0, 0);
+				blackMat.ambientColor = new BABYLON.Color3(0, 0, 0);		
+				//blackMat.emissiveColor = new BABYLON.Color3(0, 0, 0);
+				let b1 = BABYLON.MeshBuilder.CreateDisc("eye", {radius: 0.055, tessellation: 32}, scene);	
+				b1.position = new BABYLON.Vector3(-0.075, 0.14, -0.027);
+				b1.material = blackMat;
+				let e1 = BABYLON.MeshBuilder.CreateDisc("eye", {radius: 0.05, tessellation: 32}, scene);	
+				e1.position = new BABYLON.Vector3(-0.075, 0.14, -0.03);
+				e1.material = whiteMat;
+				let p1 = BABYLON.MeshBuilder.CreateDisc("eye", {radius: 0.04, tessellation: 32}, scene);	
+				p1.position = new BABYLON.Vector3(-0.077, 0.13, -0.04);
+				p1.material = blackMat;
+				avatarBase.addChild(b1);
+				avatarBase.addChild(e1);
+				avatarBase.addChild(p1);
+				let b2 = BABYLON.MeshBuilder.CreateDisc("eye", {radius: 0.055, tessellation: 32}, scene);	
+				b2.position = new BABYLON.Vector3(0.075, 0.14, -0.027);
+				b2.material = blackMat;
+				let e2 = BABYLON.MeshBuilder.CreateDisc("eye", {radius: 0.05, tessellation: 32}, scene);	
+				e2.position = new BABYLON.Vector3(0.075, 0.14, -0.03);
+				e2.material = whiteMat;
+				let p2 = BABYLON.MeshBuilder.CreateDisc("eye", {radius: 0.04, tessellation: 32}, scene);	
+				p2.position = new BABYLON.Vector3(0.073, 0.13, -0.04);
+				p2.material = blackMat;
+				avatarBase.addChild(b2);
+				avatarBase.addChild(e2);
+				avatarBase.addChild(p2);				
+			}
+			
+			// Clone.
+			// TODO: Determine if createInstance() will work.
+			avatar = avatarBase.clone(userId);
+												
+			// Set the position and rotation.
+			avatar.position = position;
+			avatar.rotation = rotation;
+			
+			// Done.
+			return avatar;
+		},
+		
 		wireSquidSpace: function(options, data, squidSpace) {
 			attachObjectLoaderHooks(squidSpace);
 			attachPrepareHook(squidSpace);
