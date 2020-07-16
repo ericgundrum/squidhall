@@ -37,9 +37,11 @@ var pipelineexample_kd = (function(){
             },
             "objectPlacements": [
                {
+                  "object": "artshow.artpnl-1-ns-1-0",
                   "data": [
                      {
                         "data": {
+                           "place-on": "front",
                            "textures": [
                               {
                                  "texture": "kathryn-duval-1",
@@ -74,27 +76,27 @@ var pipelineexample_kd = (function(){
                                     0.45
                                  ]
                               }
-                           ],
-                           "place-on": "front"
+                           ]
                         },
                         "options": {
+                           "placer": "ArtPlacer",
                            "moreInfoData": {
                               "text": "Kathryn is located in Hilo Hawaii. She’s interested in alternate realities of nature.",
-                              "link-text": "Kathryn Duval's Page",
                               "title": "Kathryn Duval",
+                              "link-text": "Kathryn Duval's Page",
                               "link": "https://squid.fanac.com/kathryn-duval/"
-                           },
-                           "placer": "ArtPlacer"
+                           }
                         },
                         "place-name": "kathryn-duval"
                      }
-                  ],
-                  "object": "artshow.artpnl-1-ns-1-0"
+                  ]
                },
                {
+                  "object": "artshow.ArtShowDesk-1-0",
                   "data": [
                      {
                         "data": {
+                           "origin-corner": "nw",
                            "textures": [
                               {
                                  "texture": "kathryn-duval-2",
@@ -109,11 +111,11 @@ var pipelineexample_kd = (function(){
                               },
                               {
                                  "texture": "kathryn-duval-3",
-                                 "tilted": true,
                                  "position": [
                                     0.9,
                                     0.3
                                  ],
+                                 "tilted": true,
                                  "size": [
                                     0.3,
                                     0.225
@@ -130,20 +132,18 @@ var pipelineexample_kd = (function(){
                                     0.225
                                  ]
                               }
-                           ],
-                           "origin-corner": "nw"
+                           ]
                         },
                         "options": {
+                           "placer": "TablePlacer",
                            "moreInfoData": {
-                              "title": "Table Test 3",
-                              "text": "This is just a test popup."
-                           },
-                           "placer": "TablePlacer"
+                              "text": "This is just a test popup.",
+                              "title": "Table Test 3"
+                           }
                         },
                         "place-name": "table-test-3"
                      }
-                  ],
-                  "object": "artshow.ArtShowDesk-1-0"
+                  ]
                },
             ]
          },
