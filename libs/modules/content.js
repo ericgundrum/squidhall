@@ -39,181 +39,181 @@ var pipelineexample_aw = (function(){
             },
             "objectPlacements": [
                {
-                  "object": "artshow.artpnl-1-ew-1-0",
                   "doc": "The panel 'artshow.artpnl-1-ew-1-0' is from the layouts in the furniture.model.json file.",
+                  "object": "artshow.artpnl-1-ew-1-0",
                   "data": [
                      {
-                        "doc": "The place-name is used as the base name for placed objects located on artshow.artpnl-1-ew-1-1.",
-                        "options": {
-                           "placer": "ArtPlacer",
-                           "moreInfoData": {
-                              "text": "Ai Weiwei is a Chinese contemporary artist, active in sculpture, installation, architecture, curating, photography, film, and social, political and cultural. These photos are from an exhibit held of his work on Alcatraz island in the former prison buildings in 2015.",
-                              "title": "Ai Weiwei",
-                              "link-text": "Ai Weiwei's Page",
-                              "link": "https://squid.fanac.com/art-show/ai-weiwei/"
-                           },
-                           "doc": "The 'ArtPlacer' uses the data below to size and position the art."
-                        },
                         "place-name": "ai-weiwei",
+                        "doc": "The place-name is used as the base name for placed objects located on artshow.artpnl-1-ew-1-1.",
                         "data": {
                            "place-on": "front",
                            "doc": "The place-on value lets you specify 'front' or 'back' of the panel.",
                            "textures": [
                               {
-                                 "texture": "Ai-Weiwei-1",
+                                 "size": [
+                                    0.6,
+                                    0.45
+                                 ],
                                  "doc": "Size is WxH.",
                                  "position": [
                                     0,
                                     0
                                  ],
-                                 "size": [
-                                    0.6,
-                                    0.45
-                                 ]
+                                 "texture": "Ai-Weiwei-1"
                               },
                               {
-                                 "texture": "Ai-Weiwei-2",
+                                 "size": [
+                                    0.6,
+                                    0.8
+                                 ],
                                  "doc": "Size and position must fit with panel size of X=0.6 and Y=1.",
                                  "position": [
                                     0.5,
                                     0.6
                                  ],
-                                 "size": [
-                                    0.6,
-                                    0.8
-                                 ]
+                                 "texture": "Ai-Weiwei-2"
                               },
                               {
-                                 "texture": "Ai-Weiwei-3",
+                                 "size": [
+                                    0.6,
+                                    0.45
+                                 ],
                                  "doc": "Size should reflect proportions of original image.",
                                  "position": [
                                     0.2,
                                     1.5
                                  ],
-                                 "size": [
-                                    0.6,
-                                    0.45
-                                 ]
+                                 "texture": "Ai-Weiwei-3"
                               }
                            ]
+                        },
+                        "options": {
+                           "moreInfoData": {
+                              "text": "Ai Weiwei is a Chinese contemporary artist, active in sculpture, installation, architecture, curating, photography, film, and social, political and cultural. These photos are from an exhibit held of his work on Alcatraz island in the former prison buildings in 2015.",
+                              "link-text": "Ai Weiwei's Page",
+                              "title": "Ai Weiwei",
+                              "link": "https://squid.fanac.com/art-show/ai-weiwei/"
+                           },
+                           "doc": "The 'ArtPlacer' uses the data below to size and position the art.",
+                           "placer": "ArtPlacer"
                         }
                      }
                   ]
                },
                {
-                  "object": "GoHArtExhibitTables.GoHArtExhibitTable-0",
                   "doc": "The table 'GoHArtExhibitTables.GoHArtExhibitTable-0' is from the layouts in the furniture.model.json file.",
+                  "object": "GoHArtExhibitTables.GoHArtExhibitTable-0",
                   "data": [
                      {
-                        "doc": "The place-name is used as the base name for placed objects located on GoHArtExhibitTables.GoHArtExhibitTable-0.",
-                        "options": {
-                           "placer": "TablePlacer",
-                           "moreInfoData": {
-                              "text": "This is just a test popup.",
-                              "title": "Table Test 1"
-                           },
-                           "doc": "The 'TablePlacer' uses the data below to size and position the art."
-                        },
                         "place-name": "table-test-1",
+                        "doc": "The place-name is used as the base name for placed objects located on GoHArtExhibitTables.GoHArtExhibitTable-0.",
                         "data": {
-                           "doc": "The origin-corner value lets you specify what corner of the table is the origin point for X/Y co-ordinates, values are 'nw', 'ne', 'sw', and 'se'. Note that the user spawns in the NW corner of Squid Hall facing SE.",
                            "origin-corner": "se",
+                           "doc": "The origin-corner value lets you specify what corner of the table is the origin point for X/Y co-ordinates, values are 'nw', 'ne', 'sw', and 'se'. Note that the user spawns in the NW corner of Squid Hall facing SE.",
                            "textures": [
                               {
-                                 "texture": "Ai-Weiwei-1",
+                                 "size": [
+                                    0.3,
+                                    0.225
+                                 ],
                                  "doc": "Size is WxH.",
                                  "position": [
                                     0,
                                     0
                                  ],
-                                 "size": [
-                                    0.3,
-                                    0.225
-                                 ]
+                                 "texture": "Ai-Weiwei-1"
                               },
                               {
-                                 "texture": "Ai-Weiwei-2",
+                                 "size": [
+                                    0.3,
+                                    0.4
+                                 ],
                                  "doc": "Size and position must fit with table size of X=0.9 and Y=0.375.",
                                  "position": [
                                     0.4,
                                     0
                                  ],
-                                 "tilted": true,
-                                 "size": [
-                                    0.3,
-                                    0.4
-                                 ]
+                                 "texture": "Ai-Weiwei-2",
+                                 "tilted": true
                               },
                               {
-                                 "texture": "Ai-Weiwei-3",
+                                 "size": [
+                                    0.3,
+                                    0.225
+                                 ],
                                  "doc": "Size should reflect proportions of original image.",
                                  "position": [
                                     0.9,
                                     0.3
                                  ],
-                                 "size": [
-                                    0.3,
-                                    0.225
-                                 ]
+                                 "texture": "Ai-Weiwei-3"
                               }
                            ]
+                        },
+                        "options": {
+                           "moreInfoData": {
+                              "text": "This is just a test popup.",
+                              "title": "Table Test 1"
+                           },
+                           "doc": "The 'TablePlacer' uses the data below to size and position the art.",
+                           "placer": "TablePlacer"
                         }
                      }
                   ]
                },
                {
-                  "object": "artshow.ArtShowDesk-2",
                   "data": [
                      {
+                        "place-name": "table-test-2",
                         "data": {
                            "origin-corner": "sw",
                            "textures": [
                               {
-                                 "texture": "Ai-Weiwei-1",
+                                 "size": [
+                                    0.3,
+                                    0.225
+                                 ],
                                  "position": [
                                     0,
                                     0
                                  ],
-                                 "tilted": true,
-                                 "size": [
-                                    0.3,
-                                    0.225
-                                 ]
+                                 "texture": "Ai-Weiwei-1",
+                                 "tilted": true
                               },
                               {
-                                 "texture": "Ai-Weiwei-2",
+                                 "size": [
+                                    0.3,
+                                    0.4
+                                 ],
                                  "position": [
                                     0.4,
                                     0
                                  ],
-                                 "size": [
-                                    0.3,
-                                    0.4
-                                 ]
+                                 "texture": "Ai-Weiwei-2"
                               },
                               {
-                                 "texture": "Ai-Weiwei-3",
+                                 "size": [
+                                    0.3,
+                                    0.225
+                                 ],
                                  "position": [
                                     0.9,
                                     0.3
                                  ],
-                                 "size": [
-                                    0.3,
-                                    0.225
-                                 ]
+                                 "texture": "Ai-Weiwei-3"
                               }
                            ]
                         },
                         "options": {
-                           "placer": "TablePlacer",
                            "moreInfoData": {
                               "text": "This is just a test popup.",
                               "title": "Table Test 1"
-                           }
-                        },
-                        "place-name": "table-test-2"
+                           },
+                           "placer": "TablePlacer"
+                        }
                      }
-                  ]
+                  ],
+                  "object": "artshow.ArtShowDesk-2"
                },
             ]
          },
@@ -263,113 +263,113 @@ var pipelineexample_kd = (function(){
             },
             "objectPlacements": [
                {
-                  "object": "artshow.artpnl-1-ns-1-0",
                   "data": [
                      {
+                        "place-name": "kathryn-duval",
                         "data": {
                            "place-on": "front",
                            "textures": [
                               {
-                                 "texture": "kathryn-duval-1",
+                                 "size": [
+                                    0.6,
+                                    0.45
+                                 ],
                                  "position": [
                                     0,
                                     0
                                  ],
+                                 "texture": "kathryn-duval-1"
+                              },
+                              {
                                  "size": [
                                     0.6,
                                     0.45
-                                 ]
-                              },
-                              {
-                                 "texture": "kathryn-duval-2",
+                                 ],
                                  "position": [
                                     0.45,
                                     0.5
                                  ],
+                                 "texture": "kathryn-duval-2"
+                              },
+                              {
                                  "size": [
                                     0.6,
                                     0.45
-                                 ]
-                              },
-                              {
-                                 "texture": "kathryn-duval-3",
+                                 ],
                                  "position": [
                                     0,
                                     1
                                  ],
-                                 "size": [
-                                    0.6,
-                                    0.45
-                                 ]
+                                 "texture": "kathryn-duval-3"
                               }
                            ]
                         },
                         "options": {
-                           "placer": "ArtPlacer",
                            "moreInfoData": {
                               "text": "Kathryn is located in Hilo Hawaii. She’s interested in alternate realities of nature.",
-                              "title": "Kathryn Duval",
                               "link-text": "Kathryn Duval's Page",
+                              "title": "Kathryn Duval",
                               "link": "https://squid.fanac.com/kathryn-duval/"
-                           }
-                        },
-                        "place-name": "kathryn-duval"
+                           },
+                           "placer": "ArtPlacer"
+                        }
                      }
-                  ]
+                  ],
+                  "object": "artshow.artpnl-1-ns-1-0"
                },
                {
-                  "object": "artshow.ArtShowDesk-1-0",
                   "data": [
                      {
+                        "place-name": "table-test-3",
                         "data": {
                            "origin-corner": "nw",
                            "textures": [
                               {
-                                 "texture": "kathryn-duval-2",
+                                 "size": [
+                                    0.3,
+                                    0.4
+                                 ],
                                  "position": [
                                     0.4,
                                     0
                                  ],
-                                 "size": [
-                                    0.3,
-                                    0.4
-                                 ]
+                                 "texture": "kathryn-duval-2"
                               },
                               {
-                                 "texture": "kathryn-duval-3",
+                                 "size": [
+                                    0.3,
+                                    0.225
+                                 ],
                                  "position": [
                                     0.9,
                                     0.3
                                  ],
-                                 "tilted": true,
+                                 "texture": "kathryn-duval-3",
+                                 "tilted": true
+                              },
+                              {
                                  "size": [
                                     0.3,
                                     0.225
-                                 ]
-                              },
-                              {
-                                 "texture": "kathryn-duval-1",
+                                 ],
                                  "position": [
                                     1.3,
                                     0.15
                                  ],
-                                 "size": [
-                                    0.3,
-                                    0.225
-                                 ]
+                                 "texture": "kathryn-duval-1"
                               }
                            ]
                         },
                         "options": {
-                           "placer": "TablePlacer",
                            "moreInfoData": {
                               "text": "This is just a test popup.",
                               "title": "Table Test 3"
-                           }
-                        },
-                        "place-name": "table-test-3"
+                           },
+                           "placer": "TablePlacer"
+                        }
                      }
-                  ]
+                  ],
+                  "object": "artshow.ArtShowDesk-1-0"
                },
             ]
          },

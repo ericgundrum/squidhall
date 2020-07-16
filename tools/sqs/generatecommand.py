@@ -28,21 +28,35 @@ import sys
 import os
 import json
 
-
 from common import ResourceFlavor, ResourceAction, ModuleConfiguration
+from filters.cleanbabylon import cleanBabylonData
 from sqslogger import logger
 
 
 def insertTextFile(inFilePath, outFile, singleLine = True):
     """Inserts the contents of a text file specified by the in file path into the out file."""
     
-    inFile = open(inFilePath, "r")
-    for line in inFile:
-        if singleLine:
-            outFile.write(line.replace('\n', '\\n').replace('"', '\\"'))
-        else:
-            outFile.write(line.replace('"', '\\"'))
-    inFile.close()
+    root, ex = os.path.splitext(inFilePath)
+    
+    if ex.lower() == ".babylon":
+        # Load Babylon file
+        with open(inFilePath, 'r') as babFile:
+            data = json.load(babFile)
+            babFile.close()
+            cleanBabylonData(data)
+            cleaned = json.dumps(data)
+            if singleLine:
+                outFile.write(cleaned.replace('\n', '\\n').replace('"', '\\"'))
+            else:
+                outFile.write(cleaned.replace('"', '\\"'))
+    else:
+        inFile = open(inFilePath, "r")
+        for line in inFile:
+            if singleLine:
+                outFile.write(line.replace('\n', '\\n').replace('"', '\\"'))
+            else:
+                outFile.write(line.replace('"', '\\"'))
+        inFile.close()
 
 
 def insertText(text, outFile, singleLine = True):
