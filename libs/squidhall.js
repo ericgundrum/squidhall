@@ -33,13 +33,12 @@ document.addEventListener("DOMContentLoaded", (event) =>{
 			document.getElementById('mpopup-text').innerHTML = `<p>${data["text"]}</p>`;
 		}
 		else {
-			document.getElementById('mpopup-text').innerHTML = "<p>Normally a message would be here.</p>";
+			document.getElementById('mpopup-text').innerHTML = "<p>&nbsp;</p>";
 		}
 
 		if ("link" in data && "link-text" in data) {
 			document.getElementById('mpopup-link').innerHTML = `<p>See more here: <a href='${data["link"]}' target='_blank'>${data["link-text"]}</a></p>`;
 		}
-
 		mpopup.style.display = "block";
 	}
 
@@ -483,7 +482,7 @@ var SquidHall = function() {
 					bm.rotation.y = Math.PI / 2;
 					bm.position.x = (i * 10) + 5.71;
 					bm.position.y = 0;
-					bm.position.z = 0;
+					bm.position.z = -0.25;
 					bm.checkCollisions = false;
 				}
 			}

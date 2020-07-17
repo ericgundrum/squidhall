@@ -1,0 +1,21 @@
+{
+	"doc": "Example Asset Pipeline module. The 'module-name' needs to be unique among all module files.",
+	"module-name": "pipelineexample_plinth",
+	"config": {
+		"doc": "Using defaults from world.module.json, except we override the 'generate-dir', the 'object-dir' and specify 'autoload'.",
+		"generate-dir": "libs/modules/content/",
+		"object-dir": "objects/content/",
+		"autoload": true		
+	},
+	"resources": {
+		"objects": [
+			
+		]
+	},
+	"layouts": [
+		{
+			
+		}
+	]
+}
+			
