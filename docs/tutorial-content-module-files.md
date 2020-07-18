@@ -6,13 +6,17 @@ When you are ready to continue, read on to 'Tutorial Steps' below.
 
 ### What this tutorial covers
 
-This tutorial will take you step by step through the process of creating and testing a content module file. After the tutorial steps there are some more detailed descriptions of certain content file values, followed by a template module file, an annotated module file, and a full example of a module file.
+This tutorial will take you step by step through the process of creating and testing a content module file for art panels or tables using framed art. After the tutorial steps there are some more detailed descriptions of certain content file values, followed by a template module file, an annotated module file, and a full example of a module file.
 
 When you finish this tutorial you should understand the basics of content module files and how to use the SquidSpace tools to manage the asset pipeline, generate Javascript modules and test/debug a content module file.
 
 ### What this tutorial does not cover
 
-You may be required to use Git for version control, which adds the following steps:
+This tutorial does not cover placing objects on tables or plinths, although in the extra information below there are some more detail and examples of how to do this. 
+
+NOTE: When placing objects the 3D object files need to be converted to .bablyon format by hand. For more on this see [How To Convert .obj Files to .babylon files](how-to-convertobjtobabylon.md)
+
+Separately, you may be required to use Git for version control, which adds the following steps:
 
 1. Cloning the Git repo
 
@@ -22,7 +26,7 @@ You may be required to use Git for version control, which adds the following ste
 
 4. Making a 'Pull Request' for your branch
 
-These things are important to the process, and even if you are not required to do them, someone will be. 
+These things are important to the process and, even if you are not required to do them, someone will be. 
 
 However, using Git – or other methods of putting the content files you create onto the production server – falls outside the purview of this tutorial.
 
@@ -58,9 +62,9 @@ For this tutorial we are going to use the first two images in the gallery, plus 
 
 Continue with Step 4 below.
 
-### Step 4. Create a texture resource declaration for each image
+### Step 4. Create resource declarations for each image or object
 
-In the template file there is a "resources" section that contains a "textures" section. In the "textures" section there is a texture resource declaration template. We are going to use three images for our resources, so copy that template and paste it two more times for a total of three. Make sure to remove the comma after the last texture resource declaration so the JSON parser doesn't have a fit.
+In the template file there is a "resources" section that contains "objects" and "textures" sections. In the "textures" section there is a texture resource declaration template. We are going to use three images for our resources, so copy that template and paste it two more times for a total of three. Make sure to remove the comma after the last texture resource declaration so the JSON parser doesn't have a fit.
 
 For each image change the 'RESOURCE-NAME' and 'FILE-NAME' values to something unique and appropriate. For this tutorial are going to use 'ai-weiwei-1', 'ai-weiwei-2', and 'ai-weiwei-3'. 
 
@@ -114,8 +118,7 @@ When you are done your "textures" section should look like this:
 		}
 	]
 
-
-If you are doing an art panel layout continue with Step 5.a below. If you are doing a table layout continue with Step 5.b below. (You can do both if you want.)
+If you are doing a table layout continue with Step 5.b below. (You can do both if you want.)
 
 ### Step 5.a. Create an Art Panel Layout
 
@@ -167,7 +170,7 @@ For each image change the 'RESOURCE-NAME' to one of the 'RESOURCE-NAME' values s
 
 The same applies to the 'POS-X' and 'POS-Y' position values. Moreover, the position is specified as left to right ('POS-X') and top to bottom ('POS-Y') on the art panel starting from the upper left corner of the chosen side of the panel. 
 
-See 'ArtPlacer and TablePlacer Algorithms' below for more detail on size and position units and how X/Y positioning works.
+See 'ArtPlacer, TablePlacer and PlinthPlacer Algorithms' below for more detail on size and position units and how X/Y positioning works.
 
 For this tutorial we are going to use some appropriate values, keeping the size of each image frame less than half as wide as the panel and staggering them a bit. 
 
@@ -272,7 +275,7 @@ For each image change the 'RESOURCE-NAME' to one of the 'RESOURCE-NAME' values s
 
 The same applies to the 'POS-X' and 'POS-Y' position values. Moreover, the position is specified as left to right ('POS-X') and top to bottom ('POS-Y') on the art panel starting from the upper left corner of the chosen side of the panel. 
 
-See 'ArtPlacer and TablePlacer Algorithms' below for more detail on size and position units and how X/Y positioning works.
+See 'ArtPlacer, TablePlacer and PlinthPlacer Algorithms' below for more detail on size and position units and how X/Y positioning works.
 
 For this tutorial we are going to use some appropriate values, keeping the size of each image frame less than half as wide as the panel and staggering them a bit. 
 
@@ -374,7 +377,11 @@ To run the code generator enter the following line in a terminal session from th
 
 If the command fails because the content module file is incorrect in some way you will see one or more error messages. You may need to return to one of the previous steps of the tutorial and work forward again from there.
 
-Otherwise you will need to verify everything worked. To do this, look in the 'libs/modules' directory. There should be a Javascript module named 'aiweiwei.js'. At a minimum there should also be 'world.js' and 'furniture.js' files as well. If they do not exist you will need to generate them from the 'world.module.json' and 'furniture.content.json' module files.
+Otherwise, combine your generated content module with all the other content modules:
+
+	python3 tools/sqs/sqs.py pipeline content/*.content.module.json
+
+Now you will need to verify everything worked. To do this, look in the 'libs/modules' directory. There should be a Javascript module named 'content.js'. At a minimum there should also be 'world.js' and 'furniture.js' files as well. If they do not exist you will need to generate them from the 'world.module.json' and 'furniture.content.json' module files.
 
 When you are sure all required module are generated, continue with Step 9 below.
 
@@ -392,7 +399,7 @@ Once the web server is running, start a web browser and navigate to http://local
 
 The test page should load and present you with a view of the 3D space. It might take a while before all the assets are loaded and you can navigate around. If it fails to load take a look at the web browser console and see if there are any clues to why in the debug and error messages there. 
 
-You should be able to 'walk' up to the art panel or table you used in the tutorial and visually verify the expected image are sized and positioned as you expected them. If the images are not there at all take a look at the web browser console and see if there are any clues to why in the debug and error messages there. 
+You should be able to 'walk up' to the art panel or table you used in the tutorial and visually verify the expected image are sized and positioned as you expected them. If the images are not there at all take a look at the web browser console and see if there are any clues to why in the debug and error messages there. 
 
 If you found a problem that requires correction, go back to one of the previous steps. If everything looks good, you have completed the tutorial and can read below for more detail on how things work.
 
@@ -400,7 +407,7 @@ If you found a problem that requires correction, go back to one of the previous 
 
 The [Module File Specification](modulefile-specification.md) and the [SquidSpace Module File requirements](squidspace-modulefiles.md) documents detail how layouts work, with the latter document providing considerable information on the object placer declarations. However, neither document specifies how object placer algorithms *work*.
 
-Put simply, an object placer is a function that is called with information from a module file, creates one or more 3D object instances (sometimes cloned from existing objects) and puts them in specific places in the 3D space. This object placer function is registered with SquidSpace with a name, but is not necessarily provided by SquidSpace and may be a custom implementation. For example, ArtPlacer and TablePlacer object placer algorithms are specific to the Squid Hall project and even contain hard-coded expectations about the objects they are placing art frames on. Other placer algorithms, such as 'LinearSeries' are SquidSpace 'builtins'.
+Put simply, an object placer is a function that is called with information from a module file, creates one or more 3D object instances (sometimes cloned from existing objects) and puts them in specific places in the 3D space. This object placer function is registered with SquidSpace with a name, but is not necessarily provided by SquidSpace and may be a custom implementation. For example, ArtPlacer, TablePlacer and PlinthPlacer placer algorithms are specific to the Squid Hall project and even contain hard-coded expectations about the objects they are placing art frames on. Other placer algorithms, such as 'LinearSeries' are SquidSpace 'builtins'.
 
 Basically, while processing layouts SquidSpace calls the function registered with the placer name in the object placer declaration, passing the options and data values from the declaration along with other context, such as the layout area and the object specified in the object placer declaration. The placer function can perform this placement any way it likes and, moreover, can place as many 3D objects as it likes. 
 
@@ -412,13 +419,49 @@ It is not required, but the placer function can also register the 3D objects it 
 
 This naming scheme allows us to specify particular objects placed by the SquidSpace layout engine in a separate module file, so long as the placer function registers the object. If the placed 3D object will never need to be referred to later it is not necessary. 
 
-## ArtPlacer and TablePlacer Algorithms
+## List of Placer Algorithms
 
-The ArtPlacer and TablePlacer placer algorithms are very similar, but each is optimized for placing image frames on a specific 3D object type: ArtPlacer knows about art panels and places frames right to left and top to bottom, while TablePlacer knows about tables and places frames right to left and back to front. 
+Every module files user 'placer algorithms' to put things into the space. Below is a list of all the available placer algorithms, although in actual practice for content you will mostly be using the ArtPlacer, TablePlacer and PlinthPlacer algorithms.
 
-For both algorithms the frame size is specified as Width x Height (W/H). The size should retain the proportions of the original image for best results. In general a width of 0.5 or less and a proportional height work best.
+Basic placer algorithms (mostly used for placing furniture):
 
-For both algorithms the frame position is specified as X x Y (X/Y) using a 2D coordinate system to place the fames on the target 3D object. With the ArtPlacer the coordinates are vertical and the 0/0 point is the upper left corner. With the TablePlacer the coordinates are horizontal and the 0/0 point is a specified corner of the table. 
+* Single - Places a single item at a specified position in the space
+
+* LinearSeries - Places a series of items in a row in the space, you can specify the direction the row goes and the number of items in the series
+
+* RectangleSeries - Places a series of items in a rectangle
+
+Squid hall-specific placer algorithms for furniture and world items (most require code changes to modify where things are placed):
+
+* LightPlacer - Puts lights in a predetermined position in the hall
+
+* BeamPlacer - Puts the beams in predetermined position in the hall ceiling
+
+* BannerPlacer - Puts the beams in predetermined position in the hall ceiling
+
+* CurtainPlacer - Puts the curtains in predetermined position around the hall
+
+* SquidPlacer - Puts the squid on the back of the hall
+
+* SignFullPlacer - Puts the large signs in predetermined positions around the hall
+
+* SignHalfPlacer - Puts the smaller signs in predetermined positions around the hall
+
+Squid hall-specific content placer algorithms for placing art and object content onto furniture (do not require code changes to use):
+
+* ArtPlacer - Places images on art panels
+
+* TablePlacer - Places images and objects on tables
+
+* PlinthPlacer - Places objects on plinths
+
+## ArtPlacer, TablePlacer and PlinthPlacer Algorithms
+
+The ArtPlacer, TablePlacer and PlinthPlacer placer algorithms are very similar, but each is optimized for placing image frames or objects on a specific 3D object type: ArtPlacer knows about art panels and image frames and places frames right to left and top to bottom. TablePlacer knows about tables and places frames or 3D objects right to left and back to front. PlinthPlacer knows about plinths and can place one 3D object on a plinth.
+
+For ArtPlacer and TablePlacer algorithms the frame size is specified as Width x Height (W/H). The size should retain the proportions of the original image for best results. In general a width of 0.5 or less and a proportional height work best.
+
+For ArtPlacer and TablePlacer algorithms the frame position is specified as X x Y (X/Y) using a 2D coordinate system to place the fames on the target 3D object. With the ArtPlacer the coordinates are vertical and the 0/0 point is the upper left corner. With the TablePlacer the coordinates are horizontal and the 0/0 point is a specified corner of the table. 
 
 Note that sizes and positions are specified in 3D space units; which are approximately 1 meter per unit. The art panels are 1 unit high and 0.6 units wide. The tables are 0.9 units long and 0.375 units deep.
 
@@ -434,6 +477,10 @@ This means for each table you must determine where the 'back' and 'front' of the
 
 ![Origin corners of dealer table square](img/tableex2.png)
 
+With the PlinthPlacer algorithm you can only specify the object rotation and scaling, since there is only one 3D object per plinth.
+
+NOTE: When placing objects the 3D object files need to be converted to .bablyon format by hand. For more on this see [How To Convert .obj Files to .babylon files](how-to-convertobjtobabylon.md)
+
 ## Using the SquidSpace Tools
 
 The SquidSpace tools are written using Python version 3 and have only been tested on Unix systems. (Linux and macOS.) They may work with Windows and other operating systems, but it is not guaranteed. 
@@ -442,7 +489,7 @@ Other than Python3 the SquidSpace tools have *no external requirements or depend
 
 In some cases you may need to perform the steps of this tutorial 'blind' and submit the resulting content module file to someone else to perform Steps 7 and 8. After which they can supply you with the results or the URL of the test page on a server so you can do Step 9.
 
-For more information, see the [SquidSpace.js Tools Reference](squidspace-tools.md).
+For more information, see [How To Manage Content for Squid Hall](how-to-content-management.md) and the [SquidSpace.js Tools Reference](squidspace-tools.md).
 
 ## Using the squidhalltest.html Debugging Features
 
@@ -478,6 +525,8 @@ There are some limitations for how the label works when 'finding' a 3D object vi
 
 This is a template for creating new content module files. The values in upper-case need to be replaced with actual values. Note that elements inside of JSON array sections (the areas surrounded by square brackets, '[]') or object sections (the areas surrounded by curly brackets, '{}') must be separated by commas *except for the last element*. The most common mistakes made when copying and pasting JSON elements is forgetting to add a comma to middle elements or forgetting to remove the comma on the last element.
 
+This template includes object resources and object placements (for tables or plinths), which are not included in the tutorial steps above. Please remove them when following the tutorial; however, when using this template for real content modules involving tables with objects or plinths you will need to retain them.
+
 For a detailed explanation of what each JSON element means, see 'Annotated Example Content Module' below. For a complete example of a content module see 'Full Example Content Module File' below.
 
 	{
@@ -488,8 +537,22 @@ For a detailed explanation of what each JSON element means, see 'Annotated Examp
 			"autoload": true
 		},
 		"resources": {
+			"objects": [
+				{
+					"doc": "Object resource template.",
+					"resource-name": "RESOURCE-NAME",
+					"config": {
+						"pack-options": {
+							"action": "insert"
+						},
+						"file-name": "CONVERTED-OBJECT-FILE.babylon"
+					}
+				},
+				
+			],
 			"textures": [
 				{
+					"doc": "Texture resource template.",
 					"resource-name": "RESOURCE-NAME",
 					"config": {
 						"cache-options": {
@@ -562,7 +625,39 @@ For a detailed explanation of what each JSON element means, see 'Annotated Examp
 										},
 										
 									],
+									"objects": [
+										{								
+											"object": "OBJECT-TO-PLACE",
+											"rotation": [0, 0, 0],
+											"position": [POS-X, POS-Y],
+											"size": [WIDTH, DEPTH],
+											"scale": SCALING-FACTOR	
+										}
+									],
 									"origin-corner": "ORIGIN-CORNER"
+								}
+							}
+						]
+					},
+					{
+						"doc": "Plinth layout template.",
+						"object": "PLINTH-NAME",
+						"data": [
+							{
+								"place-name": "PLACE-NAME",
+								"options": {
+									"placer": "PlinthPlacer",
+									"moreInfoData": {
+										"title": "INFO-TITLE",
+										"link-text": "INFO-LINK-TEXT",
+										"link": "INFO-URL",
+										"text": "INFO-DESCRIPTION"
+									}
+								},
+								"data": {
+									"object": "OBJECT-TO-PLACE",
+									"rotation": [0, 0, 0],
+									"scale": SCALING-FACTOR
 								}
 							}
 						]
@@ -876,16 +971,20 @@ The following is an annotated Squid Hall Content Module File. The annotation lin
 	}
 			
 
-## Full Example Content Module File
+## Full Example Content Module Files
 
-This is a full example of a content file with more resources and a number of object placements. This example would actually work with the SquidSpace tools and the Squid Hall runtime.
+Below are three full example of content files with more resources and a number of placements. These examples would actually work with the SquidSpace tools and the Squid Hall runtime.
+
+### example_aw.content.module.json:
 
 	{
 		"doc": "Example Asset Pipeline module. The 'module-name' needs to be unique among all module files.",
-		"module-name": "pipelineEx",
+		"module-name": "pipelineexample_aw",
 		"config": {
-			"doc": "Using defaults from world.module.json, except we override the 'texture-dir'.",
-			"texture-dir": "textures/content/"
+			"doc": "Using defaults from world.module.json, except we override the 'generate-dir', the 'texture-dir' and specify 'autoload'.",
+			"generate-dir": "libs/modules/content/",
+			"texture-dir": "textures/content/",
+			"autoload": true		
 		},
 		"resources": {
 			"textures": [
@@ -936,46 +1035,6 @@ This is a full example of a content file with more resources and a number of obj
 							"action": "link"
 						},
 						"file-name": "ai-weiwei-3.png"
-					}
-				},
-				{
-					"resource-name": "kathryn-duval-1",
-					"doc": "From: https://squid.fanac.com/kathryn-duval/",
-					"config": {
-						"cache-options": {
-							"url-source": "https://squid.fanac.com/wp-content/uploads/2020/05/IMG_0215-scaled.jpg",
-							"filter-profile": "ArtJpg"
-						},
-						"pack-options": {
-							"action": "link"
-						},
-						"file-name": "kathryn-duval-1.png"
-					}
-				},
-				{
-					"resource-name": "kathryn-duval-2",
-					"config": {
-						"cache-options": {
-							"url-source": "https://squid.fanac.com/wp-content/uploads/2020/05/IMG_0216-2-scaled.jpg",
-							"filter-profile": "ArtJpg"
-						},
-						"pack-options": {
-							"action": "link"
-						},
-						"file-name": "kathryn-duval-2.png"
-					}
-				},
-				{
-					"resource-name": "kathryn-duval-3",
-					"config": {
-						"cache-options": {
-							"url-source": "https://squid.fanac.com/wp-content/uploads/2020/05/IP_0815_-005-scaled.jpg",
-							"filter-profile": "ArtJpg"
-						},
-						"pack-options": {
-							"action": "link"
-						},
-						"file-name": "kathryn-duval-3.png"
 					}
 				}
 			],
@@ -1037,46 +1096,158 @@ This is a full example of a content file with more resources and a number of obj
 						]
 					},
 					{
-						"object": "artshow.artpnl-1-ew-1-0",
+						"doc": "The table 'GoHArtExhibitTables.GoHArtExhibitTable-0' is from the layouts in the furniture.model.json file.",
+						"object": "GoHArtExhibitTables.GoHArtExhibitTable-0",
 						"data": [
 							{
-								"doc": "The place-name is used as the base name for placed objects located on artshow.artpnl-1-ew-1-1.",
-								"place-name": "ai-weiwei",
+								"doc": "The place-name is used as the base name for placed objects located on GoHArtExhibitTables.GoHArtExhibitTable-0.",
+								"place-name": "table-test-1",
 								"options": {
-									"placer": "ArtPlacer",
+									"doc": "The 'TablePlacer' uses the data below to size and position the art.",
+									"placer": "TablePlacer",
 									"moreInfoData": {
-										"title": "Ai Weiwei",
-										"link-text": "Ai Weiwei's Page",
-										"link": "https://squid.fanac.com/art-show/ai-weiwei/",
-										"text": "Ai Weiwei is a Chinese contemporary artist, active in sculpture, installation, architecture, curating, photography, film, and social, political and cultural. These photos are from an exhibit held of his work on Alcatraz island in the former prison buildings in 2015."
+										"title": "Table Test 1",
+										"text": "This is just a test popup."
 									}
 								},
 								"data": {
-									"doc": "The textures are specified in the 'resources' section.",
 									"textures": [
 										{
 											"texture": "Ai-Weiwei-1",
-											"doc": "Position starts from upper left, so [0, 0] is the upper left corner.",
-											"size": [0.6, 0.45],
+											"doc": "Size is WxH.",
+											"size": [0.3, 0.225],
 											"position": [0, 0]
 										},
 										{
 											"texture": "Ai-Weiwei-2",
-											"size": [0.6, 0.8],
-											"position": [0.5, 0.6]
+											"doc": "Size and position must fit with table size of X=0.9 and Y=0.375.",
+											"tilted": true,
+											"size": [0.3, 0.4],
+											"position": [0.4, 0]
 										},
 										{
 											"texture": "Ai-Weiwei-3",
-											"size": [0.6, 0.45],
-											"position": [0.2, 1.5]
+											"doc": "Size should reflect proportions of original image.",
+											"size": [0.3, 0.225],
+											"position": [0.9, 0.3]
 										}
+									
 									],
-									"doc": "The place-on value lets you specify 'front' or 'back' of the panel.",
-									"place-on": "back"
+									"doc": "The origin-corner value lets you specify what corner of the table is the origin point for X/Y co-ordinates, values are 'nw', 'ne', 'sw', and 'se'. Note that the user spawns in the NW corner of Squid Hall facing SE.",
+									"origin-corner": "se"
 								}
 							}
 						]
 					},
+					{
+						"object": "artshow.ArtShowDesk-2",
+						"data": [
+							{
+								"place-name": "table-test-2",
+								"options": {
+									"placer": "TablePlacer",
+									"moreInfoData": {
+										"title": "Table Test 1",
+										"text": "This is just a test popup."
+									}
+								},
+								"data": {
+									"textures": [
+										{
+											"texture": "Ai-Weiwei-1",
+											"tilted": true,
+											"size": [0.3, 0.225],
+											"position": [0, 0]
+										},
+										{
+											"texture": "Ai-Weiwei-2",
+											"size": [0.3, 0.4],
+											"position": [0.4, 0]
+										},
+										{
+											"texture": "Ai-Weiwei-3",
+											"size": [0.3, 0.225],
+											"position": [0.9, 0.3]
+										}
+									
+									],
+									"origin-corner": "sw"
+								}
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+			
+
+### example_kd.content.module.json:
+
+	{
+		"doc": "Example Asset Pipeline module. The 'module-name' needs to be unique among all module files.",
+		"module-name": "pipelineexample_kd",
+		"config": {
+			"doc": "Using defaults from world.module.json, except we override the 'generate-dir', the 'texture-dir' and specify 'autoload'.",
+			"generate-dir": "libs/modules/content/",
+			"texture-dir": "textures/content/",
+			"autoload": true		
+		},
+		"resources": {
+			"textures": [
+				{
+					"resource-name": "kathryn-duval-1",
+					"doc": "From: https://squid.fanac.com/kathryn-duval/",
+					"config": {
+						"cache-options": {
+							"url-source": "https://squid.fanac.com/wp-content/uploads/2020/05/IMG_0215-scaled.jpg",
+							"filter-profile": "ArtJpg"
+						},
+						"pack-options": {
+							"action": "link"
+						},
+						"file-name": "kathryn-duval-1.png"
+					}
+				},
+				{
+					"resource-name": "kathryn-duval-2",
+					"config": {
+						"cache-options": {
+							"url-source": "https://squid.fanac.com/wp-content/uploads/2020/05/IMG_0216-2-scaled.jpg",
+							"filter-profile": "ArtJpg"
+						},
+						"pack-options": {
+							"action": "link"
+						},
+						"file-name": "kathryn-duval-2.png"
+					}
+				},
+				{
+					"resource-name": "kathryn-duval-3",
+					"config": {
+						"cache-options": {
+							"url-source": "https://squid.fanac.com/wp-content/uploads/2020/05/IP_0815_-005-scaled.jpg",
+							"filter-profile": "ArtJpg"
+						},
+						"pack-options": {
+							"action": "link"
+						},
+						"file-name": "kathryn-duval-3.png"
+					}
+				}
+			],
+			"doc": "This example specifies only textures resources. (You can leave the 'materials' and 'objects' sections out.)",
+			"materials": [],
+			"objects": []
+		},
+		"layouts": [
+			{
+				"doc": "Object layouts for the art show area. Note that the art show is previously defined in the furniture.model.json file.",
+				"layout-name": "artshow",
+				"options": {
+					"doc": "No options, use defaults from furniture.model.json. (You can leave this options section out.)"
+				},
+				"data": [
 					{
 						"object": "artshow.artpnl-1-ns-1-0",
 						"data": [
@@ -1115,133 +1286,6 @@ This is a full example of a content file with more resources and a number of obj
 						]
 					},
 					{
-						"object": "artshow.artpnl-1-ns-1-0",
-						"data": [
-							{
-								"place-name": "kathryn-duval",
-								"options": {
-									"placer": "ArtPlacer",
-									"moreInfoData": {
-										"title": "Kathryn Duval",
-										"link-text": "Kathryn Duval's Page",
-										"link": "https://squid.fanac.com/kathryn-duval/",
-										"text": "Kathryn is located in Hilo Hawaii. She’s interested in alternate realities of nature."
-									}
-								},
-								"data": {
-									"textures": [
-										{
-											"texture": "kathryn-duval-1",
-											"size": [0.6, 0.45],
-											"position": [0, 0]
-										},
-										{
-											"texture": "kathryn-duval-2",
-											"size": [0.6, 0.45],
-											"position": [0.45, 0.5]
-										},
-										{
-											"texture": "kathryn-duval-3",
-											"size": [0.6, 0.45],
-											"position": [0, 1]
-										}
-									],
-									"place-on": "back"
-								}
-							}
-						]
-					},
-					{
-						"doc": "The table 'GoHArtExhibitTables.GoHArtExhibitTable-0' is from the layouts in the furniture.model.json file.",
-						"object": "GoHArtExhibitTables.GoHArtExhibitTable-0",
-						"data": [
-							{
-								"doc": "The place-name is used as the base name for placed objects located on GoHArtExhibitTables.GoHArtExhibitTable-0.",
-								"place-name": "table-test-1",
-								"options": {
-									"doc": "The 'TablePlacer' uses the data below to size and position the art.",
-									"placer": "TablePlacer",
-									"moreInfoData": {
-										"title": "Table Test 1",
-										"text": "This is just a test popup."
-									}
-								},
-								"data": {
-									"textures": [
-										{
-											"texture": "Ai-Weiwei-1",
-											"doc": "Size is WxH.",
-											"size": [0.3, 0.225],
-											"position": [0, 0]
-										},
-										{
-											"texture": "Ai-Weiwei-2",
-											"doc": "Size and position must fit with table size of X=0.9 and Y=0.375.",
-											"size": [0.3, 0.4],
-											"position": [0.4, 0]
-										},
-										{
-											"texture": "Ai-Weiwei-3",
-											"doc": "Size should reflect proportions of original image.",
-											"size": [0.3, 0.225],
-											"position": [0.9, 0.3]
-										},
-										{
-											"texture": "kathryn-duval-1",
-											"doc": "Size is WxH.",
-											"size": [0.3, 0.225],
-											"position": [1.3, 0.15]
-										}
-									
-									],
-									"doc": "The origin-corner value lets you specify what corner of the table is the origin point for X/Y co-ordinates, values are 'nw', 'ne', 'sw', and 'se'. Note that the user spawns in the NW corner of Squid Hall facing SE.",
-									"origin-corner": "se"
-								}
-							}
-						]
-					},
-					{
-						"object": "artshow.ArtShowDesk-2",
-						"data": [
-							{
-								"place-name": "table-test-2",
-								"options": {
-									"placer": "TablePlacer",
-									"moreInfoData": {
-										"title": "Table Test 1",
-										"text": "This is just a test popup."
-									}
-								},
-								"data": {
-									"textures": [
-										{
-											"texture": "Ai-Weiwei-1",
-											"size": [0.3, 0.225],
-											"position": [0, 0]
-										},
-										{
-											"texture": "Ai-Weiwei-2",
-											"size": [0.3, 0.4],
-											"position": [0.4, 0]
-										},
-										{
-											"texture": "Ai-Weiwei-3",
-											"size": [0.3, 0.225],
-											"position": [0.9, 0.3]
-										},
-										{
-											"texture": "kathryn-duval-1",
-											"size": [0.3, 0.225],
-											"position": [1.3, 0.15]
-										}
-									
-									],
-									"origin-corner": "sw"
-								}
-							}
-						]
-					},
-					{
 						"object": "artshow.ArtShowDesk-1-0",
 						"data": [
 							{
@@ -1256,17 +1300,13 @@ This is a full example of a content file with more resources and a number of obj
 								"data": {
 									"textures": [
 										{
-											"texture": "Ai-Weiwei-1",
-											"size": [0.3, 0.225],
-											"position": [0, 0]
-										},
-										{
-											"texture": "Ai-Weiwei-2",
+											"texture": "kathryn-duval-2",
 											"size": [0.3, 0.4],
 											"position": [0.4, 0]
 										},
 										{
-											"texture": "Ai-Weiwei-3",
+											"texture": "kathryn-duval-3",
+											"tilted": true,
 											"size": [0.3, 0.225],
 											"position": [0.9, 0.3]
 										},
@@ -1277,50 +1317,105 @@ This is a full example of a content file with more resources and a number of obj
 										}
 									
 									],
+									"objects": [
+										{								
+											"object": "plinth",
+											"rotation": [0, 0, 0],
+											"position": [1.4, 0.5],
+											"size": [0.2, 0.2],
+											"scale": 0.1	
+										}
+									],
 									"origin-corner": "nw"
 								}
 							}
 						
 						]
-					},
+					}
+				]
+			}
+		]
+	}
+
+### example_plinth.content.module.json:
+
+	{
+		"doc": "Example Asset Pipeline module. The 'module-name' needs to be unique among all module files.",
+		"module-name": "pipelineexample_plinth",
+		"config": {
+			"doc": "Using defaults from world.module.json, except we override the 'generate-dir', the 'object-dir' and specify 'autoload'.",
+			"generate-dir": "libs/modules/content/",
+			"object-dir": "objects/content/",
+			"autoload": true		
+		},
+		"resources": {
+			"objects": [
+				{
+					"doc": "For this objects we are using the default loader default options, so no need to include an options subsection.",
+					"resource-name": "hugotrophy",
+					"config": {
+						"pack-options": {
+							"action": "insert"
+						},
+						"file-name": "hugo.babylon"
+					}
+				},
+				{
+					"resource-name": "teapot",
+					"config": {
+						"pack-options": {
+							"action": "insert"
+						},
+						"file-name": "utahteapot.babylon"
+					}
+				}
+			]
+		},
+		"layouts": [
+			{
+				"doc": "Object layouts for the art show area. Note that the art show is previously defined in the furniture.model.json file.",
+				"layout-name": "fanhistory",
+				"data": [
 					{
-						"object": "artshow.ArtShowDesk-2",
+						"object": "fanhistory.plinth1-0",
 						"data": [
 							{
-								"place-name": "table-test-4",
+								"place-name": "hugo",
 								"options": {
-									"placer": "TablePlacer",
+									"placer": "PlinthPlacer",
 									"moreInfoData": {
-										"title": "Table Test 4",
-										"text": "This is just a test popup."
+										"title": "The Hugo Award Trophy",
+										"link-text": "Wikpedia Entry",
+										"link": "https://en.wikipedia.org/wiki/Hugo_award",
+										"text": "The Hugo Award is an annual literary award for the best science fiction or fantasy works and achievements of the previous year, given at the World Science Fiction Convention and chosen by its members. The Hugo is widely considered the premier award in science fiction."
 									}
 								},
 								"data": {
-									"textures": [
-										{
-											"texture": "Ai-Weiwei-1",
-											"doc": "Size is WxH.",
-											"size": [0.3, 0.225],
-											"position": [0, 0]
-										},
-										{
-											"texture": "Ai-Weiwei-2",
-											"size": [0.3, 0.4],
-											"position": [0.4, 0]
-										},
-										{
-											"texture": "Ai-Weiwei-3",
-											"size": [0.3, 0.225],
-											"position": [0.9, 0.3]
-										},
-										{
-											"texture": "kathryn-duval-1",
-											"size": [0.3, 0.225],
-											"position": [1.3, 0.15]
-										}
-							
-									],
-									"origin-corner": "ne"
+									"object": "hugotrophy",
+									"rotation": [0, 0, 0],
+									"scale": 1
+								}
+							}
+						]
+					},
+					{
+						"object": "fanhistory.plinth1-1",
+						"data": [
+							{
+								"place-name": "teapot",
+								"options": {
+									"placer": "PlinthPlacer",
+									"moreInfoData": {
+										"title": "The Utah Teapot",
+										"link-text": "Wikpedia Entry",
+										"link": "https://en.wikipedia.org/wiki/Utah_teapot",
+										"text": "The Utah teapot, or the Newell teapot, is a 3D test model that has become a standard reference object and an in-joke within the computer graphics community."
+									}
+								},
+								"data": {
+									"object": "teapot",
+									"rotation": [0, 0, 0],
+									"scale": 0.1
 								}
 							}
 						]
@@ -1329,4 +1424,4 @@ This is a full example of a content file with more resources and a number of obj
 			}
 		]
 	}
-			
+
