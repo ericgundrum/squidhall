@@ -597,7 +597,7 @@ var SquidHall = function() {
 		
 			// Get the placer data.
 			if (!data["textures"]) {
-				SQUIDSPACE.logWarning("ArtPlacer - No texture data. Cannot do placement.");
+				SQUIDSPACE.logWarn("ArtPlacer - No texture data. Cannot do placement.");
 				return false;
 			}
 			dt = data["textures"];
@@ -667,7 +667,7 @@ var SquidHall = function() {
 			
 			// Get the placer data.
 			if (!data["textures"]) {
-				SQUIDSPACE.logWarning("TablePlacer - No texture data. Cannot do placement.");
+				SQUIDSPACE.logWarn("TablePlacer - No texture data. Cannot do placement.");
 				return false;
 			}
 			dt = data["textures"];
@@ -677,7 +677,7 @@ var SquidHall = function() {
 				oc = ['nw', 'ne', 'sw', 'se'].indexOf(ocs.toLowerCase());				
 			}
 			if (oc < 0) {
-				SQUIDSPACE.logWarning(`TablePlacer - Invalid origin-corner: ${data["origin-corner"]}. Defaulting to 'ne'.`);
+				SQUIDSPACE.logWarn(`TablePlacer - Invalid origin-corner: ${data["origin-corner"]}. Defaulting to 'ne'.`);
 				oc = 0;
 			}
 
@@ -734,6 +734,67 @@ var SquidHall = function() {
 			
 			return true;
 	    });
+		
+		squidSpace.attachObjectPlacerHook("PlinthPlacer",
+	    	function(areaName, areaOptions, objectName, placeName, options, data, scene) {
+	
+			squidSpace.logDebug(`PlinthPlacer called! ${areaName}, ${placeName}, ${objectName}.`);
+		
+			// Get target object.
+			target = SQUIDSPACE.getLoadedObject(objectName);
+			// TODO: Check target and fail with error if not loaded. 
+		
+			//if (SQUIDDEBUG) {
+			//      SQUIDSPACE.logDebug(SQUIDDEBUG.makeDetailedObjectInfoString(target));
+			//      SQUIDSPACE.logDebug(SQUIDDEBUG.makeObjectInfoString(target));
+			//}
+		
+			// Get the event data.
+			ed = options["moreInfoData"];
+			//SQUIDSPACE.logDebug(`PlinthPlacer - moreInfoData: ${ed}`);
+		
+			// Get the placer data.
+			objToPlaceName = undefined;
+			if (data["object"]) {
+				objToPlaceName = data["object"];
+			}
+			placeRotation = [0, 0, 0];
+			if (data["rotation"]) {
+				placeRotation = data["rotation"];
+			}
+			placeScaling = 1;
+			if (data["scale"]) {
+				placeScaling = data["scale"];
+			}
+			if (!objToPlaceName) {
+				SQUIDSPACE.logWarn("PlinthPlacer - No object to place. Cannot do placement.");
+				return false;
+			}
+
+			// Get the object to place.
+			objToPlace = SQUIDSPACE.cloneObject(objToPlaceName, placeName);
+			// TODO: Check target and fail with error if not loaded. 
+
+			// Place on target.
+			pos = target[0].position.clone();
+			pos.y = pos.y + 1.365;
+			rot = new BABYLON.Vector3(placeRotation[0], placeRotation[1], placeRotation[2]);
+			scl = new BABYLON.Vector3(placeScaling, placeScaling, placeScaling);
+			for (mesh of objToPlace) {
+				mesh.scaling = scl;
+				mesh.rotation = rot;
+				mesh.position = pos;
+				mesh.isVisible = true
+			}
+		
+			// Set event data.
+	    	if (ed) {
+				SQUIDSPACE.attachClickEventToObject(placeName, "onClickShowPopup", ed, scene);
+	    	}
+			
+			return true;
+	    });
+	
 	}
 	
 	//
@@ -823,7 +884,7 @@ var SquidHall = function() {
 				{width: 70, depth: 70, height: 120, sideOrientation: BABYLON.Mesh.BACKSIDE})
 			boundsBox.position = new BABYLON.Vector3(origin[0], origin[1], origin[2])
 			boundsBox.checkCollisions = true;
-			boundsBox.visibility = false;
+			boundsBox.visibility = 0;
 		});
 	}
 	
