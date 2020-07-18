@@ -131,6 +131,15 @@
 									}
 									
 								],
+								"objects": [
+									{								
+										"object": "plinth",
+										"rotation": [0, 0, 0],
+										"position": [1.4, 0.5],
+										"size": [0.2, 0.2],
+										"scale": 0.1	
+									}
+								],
 								"origin-corner": "nw"
 							}
 						}

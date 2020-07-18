@@ -14,8 +14,8 @@ html, body {
 
 #toolBar {
     position: absolute;
-    right: 20px;
-    top: 5px;
+    right: 16px;
+    top: 10px;
 	width: 80px;
     background-color: #051726;
     color: white;

@@ -666,11 +666,14 @@ var SquidHall = function() {
 			ed = options["moreInfoData"];
 			
 			// Get the placer data.
-			if (!data["textures"]) {
-				SQUIDSPACE.logWarn("TablePlacer - No texture data. Cannot do placement.");
-				return false;
+			dtx = []
+			if (data["textures"]) {
+				dtx = data["textures"];
 			}
-			dt = data["textures"];
+			dobj = []
+			if (data["objects"]) {
+				dobj = data["objects"];
+			}
 			ocs = data["origin-corner"];
 			oc = -1;
 			if (typeof ocs === 'string' || ocs instanceof String) {
@@ -680,9 +683,9 @@ var SquidHall = function() {
 				SQUIDSPACE.logWarn(`TablePlacer - Invalid origin-corner: ${data["origin-corner"]}. Defaulting to 'ne'.`);
 				oc = 0;
 			}
-
+			
 			count = 0;
-			for (tx of dt) {
+			for (tx of dtx) {
 				// Get texture data dsvalues.
 				txName = tx["texture"];
 				size = tx["size"];
@@ -729,6 +732,74 @@ var SquidHall = function() {
 				if (tx["tilted"]) {
 					frm.rotation.x = 0.3;
 					frm.position.y = frm.position.y + (size[0] / 2);
+				}
+			}
+			for (obj of dobj) {
+				// Get the object data.
+				objToPlaceName = undefined;
+				if (obj["object"]) {
+					objToPlaceName = obj["object"];
+				}
+				placeRotation = [0, 0, 0];
+				if (obj["rotation"]) {
+					placeRotation = obj["rotation"];
+				}
+				placeScaling = 1;
+				if (obj["scale"]) {
+					placeScaling = obj["scale"];
+				}
+				size = obj["size"];
+				position = obj["position"];
+				if (!objToPlaceName) {
+					SQUIDSPACE.logWarn("PlinthPlacer - No object to place. Cannot do placement.");
+					return false;
+				}
+				else {
+					// Calculate positions.
+					posV = target[0].position.clone();
+					posV.y = posV.y + 0.751;		
+					switch (oc) {
+					case 0: // 'nw'
+						placeRotation[2] = placeRotation[2] + 0;
+						posV.x = posV.x - 0.58 + position[0] - (size[0] / 2);
+						posV.z = posV.z + 0.03 - position[1] - (size[1] / 2);
+						break;
+					case 1: // 'ne'
+						placeRotation[2] = placeRotation[2] + 1.57;
+						posV.z = posV.z + 0.885 - position[0] - (size[0] / 2);
+						posV.x = posV.x + 0.03 - position[1] - (size[1] / 2);
+						break;
+					case 2: // 'sw'
+						placeRotation[2] = placeRotation[2] + 4.71;
+						posV.z = posV.z - 0.58 + position[0] - (size[0] / 2);
+						posV.x = posV.x - 0.68 + position[1] + (size[1] / 2);
+						break;
+					case 3: // 'se'
+						placeRotation[2] = placeRotation[2] + 3.14;
+						posV.x = posV.x + 0.885 - position[0] - (size[0] / 2);
+						posV.z = posV.z - 0.68 + position[1] + (size[1] / 2);
+						break;
+					}
+					
+					// Get the object to place.
+					let nm = areaName + "." + objToPlaceName + "-" + count++;
+					objToPlace = SQUIDSPACE.cloneObject(objToPlaceName, nm);
+					// TODO: Check target and fail with error if not loaded. 
+					
+					// Place on target.
+					rot = new BABYLON.Vector3(placeRotation[0], placeRotation[1], placeRotation[2]);
+					scl = new BABYLON.Vector3(placeScaling, placeScaling, placeScaling);
+					for (mesh of objToPlace) {
+						mesh.scaling = scl;
+						mesh.rotation = rot;
+						mesh.position = posV;
+						mesh.isVisible = true
+					}
+		
+					// Set event data.
+			    	if (ed) {
+						SQUIDSPACE.attachClickEventToObject(nm, "onClickShowPopup", ed, scene);
+			    	}
 				}
 			}
 			
