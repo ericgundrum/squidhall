@@ -6,24 +6,24 @@ var pipelineexample_kd = (function(){
                "options": {
                },
                "data": {
-                  "dir": "textures/content/",
-                  "file-name": "kathryn-duval-1.png"
+                  "file-name": "kathryn-duval-1.png",
+                  "dir": "textures/content/"
                }
          },
          "kathryn-duval-2": {
                "options": {
                },
                "data": {
-                  "dir": "textures/content/",
-                  "file-name": "kathryn-duval-2.png"
+                  "file-name": "kathryn-duval-2.png",
+                  "dir": "textures/content/"
                }
          },
          "kathryn-duval-3": {
                "options": {
                },
                "data": {
-                  "dir": "textures/content/",
-                  "file-name": "kathryn-duval-3.png"
+                  "file-name": "kathryn-duval-3.png",
+                  "dir": "textures/content/"
                }
          },},
       materials: {},
@@ -37,23 +37,12 @@ var pipelineexample_kd = (function(){
             },
             "objectPlacements": [
                {
-                  "object": "artshow.artpnl-1-ns-1-0",
                   "data": [
                      {
-                        "place-name": "kathryn-duval",
-                        "options": {
-                           "placer": "ArtPlacer",
-                           "moreInfoData": {
-                              "link": "https://squid.fanac.com/kathryn-duval/",
-                              "link-text": "Kathryn Duval's Page",
-                              "text": "Kathryn is located in Hilo Hawaii. She’s interested in alternate realities of nature.",
-                              "title": "Kathryn Duval"
-                           }
-                        },
                         "data": {
-                           "place-on": "front",
                            "textures": [
                               {
+                                 "texture": "kathryn-duval-1",
                                  "size": [
                                     0.6,
                                     0.45
@@ -61,10 +50,10 @@ var pipelineexample_kd = (function(){
                                  "position": [
                                     0,
                                     0
-                                 ],
-                                 "texture": "kathryn-duval-1"
+                                 ]
                               },
                               {
+                                 "texture": "kathryn-duval-2",
                                  "size": [
                                     0.6,
                                     0.45
@@ -72,10 +61,10 @@ var pipelineexample_kd = (function(){
                                  "position": [
                                     0.45,
                                     0.5
-                                 ],
-                                 "texture": "kathryn-duval-2"
+                                 ]
                               },
                               {
+                                 "texture": "kathryn-duval-3",
                                  "size": [
                                     0.6,
                                     0.45
@@ -83,29 +72,32 @@ var pipelineexample_kd = (function(){
                                  "position": [
                                     0,
                                     1
-                                 ],
-                                 "texture": "kathryn-duval-3"
+                                 ]
                               }
-                           ]
-                        }
-                     }
-                  ]
-               },
-               {
-                  "object": "artshow.ArtShowDesk-1-0",
-                  "data": [
-                     {
-                        "place-name": "table-test-3",
+                           ],
+                           "place-on": "front"
+                        },
                         "options": {
-                           "placer": "TablePlacer",
+                           "placer": "ArtPlacer",
                            "moreInfoData": {
-                              "text": "This is just a test popup.",
-                              "title": "Table Test 3"
+                              "title": "Kathryn Duval",
+                              "text": "Kathryn is located in Hilo Hawaii. She’s interested in alternate realities of nature.",
+                              "link-text": "Kathryn Duval's Page",
+                              "link": "https://squid.fanac.com/kathryn-duval/"
                            }
                         },
+                        "place-name": "kathryn-duval"
+                     }
+                  ],
+                  "object": "artshow.artpnl-1-ns-1-0"
+               },
+               {
+                  "data": [
+                     {
                         "data": {
                            "textures": [
                               {
+                                 "texture": "kathryn-duval-2",
                                  "size": [
                                     0.3,
                                     0.4
@@ -113,10 +105,11 @@ var pipelineexample_kd = (function(){
                                  "position": [
                                     0.4,
                                     0
-                                 ],
-                                 "texture": "kathryn-duval-2"
+                                 ]
                               },
                               {
+                                 "tilted": true,
+                                 "texture": "kathryn-duval-3",
                                  "size": [
                                     0.3,
                                     0.225
@@ -124,10 +117,10 @@ var pipelineexample_kd = (function(){
                                  "position": [
                                     0.9,
                                     0.3
-                                 ],
-                                 "texture": "kathryn-duval-3"
+                                 ]
                               },
                               {
+                                 "texture": "kathryn-duval-1",
                                  "size": [
                                     0.3,
                                     0.225
@@ -135,14 +128,41 @@ var pipelineexample_kd = (function(){
                                  "position": [
                                     1.3,
                                     0.15
+                                 ]
+                              }
+                           ],
+                           "objects": [
+                              {
+                                 "scale": 0.1,
+                                 "rotation": [
+                                    0,
+                                    0,
+                                    0
                                  ],
-                                 "texture": "kathryn-duval-1"
+                                 "object": "plinth",
+                                 "size": [
+                                    0.2,
+                                    0.2
+                                 ],
+                                 "position": [
+                                    1.4,
+                                    0.5
+                                 ]
                               }
                            ],
                            "origin-corner": "nw"
-                        }
+                        },
+                        "options": {
+                           "placer": "TablePlacer",
+                           "moreInfoData": {
+                              "title": "Table Test 3",
+                              "text": "This is just a test popup."
+                           }
+                        },
+                        "place-name": "table-test-3"
                      }
-                  ]
+                  ],
+                  "object": "artshow.ArtShowDesk-1-0"
                },
             ]
          },

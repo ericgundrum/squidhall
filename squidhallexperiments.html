@@ -9,6 +9,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>Squid Hall Experiments</title>
 		<link rel="stylesheet" type="text/css" href="css/squidhall.css">
+		<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;800&display=swap" rel="stylesheet">
 		
 		<!-- SCRIPTS START -->
 
@@ -54,14 +55,16 @@
 		<!-- SCRIPTS END -->
 	</head>
 	<body>
-
-		<div id="toolBar"><a onclick="showCntrlPanelPopup()" href="#">&#9776;</a> 
-			<span id="fpsLabel"></span></div>
+		
+		<div id="toolBar">
+			<a onclick="showCntrlPanelPopup()" href="#">&#9776;</a> 
+			<span id="fpsLabel"></span>
+		</div>
 
 		<div id="mPopupBox" class="mpopup">
 		    <div class="mpopup-content">
 		        <div class="mpopup-head">
-		            <span id="mPopupBox-close" class="mpopup-close">&#x274E;</span>
+		            <span id="mPopupBox-close" class="mpopup-close">x</span>
 		            <h2 id="mpopup-title">Simple Modal Popup</h2>
 		        </div>
 		        <div class="mpopup-main" id="mpopup-text">
@@ -73,8 +76,8 @@
 		<div id="mCtrlPnl" class="mpopup">
 		    <div class="mpopup-content">
 		        <div class="mpopup-head">
-		            <span id="mCtrlPnl-close" class="mpopup-close">&#x274E;</span>
-		            <h2 id="mpopup-title">Debug Control Panel</h2>
+		            <span id="mCtrlPnl-close" class="mpopup-close">x</span>
+		            <h2 id="mpopup-title">Control Panel</h2>
 		        </div>
 		        <div class="mpopup-main" id="mCtrlPnl-Tab1">
 		            <p><input id="mAudioCB" type="checkbox" onchange="audioCkbox(this)" checked/> Play Audio</p>
@@ -88,9 +91,10 @@
 					</span>
 					<!-- DEBUG-SPECIFIC MARKUP END -->
 		        </div>
+				<div class="mpopup-foot"></div>
 		    </div>
 		</div>
-		
+
 		<canvas id="renderCanvas" touch-action="none"></canvas>
 
 <script>

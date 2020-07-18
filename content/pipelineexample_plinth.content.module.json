@@ -1,0 +1,86 @@
+{
+	"doc": "Example Asset Pipeline module. The 'module-name' needs to be unique among all module files.",
+	"module-name": "pipelineexample_plinth",
+	"config": {
+		"doc": "Using defaults from world.module.json, except we override the 'generate-dir', the 'object-dir' and specify 'autoload'.",
+		"generate-dir": "libs/modules/content/",
+		"object-dir": "objects/content/",
+		"autoload": true		
+	},
+	"resources": {
+		"objects": [
+			{
+				"doc": "For this objects we are using the default loader default options, so no need to include an options subsection.",
+				"resource-name": "hugotrophy",
+				"config": {
+					"pack-options": {
+						"action": "insert"
+					},
+					"file-name": "hugo.babylon"
+				}
+			},
+			{
+				"resource-name": "teapot",
+				"config": {
+					"pack-options": {
+						"action": "insert"
+					},
+					"file-name": "utahteapot.babylon"
+				}
+			}
+		]
+	},
+	"layouts": [
+		{
+			"doc": "Object layouts for the art show area. Note that the art show is previously defined in the furniture.model.json file.",
+			"layout-name": "fanhistory",
+			"data": [
+				{
+					"object": "fanhistory.plinth1-0",
+					"data": [
+						{
+							"place-name": "hugo",
+							"options": {
+								"placer": "PlinthPlacer",
+								"moreInfoData": {
+									"title": "The Hugo Award Trophy",
+									"link-text": "Wikpedia Entry",
+									"link": "https://en.wikipedia.org/wiki/Hugo_award",
+									"text": "The Hugo Award is an annual literary award for the best science fiction or fantasy works and achievements of the previous year, given at the World Science Fiction Convention and chosen by its members. The Hugo is widely considered the premier award in science fiction."
+								}
+							},
+							"data": {
+								"object": "hugotrophy",
+								"rotation": [0, 0, 0],
+								"scale": 1
+							}
+						}
+					]
+				},
+				{
+					"object": "fanhistory.plinth1-1",
+					"data": [
+						{
+							"place-name": "teapot",
+							"options": {
+								"placer": "PlinthPlacer",
+								"moreInfoData": {
+									"title": "The Utah Teapot",
+									"link-text": "Wikpedia Entry",
+									"link": "https://en.wikipedia.org/wiki/Utah_teapot",
+									"text": "The Utah teapot, or the Newell teapot, is a 3D test model that has become a standard reference object and an in-joke within the computer graphics community."
+								}
+							},
+							"data": {
+								"object": "teapot",
+								"rotation": [0, 0, 0],
+								"scale": 0.1
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}
+			

@@ -14,17 +14,17 @@ html, body {
 
 #toolBar {
     position: absolute;
-    right: 20px;
+    right: 16px;
     top: 10px;
 	width: 80px;
-    background-color: #337000;
+    background-color: #051726;
     color: white;
     cursor: default;
 }
-#toolBar a:link {color: yellow;}
-#toolBar a:visited {color: yellow;}
+#toolBar a:link {color: gold;}
+#toolBar a:visited {color: lightblue;}
 #toolBar a:hover {color: antiquewhite}
-#toolBar a:active {color: yellow}
+#toolBar a:active {color: antiquewhite}
 
 /* Modal Popup box style */
 .mpopup {
@@ -46,6 +46,8 @@ html, body {
     margin: auto;
     padding: 0;
     width: 60%;
+    border:1px solid #77e7fd;
+    font-family: 'Montserrat', sans-serif;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
     -webkit-animation-name: animatetop;
     -webkit-animation-duration: 0.4s;
@@ -54,13 +56,13 @@ html, body {
 }
 .mpopup-head {
     padding: 2px 8px;
-    background-color: #337000;
+    background-color: #051726;
     color: white;
 }
 .mpopup-close {
 	cursor: pointer;
 	font-size: x-large;
-	//color: gold;
+	color:#77e7fd;
 	padding: 0;
 	//padding: 1px;
 	margin: 0;
@@ -71,16 +73,22 @@ html, body {
 	text-align: center;
 	margin: 0;
 }
-.mpopup-main {padding: 2px 16px;}
+.mpopup-main {padding: 2px 16px;
+	border-left:12px solid #051726; border-right:12px solid #051726;}
 .mpopup-foot {
     padding: 2px 16px;
-    background-color: #337000;
+    background-color: #051726;
     color: white;
 }
 .mpopup-foot a:link {color: gold;}
 .mpopup-foot a:visited {color: lightblue;}
 .mpopup-foot a:hover {color: antiquewhite}
 .mpopup-foot a:active {color: antiquewhite}
+
+h2#mpopup-title {background-color:#04162c;
+		      	border:1px solid #77e7fd;
+		      	margin:3px;
+		      	padding:10px;}
 
 /* add animation effects */
 @-webkit-keyframes animatetop {

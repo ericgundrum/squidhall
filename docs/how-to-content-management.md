@@ -1,6 +1,6 @@
 # How To Manage Content for Squid Hall
 
-This section provides specific information for running the SQS pipeline command in Squid Hall.
+This document provides specific information for running the SQS pipeline command in Squid Hall.
 
 Content management consists of two separate steps, which must be done in the following order: 
 
