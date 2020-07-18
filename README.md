@@ -12,6 +12,8 @@ These files can either link to content or contain the content internally. In the
 
 2. [version-20200701.0](https://github.com/jackwilliambell/squidhall/releases/tag/version-20200701.0) [Alpha 1.0] First candidate release
 
+2. [version-20200715.0](https://github.com/jackwilliambell/squidhall/releases/tag/version-20200701.0) [Alpha 2.0] Second candidate release
+
 ## 3D modelling notes
 
 * Features: https://doc.babylonjs.com/features
