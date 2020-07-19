@@ -1,0 +1,242 @@
+{
+    "module-name": "hall",
+	"doc": "Main module file for Squid Hall.",
+	"config": {
+		"doc": "Uses world defaults."
+	},
+	"resources": {
+		"textures": [],
+		"materials": [],
+		"objects": [
+			{
+				"resource-name": "floor",
+				"options": {
+					"doc": "'floor' hook function creates an object from scratch.",
+					"loader": "Floor",
+					"visible": true
+				},
+				"data": {
+					"size": [40, 68.7],
+					"position": [0, 0, 0],
+					"material": "macadam"
+				}
+			},
+			{
+				"resource-name": "arena",
+				"config": {
+					"pack-options": {
+						"action": "insert"
+					},
+					"file-name": "arena.babylon"
+				},
+				"options": {
+					"doc": "'default' hook function creates object from inserted data or URL.",
+					"loader": "default",
+					"visible": true
+				}
+			},
+			{
+				"resource-name": "artsection",
+				"options": {
+					"doc": "'FloorSection' hook function creates object from scratch.",
+					"loader": "FloorSection",
+					"visible": true
+				},
+				"data": {
+					"size": [14, 17],
+					"position": [3, 0.01, 0],
+					"material": "marble"
+				}
+			},
+			{
+				"resource-name": "historysection",
+				"options": {
+					"doc": "'FloorSection' hook function creates object from scratch.",
+					"loader": "FloorSection",
+					"visible": true
+				},
+				"data": {
+					"size": [13, 27.5],
+					"position": [21.6, 0.01, 6.5],
+					"material": "marble"
+				}
+			},
+			{
+				"resource-name": "dealearwestsection",
+				"options": {
+					"doc": "'FloorSection' hook function creates object from scratch.",
+					"loader": "FloorSection",
+					"visible": true
+				},
+				"data": {
+					"size": [13, 17.5],
+					"position": [4.5, 0.01, 39],
+					"material": "marble"
+				}
+			},
+			{
+				"resource-name": "dealeareasttsection",
+				"options": {
+					"doc": "'FloorSection' hook function creates object from scratch.",
+					"loader": "FloorSection",
+					"visible": true
+				},
+				"data": {
+					"size": [13, 17.5],
+					"position": [22.5, 0.01, 39],
+					"material": "marble"
+				}
+			},
+			{
+				"resource-name": "beam",
+				"config": {
+					"pack-options": {
+						"action": "insert"
+					},
+					"file-name": "beam.babylon"
+				},
+				"options": {
+					"loader": "default"
+				}
+			},
+			{
+				"resource-name": "banner",
+				"config": {
+					"pack-options": {
+						"action": "insert"
+					},
+					"file-name": "banner.babylon"
+				},
+				"options": {
+					"loader": "default"
+				}
+			},
+			{
+				"resource-name": "curtain",
+				"config": {
+					"pack-options": {
+						"action": "insert"
+					},
+					"file-name": "curtain.babylon"
+				},
+				"options": {
+					"loader": "default"
+				}
+			},
+			{
+				"resource-name": "squid",
+				"config": {
+					"pack-options": {
+						"action": "insert"
+					},
+					"file-name": "squid.babylon"
+				},
+				"options": {
+					"loader": "default"
+				}
+			},
+			{
+				"resource-name": "skybox",
+				"options": {
+					"doc": "'SkyBox' hook function creates object from scratch.",
+					"loader": "SkyBox",
+					"visible": true
+				},
+				"data": {
+					"doc": "Possible values: textures/skybox/skybox1/skybox1, textures/skybox/Ely38/Ely38, etc.",
+					"cube-texture": "textures/skybox/Ely38/Ely38"
+				}
+			},
+			{
+				"resource-name": "user",
+				"options": {
+					"doc": "'UserCamera' hook function creates object from scratch.",
+					"loader": "UserCamera",
+					"visible": true
+				},
+				"data": {
+					"position": [36.5, 1.6, 3]
+				}
+			}
+		],
+		"mods": []
+	},
+	"layouts": [
+		{
+			"doc": "Object layouts for the entire arena.",
+			"layout-name": "arena",
+			"options": {
+				"doc": "Area origin and size are required are not currently implemented.",
+				"size": [50, 30, 72],
+				"origin": [0, 0, 0]
+			},
+			"data": [
+				{
+					"object": "beam",
+					"data": [
+						{
+							"place-name": "beams",
+							"options": {
+								"doc": "Uses a hook placer function that knows where it wants things.",
+								"placer": "BeamPlacer"
+							}
+						}
+					]
+				},
+				{
+					"object": "banner",
+					"data": [
+						{
+							"place-name": "banners",
+							"options": {
+								"doc": "Uses a hook placer function that knows where it wants things.",
+								"placer": "BannerPlacer"
+							}
+						}
+					]
+				},
+				{
+					"object": "curtain",
+					"data": [
+						{
+							"place-name": "curtains",
+							"options": {
+								"doc": "Uses a hook placer function that knows where it wants things.",
+								"placer": "CurtainPlacer"
+							}
+						}
+					]
+				},
+				{
+					"object": "squid",
+					"data": [
+						{
+							"place-name": "squid",
+							"options": {
+								"doc": "Uses a hook placer function that requires some option values.",
+								"placer": "SquidPlacer"
+							},
+							"data": {
+								"position": [34.5, 11, 62.5],
+								"rotation": 3.14
+							}
+						}
+					]
+				},
+				{
+					"doc": "TODO: this needs to refer to a light object, will require rework of the hook function.",
+					"object": "_none_",
+					"data": [
+						{
+							"place-name": "lights",
+							"options": {
+								"doc": "Uses a hook placer function that knows where it wants things.",
+								"placer": "LightPlacer"
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

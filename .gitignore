@@ -12,6 +12,7 @@ __pycache__/
 *.pyc
 build/
 scratch/
+libs/modules/
 tools/testmodules/build/
 tools/testmodules/textures/
 

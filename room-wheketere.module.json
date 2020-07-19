@@ -1,0 +1,64 @@
+{
+    "module-name": "wheketere",
+	"doc": "Main module file for Wheketere room.",
+	"config": {
+		"doc": "Uses world defaults."
+	},
+	"resources": {
+		"textures": [],
+		"materials": [],
+		"objects": [
+			{
+				"resource-name": "floor",
+				"options": {
+					"doc": "'floor' hook function creates an object from scratch.",
+					"loader": "Floor",
+					"visible": true
+				},
+				"data": {
+					"size": [40, 68.7],
+					"position": [0, 0, 0],
+					"material": "macadam"
+				}
+			},
+			{
+				"resource-name": "skybox",
+				"options": {
+					"doc": "'SkyBox' hook function creates object from scratch.",
+					"loader": "SkyBox",
+					"visible": true
+				},
+				"data": {
+					"doc": "Possible values: textures/skybox/skybox1/skybox1, textures/skybox/Ely38/Ely38, etc.",
+					"cube-texture": "textures/skybox/Ely38/Ely38"
+				}
+			},
+			{
+				"resource-name": "user",
+				"options": {
+					"doc": "'UserCamera' hook function creates object from scratch.",
+					"loader": "UserCamera",
+					"visible": true
+				},
+				"data": {
+					"position": [36.5, 1.6, 3]
+				}
+			}
+		],
+		"mods": []
+	},
+	"layouts": [
+		{
+			"doc": "Object layouts for the entire room.",
+			"layout-name": "room",
+			"options": {
+				"doc": "Area origin and size are required are not currently implemented.",
+				"size": [50, 30, 72],
+				"origin": [0, 0, 0]
+			},
+			"data": [
+				
+			]
+		}
+	]
+}
