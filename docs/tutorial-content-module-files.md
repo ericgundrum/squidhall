@@ -403,61 +403,11 @@ You should be able to 'walk up' to the art panel or table you used in the tutori
 
 If you found a problem that requires correction, go back to one of the previous steps. If everything looks good, you have completed the tutorial and can read below for more detail on how things work.
 
-## Layouts, Object Placers, and Object Names
-
-The [Module File Specification](modulefile-specification.md) and the [SquidSpace Module File requirements](squidspace-modulefiles.md) documents detail how layouts work, with the latter document providing considerable information on the object placer declarations. However, neither document specifies how object placer algorithms *work*.
-
-Put simply, an object placer is a function that is called with information from a module file, creates one or more 3D object instances (sometimes cloned from existing objects) and puts them in specific places in the 3D space. This object placer function is registered with SquidSpace with a name, but is not necessarily provided by SquidSpace and may be a custom implementation. For example, ArtPlacer, TablePlacer and PlinthPlacer placer algorithms are specific to the Squid Hall project and even contain hard-coded expectations about the objects they are placing art frames on. Other placer algorithms, such as 'LinearSeries' are SquidSpace 'builtins'.
-
-Basically, while processing layouts SquidSpace calls the function registered with the placer name in the object placer declaration, passing the options and data values from the declaration along with other context, such as the layout area and the object specified in the object placer declaration. The placer function can perform this placement any way it likes and, moreover, can place as many 3D objects as it likes. 
-
-It is not required, but the placer function can also register the 3D objects it creates and places with SquidSpace using a unique name that only refers to that one 3d object within the space. These names must adhere to the following rules:
-
-* The name must be namespaced by the layout area using dot notation; for example, a 3D object registered with the 'place name' 'foo' in layout area 'bar' has the name 'foo.bar'
-
-* If the placer function creates multiple copies of a 3D object and registers them, it must extend the 'place name' with a dash and a unique number for each instance; for example, three 3D objects with the 'place name' 'foo' in layout area 'bar' will have the names 'foo.bar-0', 'foo.bar-1', and 'foo.bar-3'
-
-This naming scheme allows us to specify particular objects placed by the SquidSpace layout engine in a separate module file, so long as the placer function registers the object. If the placed 3D object will never need to be referred to later it is not necessary. 
-
-## List of Placer Algorithms
-
-Every module files user 'placer algorithms' to put things into the space. Below is a list of all the available placer algorithms, although in actual practice for content you will mostly be using the ArtPlacer, TablePlacer and PlinthPlacer algorithms.
-
-Basic placer algorithms (mostly used for placing furniture):
-
-* Single - Places a single item at a specified position in the space
-
-* LinearSeries - Places a series of items in a row in the space, you can specify the direction the row goes and the number of items in the series
-
-* RectangleSeries - Places a series of items in a rectangle
-
-Squid hall-specific placer algorithms for furniture and world items (most require code changes to modify where things are placed):
-
-* LightPlacer - Puts lights in a predetermined position in the hall
-
-* BeamPlacer - Puts the beams in predetermined position in the hall ceiling
-
-* BannerPlacer - Puts the beams in predetermined position in the hall ceiling
-
-* CurtainPlacer - Puts the curtains in predetermined position around the hall
-
-* SquidPlacer - Puts the squid on the back of the hall
-
-* SignFullPlacer - Puts the large signs in predetermined positions around the hall
-
-* SignHalfPlacer - Puts the smaller signs in predetermined positions around the hall
-
-Squid hall-specific content placer algorithms for placing art and object content onto furniture (do not require code changes to use):
-
-* ArtPlacer - Places images on art panels
-
-* TablePlacer - Places images and objects on tables
-
-* PlinthPlacer - Places objects on plinths
-
 ## ArtPlacer, TablePlacer and PlinthPlacer Algorithms
 
 The ArtPlacer, TablePlacer and PlinthPlacer placer algorithms are very similar, but each is optimized for placing image frames or objects on a specific 3D object type: ArtPlacer knows about art panels and image frames and places frames right to left and top to bottom. TablePlacer knows about tables and places frames or 3D objects right to left and back to front. PlinthPlacer knows about plinths and can place one 3D object on a plinth.
+
+For more information on the ArtPlacer, TablePlacer and PlinthPlacer placer algorithms see the [Content Placers Reference](content-placers-reference.md).
 
 For ArtPlacer and TablePlacer algorithms the frame size is specified as Width x Height (W/H). The size should retain the proportions of the original image for best results. In general a width of 0.5 or less and a proportional height work best.
 
