@@ -1,5 +1,8 @@
-#!/bin/bash
+#!/bin/sh
 # This script generates code for all modules and merges the content files.
+
+mkdir -p libs/modules/content
+
 python3 tools/sqs/sqs.py generate world.module.json
 python3 tools/sqs/sqs.py generate room-squidhall.module.json
 python3 tools/sqs/sqs.py generate room-wheketere.module.json
